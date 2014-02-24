@@ -21,7 +21,8 @@ CONFIG += no_include_pwd
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
 LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 windows:LIBS += -lws2_32 -lole32 -loleaut32 -luuid -lgdi32
-
+QRENCODE_INCLUDE_PATH=C:/deps/qrencode/include
+QRENCODE_LIB_PATH=C:/deps/qrencode/lib
 
 OBJECTS_DIR = build
 MOC_DIR = build
