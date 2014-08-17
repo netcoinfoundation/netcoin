@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef _BITCOIN_ADDRMAN
 #define _BITCOIN_ADDRMAN 1
-
+#include <stdint.h>
 #include "netbase.h"
 #include "protocol.h"
 #include "util.h"

@@ -11,7 +11,7 @@
 
 #ifndef __INCLUDED_PROTOCOL_H__
 #define __INCLUDED_PROTOCOL_H__
-
+#include <stdint.h>
 #include "serialize.h"
 #include "netbase.h"
 #include <string>
@@ -20,7 +20,7 @@
 extern bool fTestNet;
 static inline unsigned short GetDefaultPort(const bool testnet = fTestNet)
 {
-    return testnet ? 21310 : 11310;
+    return (testnet ? 21310 : 11310);
 }
 
 

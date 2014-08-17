@@ -2,23 +2,25 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=0
+USE_UPNP:=1
 
-INCLUDEPATHS= \
- -I"C:\deps\boost" \
- -I"C:\deps\db\build_unix" \
- -I"C:\deps\ssl\include" 
-
+ INCLUDEPATHS= \
+ -L"C:\deps\boost_1_55_0" \
+ -L"C:\deps" \
+ -L"C:\deps\db-4.8.30.NC\build_unix" \
+ -L"C:\deps\openssl-1.0.1h\include\openssl"
+ 
 LIBPATHS= \
- -L"C:\deps\boost\stage\lib" \
- -L"C:\deps\db\build_unix" \
- -L"C:\deps\ssl" \
+ -L"C:\deps\boost_1_55_0\stage\lib" \
+ -L"C:\deps\miniupnpc" \
+ -L"C:\deps\db-4.8.30.NC\build_unix" \
+ -L"C:\deps\openssl-1.0.1h"
 
 LIBS= \
- -l boost_system-mgw46-mt-1_54 \
- -l boost_filesystem-mgw46-mt-1_54 \
- -l boost_program_options-mgw46-mt-1_54 \
- -l boost_thread-mgw46-mt-1_54 \
+ -l boost_system-mgw46-mt-1_55_0 \
+ -l boost_filesystem-mgw46-mt-1_55_0 \
+ -l boost_program_options-mgw46-mt-1_55_0 \
+ -l boost_thread-mgw46-mt-1_55_0 \
  -l db_cxx \
  -l ssl \
  -l crypto
@@ -26,6 +28,7 @@ LIBS= \
 DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6 -D__NO_SYSTEM_INCLUDES
 #DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 

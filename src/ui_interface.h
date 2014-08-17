@@ -6,6 +6,7 @@
 #ifndef BITCOIN_UI_INTERFACE_H
 #define BITCOIN_UI_INTERFACE_H
 
+#include <stdint.h>
 #include <string>
 #include "util.h" // for int64
 #include <boost/signals2/signal.hpp>

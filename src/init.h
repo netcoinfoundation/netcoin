@@ -5,11 +5,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_INIT_H
 #define BITCOIN_INIT_H
-
+#include <stdint.h>
 #include "wallet.h"
 
 extern CWallet* pwalletMain;
-
+extern std::string strWalletFileName;
 void StartShutdown();
 void Shutdown(void* parg);
 bool AppInit2();

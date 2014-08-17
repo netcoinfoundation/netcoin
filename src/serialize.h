@@ -5,7 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_SERIALIZE_H
 #define BITCOIN_SERIALIZE_H
-
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <map>

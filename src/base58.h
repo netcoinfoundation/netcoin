@@ -16,7 +16,7 @@
 //
 #ifndef BITCOIN_BASE58_H
 #define BITCOIN_BASE58_H
-
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include "bignum.h"

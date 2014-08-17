@@ -5,7 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_IRC_H
 #define BITCOIN_IRC_H
-
+#include <stdint.h>
 void ThreadIRCSeed(void* parg);
 
 extern int nGotIRCAddresses;

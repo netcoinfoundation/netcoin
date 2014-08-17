@@ -23,13 +23,16 @@ public:
     void setDateRange(const QDateTime &from, const QDateTime &to);
     void setAddressPrefix(const QString &addrPrefix);
     /**
-      @note Type filter takes a bitfield created with TYPE() or ALL_TYPES
+      @note Type filter takes a bit field created with TYPE() or ALL_TYPES
      */
     void setTypeFilter(quint32 modes);
     void setMinAmount(qint64 minimum);
 
     /** Set maximum number of rows returned, -1 if unlimited. */
     void setLimit(int limit);
+
+    /** Set whether to show conflicted transactions. */
+    void setShowInactive(bool showInactive);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 protected:
@@ -42,6 +45,7 @@ private:
     quint32 typeFilter;
     qint64 minAmount;
     int limitRows;
+    bool showInactive;
 
 signals:
 

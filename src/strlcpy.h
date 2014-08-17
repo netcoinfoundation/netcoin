@@ -15,7 +15,7 @@
  */
 #ifndef BITCOIN_STRLCPY_H
 #define BITCOIN_STRLCPY_H
-
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
