@@ -74,7 +74,7 @@ public:
 	 *
 	 * @return the denomination
 	 */
-	const CoinDenomination getDenomination();
+    CoinDenomination getDenomination();
 
 	bool Verify(const Accumulator& a, const SpendMetaData &metaData) const;
 

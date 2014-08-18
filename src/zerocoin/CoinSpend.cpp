@@ -59,7 +59,7 @@ CoinSpend::getCoinSerialNumber() {
 	return this->coinSerialNumber;
 }
 
-const CoinDenomination
+CoinDenomination
 CoinSpend::getDenomination() {
 	return static_cast<CoinDenomination>(this->denomination);
 }

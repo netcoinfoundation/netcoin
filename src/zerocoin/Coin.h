@@ -49,7 +49,7 @@ public:
 	 */
 	PublicCoin( const Params* p, const Bignum& coin, const CoinDenomination d = ZQ_PEDERSEN);
 	const Bignum& getValue() const;
-	const CoinDenomination getDenomination() const;
+    CoinDenomination getDenomination() const;
 	bool operator==(const PublicCoin& rhs) const;
 	bool operator!=(const PublicCoin& rhs) const;
 	/** Checks that a coin prime
@@ -115,7 +115,7 @@ private:
 	 * the resulting commitment is prime. Stores the
 	 * resulting commitment (coin) and randomness (trapdoor).
 	 **/
-	void mintCoin(const CoinDenomination denomination);
+    void mintCoin(const CoinDenomination denomination);
 	
 	/**
 	 * @brief Mint a new coin using a faster process.
@@ -131,7 +131,7 @@ private:
 	 * to timing attacks. Don't use it if you think someone
 	 * could be timing your coin minting.
 	 **/
-	void mintCoinFast(const CoinDenomination denomination);
+    void mintCoinFast(const CoinDenomination denomination);
 
 };
 

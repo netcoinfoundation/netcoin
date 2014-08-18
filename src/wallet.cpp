@@ -18,7 +18,6 @@
 
 #include "main.h"
 
-#include <QString>
 
 using namespace std;
 

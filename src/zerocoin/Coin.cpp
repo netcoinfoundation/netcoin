@@ -42,7 +42,7 @@ const Bignum& PublicCoin::getValue() const {
 	return this->value;
 }
 
-const CoinDenomination PublicCoin::getDenomination() const {
+CoinDenomination PublicCoin::getDenomination() const {
 	return static_cast<CoinDenomination>(this->denomination);
 }
 

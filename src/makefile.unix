@@ -94,11 +94,14 @@ xCXXFLAGS=-O2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-para
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
+    obj/kernel.o \
+    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
     obj/addrman.o \
     obj/crypter.o \
+    obj/miner.o \
     obj/key.o \
     obj/db.o \
     obj/init.o \
@@ -108,16 +111,21 @@ OBJS= \
     obj/net.o \
     obj/protocol.o \
     obj/bitcoinrpc.o \
+    obj/rpcblockchain.o \
+    obj/rpcmining.o \
     obj/rpcdump.o \
     obj/rpcnet.o \
     obj/rpcrawtransaction.o \
+    obj/rpcwallet.o \
     obj/script.o \
     obj/scrypt.o \
     obj/sync.o \
+    obj/txdb.o \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \
     obj/noui.o
+
 
 
 all: netcoind
