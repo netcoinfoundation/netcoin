@@ -2,19 +2,21 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=1
+USE_UPNP:=0
 
- INCLUDEPATHS= \
- -L"C:\deps\boost_1_55_0" \
- -L"C:\deps" \
- -L"C:\deps\db-4.8.30.NC\build_unix" \
- -L"C:\deps\openssl-1.0.1h\include\openssl"
+BOOST_SUFFIX?=-mgw49-mt-s-1_55
+
+INCLUDEPATHS= \
+ -I"$(CURDIR)" \
+ -I"/c/deps/boost_1_55_0" \
+ -I"/c/deps/db-4.8.30.NC/build_unix" \
+ -I"/c/deps/openssl-1.0.1i/include"
  
 LIBPATHS= \
- -L"C:\deps\boost_1_55_0\stage\lib" \
- -L"C:\deps\miniupnpc" \
- -L"C:\deps\db-4.8.30.NC\build_unix" \
- -L"C:\deps\openssl-1.0.1h"
+ -L"$(CURDIR)/leveldb" \
+ -L"/c/deps/boost_1_55_0/stage/lib" \
+ -L"/c/deps/db-4.8.30.NC/build_unix" \
+ -L"/c/deps/openssl-1.0.1i"
 
 LIBS= \
  -l boost_system-mgw46-mt-1_55_0 \
