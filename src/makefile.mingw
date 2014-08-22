@@ -4,21 +4,25 @@
 
 USE_UPNP:=0
 
-INCLUDEPATHS= \
- -I"C:\deps\boost" \
- -I"C:\deps\db\build_unix" \
- -I"C:\deps\ssl\include" 
+BOOST_SUFFIX?=-mgw49-mt-s-1_55
 
+INCLUDEPATHS= \
+ -I"$(CURDIR)" \
+ -I"/c/deps/boost_1_55_0" \
+ -I"/c/deps/db-4.8.30.NC/build_unix" \
+ -I"/c/deps/openssl-1.0.1i/include"
+ 
 LIBPATHS= \
- -L"C:\deps\boost\stage\lib" \
- -L"C:\deps\db\build_unix" \
- -L"C:\deps\ssl" \
+ -L"$(CURDIR)/leveldb" \
+ -L"/c/deps/boost_1_55_0/stage/lib" \
+ -L"/c/deps/db-4.8.30.NC/build_unix" \
+ -L"/c/deps/openssl-1.0.1i"
 
 LIBS= \
- -l boost_system-mgw46-mt-1_54 \
- -l boost_filesystem-mgw46-mt-1_54 \
- -l boost_program_options-mgw46-mt-1_54 \
- -l boost_thread-mgw46-mt-1_54 \
+ -l boost_system-mgw46-mt-1_55_0 \
+ -l boost_filesystem-mgw46-mt-1_55_0 \
+ -l boost_program_options-mgw46-mt-1_55_0 \
+ -l boost_thread-mgw46-mt-1_55_0 \
  -l db_cxx \
  -l ssl \
  -l crypto
@@ -26,6 +30,7 @@ LIBS= \
 DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6 -D__NO_SYSTEM_INCLUDES
 #DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
@@ -42,11 +47,14 @@ LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell
 HEADERS = $(wildcard *.h)
 
 OBJS= \
+    obj/kernel.o \
+    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
     obj/addrman.o \
     obj/crypter.o \
+    obj/miner.o \
     obj/key.o \
     obj/db.o \
     obj/init.o \
@@ -56,12 +64,16 @@ OBJS= \
     obj/net.o \
     obj/protocol.o \
     obj/bitcoinrpc.o \
+    obj/rpcblockchain.o \
+    obj/rpcmining.o \
     obj/rpcdump.o \
     obj/rpcnet.o \
     obj/rpcrawtransaction.o \
+    obj/rpcwallet.o \
     obj/script.o \
     obj/scrypt.o \
     obj/sync.o \
+    obj/txdb.o \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \

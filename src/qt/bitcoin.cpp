@@ -20,9 +20,6 @@
 #include <QSplashScreen>
 #include <QLibraryInfo>
 
-#include <boost/interprocess/ipc/message_queue.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-
 #if defined(BITCOIN_NEED_QT_PLUGINS) && !defined(_BITCOIN_QT_PLUGINS_INCLUDED)
 #define _BITCOIN_QT_PLUGINS_INCLUDED
 #define __INSURE__
@@ -58,7 +55,7 @@ static void ThreadSafeMessageBox(const std::string& message, const std::string& 
     }
 }
 
-static bool ThreadSafeAskFee(int64 nFeeRequired, const std::string& strCaption)
+static bool ThreadSafeAskFee(int64_t nFeeRequired, const std::string& strCaption)
 {
     if(!guiref)
         return false;
@@ -86,7 +83,7 @@ static void InitMessage(const std::string &message)
 {
     if(splashref)
     {
-        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(255,255,200));
+        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(232,186,63));
         QApplication::instance()->processEvents();
     }
 }
@@ -109,46 +106,21 @@ static std::string Translate(const char* psz)
 static void handleRunawayException(std::exception *e)
 {
     PrintExceptionContinue(e, "Runaway exception");
-    QMessageBox::critical(0, "Runaway exception", BitcoinGUI::tr("A fatal error occured. NetCoin can no longer continue safely and will quit.") + QString("\n\n") + QString::fromStdString(strMiscWarning));
+    QMessageBox::critical(0, "Runaway exception", BitcoinGUI::tr("A fatal error occurred. Netcoin can no longer continue safely and will quit.") + QString("\n\n") + QString::fromStdString(strMiscWarning));
     exit(1);
 }
 
 #ifndef BITCOIN_QT_TEST
 int main(int argc, char *argv[])
 {
-// TODO: implement URI support on the Mac.
-#if !defined(MAC_OSX)
     // Do this early as we don't want to bother initializing if we are just calling IPC
-    for (int i = 1; i < argc; i++)
-    {
-        if (boost::algorithm::istarts_with(argv[i], "netcoin:"))
-        {
-            const char *strURI = argv[i];
-            try {
-                boost::interprocess::message_queue mq(boost::interprocess::open_only, BITCOINURI_QUEUE_NAME);
-                if (mq.try_send(strURI, strlen(strURI), 0))
-                    // if URI could be sent to the message queue exit here
-                    exit(0);
-                else
-                    // if URI could not be sent to the message queue do a normal Bitcoin-Qt startup
-                    break;
-            }
-            catch (boost::interprocess::interprocess_exception &ex) {
-                // don't log the "file not found" exception, because that's normal for
-                // the first start of the first instance
-                if (ex.get_error_code() != boost::interprocess::not_found_error)
-                {
-                    printf("main() - boost interprocess exception #%d: %s\n", ex.get_error_code(), ex.what());
-                    break;
-                }
-            }
-        }
-    }
-#endif
+    ipcScanRelay(argc, argv);
 
+#if QT_VERSION < 0x050000
     // Internal string conversion is all UTF-8
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForTr());
+#endif
 
     Q_INIT_RESOURCE(bitcoin);
     QApplication app(argc, argv);
@@ -162,19 +134,22 @@ int main(int argc, char *argv[])
     // ... then bitcoin.conf:
     if (!boost::filesystem::is_directory(GetDataDir(false)))
     {
-        fprintf(stderr, "Error: Specified directory does not exist\n");
+        // This message can not be translated, as translation is not initialized yet
+        // (which not yet possible because lang=XX can be overridden in bitcoin.conf in the data directory)
+        QMessageBox::critical(0, "Netcoin",
+                              QString("Error: Specified data directory \"%1\" does not exist.").arg(QString::fromStdString(mapArgs["-datadir"])));
         return 1;
     }
     ReadConfigFile(mapArgs, mapMultiArgs);
 
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)
-    app.setOrganizationName("NetCoin");
-    app.setOrganizationDomain("netcoin-noexist-domain.org");
+    app.setOrganizationName("Netcoin");
+    //XXX app.setOrganizationDomain("");
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
-        app.setApplicationName("NetCoin-Qt-testnet");
+        app.setApplicationName("Netcoin-Qt-testnet");
     else
-        app.setApplicationName("NetCoin-Qt");
+        app.setApplicationName("Netcoin-Qt");
 
     // ... then GUI settings:
     OptionsModel optionsModel;
@@ -227,7 +202,6 @@ int main(int argc, char *argv[])
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min"))
     {
         splash.show();
-        splash.setAutoFillBackground(true);
         splashref = &splash;
     }
 
@@ -269,29 +243,10 @@ int main(int argc, char *argv[])
                 {
                     window.show();
                 }
-// TODO: implement URI support on the Mac.
-#if !defined(MAC_OSX)
 
-                // Place this here as guiref has to be defined if we dont want to lose URIs
-                ipcInit();
+                // Place this here as guiref has to be defined if we don't want to lose URIs
+                ipcInit(argc, argv);
 
-                // Check for URI in argv
-                for (int i = 1; i < argc; i++)
-                {
-                    if (boost::algorithm::istarts_with(argv[i], "netcoin:"))
-                    {
-                        const char *strURI = argv[i];
-                        try {
-                            boost::interprocess::message_queue mq(boost::interprocess::open_only, BITCOINURI_QUEUE_NAME);
-                            mq.try_send(strURI, strlen(strURI), 0);
-                        }
-                        catch (boost::interprocess::interprocess_exception &ex) {
-                            printf("main() - boost interprocess exception #%d: %s\n", ex.get_error_code(), ex.what());
-                            break;
-                        }
-                    }
-                }
-#endif
                 app.exec();
 
                 window.hide();
@@ -299,7 +254,7 @@ int main(int argc, char *argv[])
                 window.setWalletModel(0);
                 guiref = 0;
             }
-            // Shutdown the core and it's threads, but don't exit Bitcoin-Qt here
+            // Shutdown the core and its threads, but don't exit Bitcoin-Qt here
             Shutdown(NULL);
         }
         else

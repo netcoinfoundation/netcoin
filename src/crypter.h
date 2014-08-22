@@ -4,7 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef __CRYPTER_H__
 #define __CRYPTER_H__
-
+#include <stdint.h>
 #include "allocators.h" /* for SecureString */
 #include "key.h"
 #include "serialize.h"

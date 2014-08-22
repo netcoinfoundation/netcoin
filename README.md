@@ -1,22 +1,60 @@
-NetCoin (NET) - a fork of Litecoin that combines the random superblocks. Like Litecoin it uses scrypt as a proof of work scheme.
-
-	- 60 seconds block time
-	- Difficulty retargets every 60 blocks
-	- Total coins will be 320,636,160
-	- 6 confirmations for transaction
-	- 50 confirmations for minted blocks
-	- 1024 coins per block, and a random super block each hour that has 8X the normal payout (8096 coins)
-	- The payout will be halved each 3 months (129,600 blocks)
-	- To enourage the early adoption, the 1st week after the launch is a bonus week:
-		- First 2 days: 5x
-		- Next 2 days: 3x
-		- Next 3 days: 2x
-
-	- The default ports: Connection 11310, and RPC 11311
-
-	- No premine
+NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investment Rate
 
 
+ - The default ports: Connection 11310, and RPC 11311
+ - No premine
+
+POW Details
+
+ - 120 seconds block time POW
+ - scrypt algorithm
+ - 384 POW coins per block. Halves every 129600 blocks (3 months)
+ - 8X reward random super block each hour
+ - difficulty retargets on every block
+
+
+POSV Details
+
+ - POS activates on block 420,000 - Hard fork
+ - Personal Investment Rate (PIR) for the APR
+   Stake reward increases in line with the value of
+          the coins staked on a sliding scale using the
+   following thresholds
+
+PIR Values Year 1
+
+ NET Staked APR %
+ 0               10
+ 1,000           15
+ 10,000          20
+ 100,000         30
+ 1,000,000       80
+ 10,000,000+     100
+
+ - 120 seconds block time POS
+ - 1 hour minimum age for staking.  30 days max age.
+ - FAIR-WEIGHT protocol enforced stake weight coin value cap of 100,000 NET
+   replaces the idea of 'block splitting' to prevent very large NET holders
+          signing lots of POS blocks
+
+ - 6 confirmations for transaction
+ - 50 confirmations for minted blocks
+
+ - POSV - stake once each month to earn highest possible rewards
+          incentivises running full nodes to increase POS security
+   coin age gradually slows after 1 month with an aging half life of 90 days.
+   
+Articles of interest
+====================
+Read all about Netcoins "Fair Weight" method.
+
+http://forum.netcoinfoundation.org/thread/719/netcoin-weight-protocol-another-clone?page=1&scrollTo=10447
+
+Read about Netcoins "POSV" method
+
+http://forum.netcoinfoundation.org/thread/721/posv-rewards-blockchain-guardians-netcoin
+	
+	
 Development process
 ===================
 

@@ -5,7 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_KEYSTORE_H
 #define BITCOIN_KEYSTORE_H
-
+#include <stdint.h>
 #include "crypter.h"
 #include "sync.h"
 #include <boost/signals2/signal.hpp>

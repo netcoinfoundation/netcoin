@@ -6,6 +6,7 @@
 
 // json spirit version 4.03
 
+#include <stdint.h>
 #include "json_spirit_value.h"
 #include "json_spirit_error_position.h"
 

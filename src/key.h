@@ -5,7 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_KEY_H
 #define BITCOIN_KEY_H
-
+#include <stdint.h>
 #include <stdexcept>
 #include <vector>
 
