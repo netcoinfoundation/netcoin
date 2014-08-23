@@ -1088,10 +1088,14 @@ int GetPIRRewardPhase(int64_t nHeight)
 
 int64_t GetPIRRewardCoinYear(int64_t nCoinValue, int64_t nHeight)
 {
+    // work out which phase rates we should use, based on the block height
+    int nPhase = GetPIRRewardPhase(nHeight);
+
     // find the % band that contains the staked value
+    if (nCoinValue >= PIR_THRESHOLDS[PIR_LEVELS-1] * COIN)
+        return PIR_RATES[nPhase][PIR_LEVELS-1]  * CENT;
 
     int nLevel = 0;
-
     for (int i = 1; i<PIR_LEVELS; i++)
     {
         if (nCoinValue < PIR_THRESHOLDS[i] * COIN)
@@ -1106,8 +1110,6 @@ int64_t GetPIRRewardCoinYear(int64_t nCoinValue, int64_t nHeight)
     // a simple way to interpolate this using integer math is to break the range into 100 slices and find the slice where our coin value lies
     // Rates and Thresholds are integers, CENT and COIN are multiples of 100, so using 100 slices does not introduce any integer math rounding errors
 
-    // work out which phase rates we should use, based on the block height
-    int nPhase = GetPIRRewardPhase(nHeight);
 
     int64_t nLevelRatePerSlice = (( PIR_RATES[nPhase][nLevel+1] - PIR_RATES[nPhase][nLevel] ) * CENT )  / 100;
     int64_t nLevelValuePerSlice = (( PIR_THRESHOLDS[nLevel+1] - PIR_THRESHOLDS[nLevel] ) * COIN ) / 100;
@@ -1122,6 +1124,7 @@ int64_t GetPIRRewardCoinYear(int64_t nCoinValue, int64_t nHeight)
     };
 
     return nRewardCoinYear;
+
 }
 
 

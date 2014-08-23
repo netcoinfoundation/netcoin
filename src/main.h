@@ -51,7 +51,7 @@ static const int64_t MAX_MONEY = 325000000 * COIN; // NetCoin: maximum of 325M c
 // Netcoin PIR personal staking interest rate is organised into percentage reward bands based on the value of the coins being staked
 // madprofezzor@gmail.com
 
-static const int PIR_LEVELS = 7; // number of thresholds
+static const int PIR_LEVELS = 6; // number of entries in PIR_THRESHOLDS
 static const int PIR_PHASES = 3;
 static const int64_t PIR_PHASEBLOCKS = 365 * 24 * 60; // one year for each phase
 
@@ -61,14 +61,13 @@ static const int64_t PIR_THRESHOLDS[PIR_LEVELS] = {
     10000,
     100000,
     1000000,
-    10000000,
-    9223372036854775807
-}; // unit is netcoins.  Must start with 0 and finish with INT64T_MAX
+    10000000
+}; // unit is netcoins.  Must start with 0
 
 static const int64_t PIR_RATES[PIR_PHASES][PIR_LEVELS] = {
-        {10,15,20,30,80,100,100},   // Year 1
-        {20,25,30,35,40,45 ,45 },   // Year 2
-        {20,22,24,26,28,30 ,30 }    // Year 3+
+        {10,15,20,30,80,100},   // Year 1
+        {20,25,30,35,40,45 },   // Year 2
+        {20,22,24,26,28,30 }    // Year 3+
 };
 
 
