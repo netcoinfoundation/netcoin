@@ -53,7 +53,7 @@ static const int64_t MAX_MONEY = 325000000 * COIN; // NetCoin: maximum of 325M c
 
 static const int PIR_LEVELS = 7; // number of thresholds
 static const int PIR_PHASES = 3;
-static const int64_t PIR_PHASEBLOCKS = 365 * 24 * 60 * 60; // one year for each phase
+static const int64_t PIR_PHASEBLOCKS = 365 * 24 * 60; // one year for each phase
 
 static const int64_t PIR_THRESHOLDS[PIR_LEVELS] = {
     0,
