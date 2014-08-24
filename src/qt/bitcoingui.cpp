@@ -116,7 +116,11 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     QVBoxLayout *vbox = new QVBoxLayout();
     transactionView = new TransactionView(this);
     vbox->addWidget(transactionView);
+    vbox->setContentsMargins(0,0,0,0);
+    transactionView->setContentsMargins(0,0,0,0);
+    transactionsPage->setContentsMargins(0,0,0,0);
     transactionsPage->setLayout(vbox);
+
 
     addressBookPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab);
 
@@ -821,10 +825,6 @@ void BitcoinGUI::gotoNetworkPage()
 {
     networkAction->setChecked(true);
     centralWidget->setCurrentWidget(networkPage);
-
-    exportAction->setEnabled(true);
-    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
-    connect(exportAction, SIGNAL(triggered()), networkPage, SLOT(exportClicked()));
 }
 
 void BitcoinGUI::gotoReceiveCoinsPage()

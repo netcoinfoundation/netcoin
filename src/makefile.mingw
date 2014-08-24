@@ -3,26 +3,24 @@
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
 USE_UPNP:=0
-
-BOOST_SUFFIX?=-mgw49-mt-s-1_55
+USE_IPV6:=1
 
 INCLUDEPATHS= \
- -I"$(CURDIR)" \
- -I"/c/deps/boost_1_55_0" \
- -I"/c/deps/db-4.8.30.NC/build_unix" \
- -I"/c/deps/openssl-1.0.1i/include"
+ -I"C:\deps\boost_1_55_0" \
+ -I"C:\deps\db-4.8.30.NC\build_unix" \
+ -I"C:\deps\openssl-1.0.1i\include"
  
 LIBPATHS= \
- -L"$(CURDIR)/leveldb" \
- -L"/c/deps/boost_1_55_0/stage/lib" \
- -L"/c/deps/db-4.8.30.NC/build_unix" \
- -L"/c/deps/openssl-1.0.1i"
+ -L"C:\deps\boost_1_55_0\stage\lib" \
+ -L"C:\deps\db-4.8.30.NC\build_unix" \
+ -L"C:\deps\openssl-1.0.1i"
 
 LIBS= \
- -l boost_system-mgw46-mt-1_55_0 \
- -l boost_filesystem-mgw46-mt-1_55_0 \
- -l boost_program_options-mgw46-mt-1_55_0 \
- -l boost_thread-mgw46-mt-1_55_0 \
+ -l boost_system-mgw49-mt-s-1_55 \
+ -l boost_filesystem-mgw49-mt-s-1_55 \
+ -l boost_program_options-mgw49-mt-s-1_55 \
+ -l boost_thread-mgw49-mt-s-1_55 \
+ -l boost_chrono-mgw49-mt-s-1_55 \
  -l db_cxx \
  -l ssl \
  -l crypto
@@ -30,7 +28,7 @@ LIBS= \
 DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6 -D__NO_SYSTEM_INCLUDES
 #DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
-LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
