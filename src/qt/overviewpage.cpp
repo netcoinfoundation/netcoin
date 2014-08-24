@@ -340,7 +340,7 @@ void OverviewPage::updateStatistics()
     QString Qlpawrate = modelStatistics->getLastBlockDate().toString();
 
     QString QPeers = QString::number(peers);
-    QString qVolume = QLocale(QLocale::English).toString(volume);
+    QString qVolume = QLocale::system().toString((qlonglong)volume);
 
     if(nHeight > heightPrevious)
     {

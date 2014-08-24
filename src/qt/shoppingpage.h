@@ -129,6 +129,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButton_47_clicked();
+
 signals:
 
 };

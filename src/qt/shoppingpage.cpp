@@ -470,6 +470,12 @@ void ShoppingPage::on_pushButton_38_clicked()
 
 
 //Shopping Links
+void ShoppingPage::on_pushButton_47_clicked()
+{
+    QString link="https://unbreakablecoinauctions.com/";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
 void ShoppingPage::on_pushButton_40_clicked()
 {
     QString link="http://alpenpowerpro.com/";
