@@ -103,6 +103,7 @@
         <file>res/images/HeaderText/SpendNetcoins.png</file>
         <file>res/images/HeaderText/UsefulLinks.png</file>
         <file>res/images/residencialCastor.png</file>
+        <file>res/images/unbAuctions.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>

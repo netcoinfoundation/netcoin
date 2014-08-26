@@ -2,13 +2,18 @@
 #include "ui_overviewpage.h"
 
 #include "walletmodel.h"
+#include "clientmodel.h"
+#include "main.h"
 #include "bitcoinunits.h"
+#include "init.h"
+#include "base58.h"
 #include "optionsmodel.h"
 #include "transactiontablemodel.h"
 #include "transactionfilterproxy.h"
 #include "guiutil.h"
 #include "guiconstants.h"
 #include "wallet.h"
+#include "bitcoinrpc.h"
 #include "askpassphrasedialog.h"
 
 #include <QAbstractItemDelegate>
@@ -18,10 +23,13 @@
 #include <QLabel>
 #include <QTimer>
 #include <QFrame>
+#include <sstream>
+#include <string>
 
 #define DECORATION_SIZE 64
-#define NUM_ITEMS 5
+#define NUM_ITEMS 3
 
+using namespace json_spirit;
 extern CWallet* pwalletMain;
 extern int64_t nLastCoinStakeSearchInterval;
 double GetPoSKernelPS();
@@ -124,6 +132,7 @@ OverviewPage::OverviewPage(QWidget *parent) :
         updateMyWeight();
     }
 
+
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
     ui->listTransactions->setIconSize(QSize(DECORATION_SIZE, DECORATION_SIZE));
@@ -138,8 +147,12 @@ OverviewPage::OverviewPage(QWidget *parent) :
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
 
+    connect(ui->startButton, SIGNAL(pressed()), this, SLOT(updateStatistics()));
+
 
 }
+
+
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
 {
@@ -147,10 +160,7 @@ void OverviewPage::handleTransactionClicked(const QModelIndex &index)
         emit transactionClicked(filter->mapToSource(index));
 }
 
-OverviewPage::~OverviewPage()
-{
-    delete ui;
-}
+
 
 void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance)
 {
@@ -254,6 +264,10 @@ void OverviewPage::setModel(WalletModel *model)
 
     // update the display unit, to not use the default ("BTC")
     updateDisplayUnit();
+
+    // update statistics
+    updateStatistics();
+
     // Unlock wallet button
     WalletModel::EncryptionStatus status = model->getEncryptionStatus();
     if(status == WalletModel::Unencrypted)
@@ -286,9 +300,7 @@ void OverviewPage::lockWalletToggle()
 {
     if(model->getEncryptionStatus() == WalletModel::Locked)
     {
-
-
-        AskPassphraseDialog dlg(AskPassphraseDialog::UnlockStaking, this);
+      AskPassphraseDialog dlg(AskPassphraseDialog::UnlockStaking, this);
       dlg.setModel(model);
     if(dlg.exec() == QDialog::Accepted)
     {
@@ -300,4 +312,117 @@ void OverviewPage::lockWalletToggle()
     model->setWalletLocked(true);
     ui->unlockWalletActionNew->setText(QString("Unlock Wallet"));
      }
+}
+
+void OverviewPage::updateStatistics()
+{
+    double pHardness = GetDifficulty();
+    double pHardness2 = GetDifficulty(GetLastBlockIndex(pindexBest, true));
+    int pPawrate = GetPoWMHashPS();
+    double pPawrate2 = 0.000;
+    int nHeight = pindexBest->nHeight;
+    double nSubsidy = GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/COIN;
+    uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
+    pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+    uint64_t nNetworkWeight = GetPoSKernelPS();
+    int64_t volume = ((pindexBest->nMoneySupply)/100000000);
+    int peers = this->modelStatistics->getNumConnections();
+    pPawrate2 = (double)pPawrate;
+    QString height = QString::number(nHeight);
+
+    {
+
+    }
+    QString subsidy = QString::number(nSubsidy, 'f', 6);
+    QString hardness = QString::number(pHardness, 'f', 6);
+    QString hardness2 = QString::number(pHardness2, 'f', 6);
+    QString pawrate = QString::number(pPawrate2, 'f', 3);
+    QString Qlpawrate = modelStatistics->getLastBlockDate().toString();
+
+    QString QPeers = QString::number(peers);
+    QString qVolume = QLocale::system().toString((qlonglong)volume);
+
+    if(nHeight > heightPrevious)
+    {
+        ui->heightBox->setText("<b><font color=\"green\">" + height + "</font></b>");
+    } else {
+    ui->heightBox->setText(height);
+    }
+
+    if(nSubsidy < rewardPrevious)
+    {
+        ui->rewardBox->setText("<b><font color=\"red\">" + subsidy + "</font></b>");
+    } else {
+    ui->rewardBox->setText(subsidy);
+    }
+
+    if(pHardness > hardnessPrevious)
+    {
+        ui->diffBox->setText("<b><font color=\"green\">" + hardness + "</font></b>");
+    } else if(pHardness < hardnessPrevious) {
+        ui->diffBox->setText("<b><font color=\"red\">" + hardness + "</font></b>");
+    } else {
+        ui->diffBox->setText(hardness);
+    }
+
+    if(pPawrate2 > netPawratePrevious)
+    {
+        ui->pawrateBox->setText("<b><font color=\"green\">" + pawrate + " MH/s</font></b>");
+    } else if(pPawrate2 < netPawratePrevious) {
+        ui->pawrateBox->setText("<b><font color=\"red\">" + pawrate + " MH/s</font></b>");
+    } else {
+        ui->pawrateBox->setText(pawrate + " MH/s");
+    }
+
+    if(Qlpawrate != pawratePrevious)
+    {
+        ui->localBox->setText("<b><font color=\"green\">" + Qlpawrate + "</font></b>");
+    } else {
+    ui->localBox->setText(Qlpawrate);
+    }
+
+    if(peers > connectionPrevious)
+    {
+        ui->connectionBox->setText("<b><font color=\"green\">" + QPeers + "</font></b>");
+    } else if(peers < connectionPrevious) {
+        ui->connectionBox->setText("<b><font color=\"red\">" + QPeers + "</font></b>");
+    } else {
+        ui->connectionBox->setText(QPeers);
+    }
+
+    if(volume > volumePrevious)
+    {
+        ui->volumeBox->setText("<b><font color=\"#ffaa00\">" + qVolume + " NET" + "</font></b>");
+    } else if(volume < volumePrevious) {
+        ui->volumeBox->setText("<b><font color=\"#ffaa00\">" + qVolume + " NET" + "</font></b>");
+    } else {
+        ui->volumeBox->setText(qVolume + " NET");
+    }
+    updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume);
+}
+
+void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume)
+{
+    heightPrevious = nHeight;
+    stakeminPrevious = nMinWeight;
+    stakemaxPrevious = nNetworkWeight;
+    rewardPrevious = nSubsidy;
+    hardnessPrevious = pHardness;
+    hardnessPrevious2 = pHardness2;
+    netPawratePrevious = pPawrate2;
+    pawratePrevious = Qlpawrate;
+    connectionPrevious = peers;
+    volumePrevious = volume;
+}
+
+void OverviewPage::setStatistics(ClientModel *modelStatistics)
+{
+    updateStatistics();
+    this->modelStatistics = modelStatistics;
+
+}
+
+OverviewPage::~OverviewPage()
+{
+    delete ui;
 }

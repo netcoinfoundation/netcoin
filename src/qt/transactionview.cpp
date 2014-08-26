@@ -36,8 +36,6 @@
 TransactionView::TransactionView(QWidget *parent) :
     QWidget(parent), model(0), transactionProxyModel(0),
     transactionView(0)
-
-
 {
 
     // Build filter row
@@ -55,14 +53,16 @@ TransactionView::TransactionView(QWidget *parent) :
 #endif
 
     dateWidget = new QComboBox(this);
+    dateWidget->setContentsMargins(1,1,1,1);
 
 #ifdef Q_OS_MAC
     dateWidget->setFixedWidth(121);
 #else
-    dateWidget->setFixedWidth(120);
+    dateWidget->setFixedWidth(120);    
 #endif
 
     dateWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
+    dateWidget->setContentsMargins(1,1,1,1);
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
     dateWidget->addItem(tr("This week"), ThisWeek);
@@ -88,7 +88,7 @@ TransactionView::TransactionView(QWidget *parent) :
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
-
+    typeWidget->setContentsMargins(1,1,1,1);
     hlayout->addWidget(typeWidget);
 
     addressWidget = new QLineEdit(this);
@@ -96,7 +96,7 @@ TransactionView::TransactionView(QWidget *parent) :
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
     addressWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
-    addressWidget->setContentsMargins(0,0,0,0);
+    addressWidget->setContentsMargins(1,1,1,1);
 #endif
     hlayout->addWidget(addressWidget);
 
@@ -105,7 +105,7 @@ TransactionView::TransactionView(QWidget *parent) :
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
     amountWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     amountWidget->setPlaceholderText(tr("Min amount"));
-    amountWidget->setContentsMargins(0,0,0,0);
+    amountWidget->setContentsMargins(1,1,1,1);
 #endif
 #ifdef Q_OS_MAC
     amountWidget->setFixedWidth(97);
