@@ -177,5 +177,6 @@
         <file>res/tooltips/copyMessageTooltip.png</file>
         <file>res/tooltips/signThisMessageTooltip.png</file>
         <file>res/tooltips/resetSignMessageFieldsTooltip.png</file>
+        <file>res/tooltips/unbAuctionsTooltip.png</file>
     </qresource>
 </RCC>

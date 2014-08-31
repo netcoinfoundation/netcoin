@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
+    <width>721</width>
     <height>360</height>
    </rect>
   </property>
@@ -3276,7 +3276,7 @@ background: url(:/images/res/images/dialogBackground.jpg);
           <enum>Qt::ActionsContextMenu</enum>
          </property>
          <property name="text">
-          <string>0.00 MINT</string>
+          <string>0.00 NET</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -5148,7 +5148,7 @@ background: url(:/images/res/images/dialogBackground.jpg);
           <enum>Qt::ActionsContextMenu</enum>
          </property>
          <property name="text">
-          <string>0.00 MINT</string>
+          <string>0.00 NET</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -7020,7 +7020,7 @@ background: url(:/images/res/images/dialogBackground.jpg);
           <enum>Qt::ActionsContextMenu</enum>
          </property>
          <property name="text">
-          <string>0.00 MINT</string>
+          <string>0.00 NET</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -7951,7 +7951,7 @@ background: url(:/images/res/images/dialogBackground.jpg);
           <enum>Qt::ActionsContextMenu</enum>
          </property>
          <property name="text">
-          <string>0.00 MINT</string>
+          <string>0.00 NET</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
