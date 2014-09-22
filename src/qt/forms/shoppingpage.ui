@@ -1078,7 +1078,7 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>583</width>
+            <width>372</width>
             <height>418</height>
            </rect>
           </property>
@@ -2216,7 +2216,7 @@ background-attachment: fixed;
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bitezzeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unbAuctionsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -2629,8 +2629,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>322</height>
+            <width>342</width>
+            <height>297</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -5705,8 +5705,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>322</height>
+            <width>382</width>
+            <height>318</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -5954,8 +5954,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>322</height>
+            <width>553</width>
+            <height>297</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -6223,7 +6223,7 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>583</width>
+            <width>321</width>
             <height>456</height>
            </rect>
           </property>
