@@ -32,7 +32,7 @@ typedef int pid_t; /* define for windows compatiblity */
 
 #include "netbase.h" // for AddTimeData
 
-// to obtain PRId64 on some old systems
+// to obtain PRI64d on some old systems
 #define __STDC_FORMAT_MACROS 1
 
 #include <stdint.h>
@@ -259,7 +259,7 @@ void runCommand(std::string strCommand);
 
 inline std::string i64tostr(int64_t n)
 {
-    return strprintf("%"PRId64, n);
+    return strprintf("%"PRI64d, n);
 }
 
 inline std::string itostr(int n)
