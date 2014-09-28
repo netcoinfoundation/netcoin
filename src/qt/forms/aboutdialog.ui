@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>593</width>
-    <height>331</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="palette">
@@ -2252,8 +2252,10 @@ background:url(:/images/res/images/dialogBackground.jpg)
 Copyright © 2009-2012 Bitcoin Developers
 Copyright © 2012 PeerCoin Developers
 Copyright © 2014 NetCoin Developers
-design by meee meee and regtable69
-</string>
+
+Lead Developer: Who
+design by: meee and regtable69
+Translated by: Arjan Dekkers - Dutch</string>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
