@@ -1064,8 +1064,12 @@ int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, uint256 prevHash)
 	}
 
 	// Subsidy is cut in half every 129,600 blocks, which will occur approximately every 3 months
-	nSubsidy >>= (nHeight / 129600); 
+    nSubsidy >>= (nHeight / 129600);
 
+   if (nHeight >= BLOCK_HEIGHT_DIGISHIELD_FIX_START)
+    {
+        nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
+    }
    if (nHeight >= BLOCK_HEIGHT_POS_AND_DIGISHIELD_START)
     {
         nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
@@ -1393,10 +1397,74 @@ unsigned int GetNextTrust_DigiShield(const CBlockIndex* pindexLast, bool fProofO
     return bnNew.GetCompact();
 }
 
+//NEW DIGISHIELD START
+static const int64_t nTargetTimespanRe = 1*60; // 60 Seconds
+static const int64_t nTargetSpacingRe = 1*60; // 60 seconds
+static const int64_t nIntervalRe = nTargetTimespanRe / nTargetSpacingRe; // 1 block
+
+static const int64_t nMaxAdjustDown = 40; // 40% adjustment down
+static const int64_t nMaxAdjustUp = 20; // 20% adjustment up
+
+static const int64_t nMinActualTimespan = nTargetTimespanRe * (100 - nMaxAdjustUp) / 100;
+static const int64_t nMaxActualTimespan = nTargetTimespanRe * (100 + nMaxAdjustDown) / 100;
+
+
+static unsigned int GetNextWorkRequiredV2(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    //unsigned int nProofOfWorkLimit = Params().ProofOfWorkLimit().GetCompact();
+
+    // find the previous 2 blocks of the requested type (either POS or POW)
+    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
+
+    // netcoin POW and POS blocks each separately retarget to 2 minutes, giving 1 minute overall average block target time.
+    int64_t retargetTimespan = nTargetSpacing;
+
+    // Genesis block,  or first POS block not yet mined
+    if (pindexPrev == NULL) return bnProofOfWorkLimit.getuint();
+
+    // is there another block of the correct type prior to pindexPrev?
+    const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
+
+    if (pindexPrevPrev == NULL)
+        pindexPrevPrev = pindexPrev ;
+
+       // Limit adjustment step
+       int64_t nActualTimespan = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
+
+       printf(" nActualTimespan = %d before bounds\n", nActualTimespan);
+       if (nActualTimespan < nMinActualTimespan)
+       nActualTimespan = nMinActualTimespan;
+       if (nActualTimespan > nMaxActualTimespan)
+       nActualTimespan = nMaxActualTimespan;
+
+    CBigNum bnNew;
+    bnNew.SetCompact(pindexLast->nBits);
+    bnNew *= nActualTimespan;
+    bnNew /= retargetTimespan;
+
+    if (bnNew > bnProofOfWorkLimit)
+        bnNew = bnProofOfWorkLimit;
+
+    // debug print
+    if (fDebug && GetBoolArg("-printdigishield")) {
+        printf("GetNextWorkRequired RETARGET\n");
+        printf("nTargetTimespan = %"PRI64d" nActualTimespan = %"PRI64d"\n", retargetTimespan, nActualTimespan);
+        printf("Before: %08x %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
+        printf("After: %08x %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+    };
+
+    return bnNew.GetCompact();
+    //END OLD DIGI
+}
+
 // POW blocks tried various algorithms starting at different block height
 unsigned int GetNextProofOfWork(const CBlockIndex* pindexLast, const CBlock* pblock)
 {
     const CBlockIndex* pindexLastPOW = GetLastBlockIndex(pindexLast, false);
+
+    // most recent (highest block height DIGISHIELD FIX)
+    if (pindexLastPOW->nHeight+1 >= (fTestNet ? BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET : BLOCK_HEIGHT_DIGISHIELD_FIX_START))
+        return GetNextWorkRequiredV2(pindexLastPOW, false);
 
     // most recent (highest block height)
     if (pindexLastPOW->nHeight+1 >= (fTestNet ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START))
@@ -1412,12 +1480,10 @@ unsigned int GetNextProofOfWork(const CBlockIndex* pindexLast, const CBlock* pbl
 // GET NEXT WORK REQUIRED - MAIN FUNCTION ROUTER FOR DIFFERENT AGE AND TYPE OF BLOCKS
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlock* pblock, bool fProofOfStake)
 {
-
     if(fProofOfStake)
         return GetNextTrust_DigiShield(pindexLast, true); // first proof of stake blocks use digishield
     else
         return GetNextProofOfWork(pindexLast, pblock);
-
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits)

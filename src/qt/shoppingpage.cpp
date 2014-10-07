@@ -468,6 +468,23 @@ void ShoppingPage::on_pushButton_38_clicked()
     QDesktopServices::openUrl(QUrl(link));
 }
 
+void ShoppingPage::on_pushButton_2_clicked()
+{
+    QString link="https://cryptex.biz/market/58";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
+void ShoppingPage::on_pushButton_3_clicked()
+{
+    QString link="https://cryptex.biz/market/73";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
+void ShoppingPage::on_pushButton_5_clicked()
+{
+    QString link="https://bter.com/trade/net_btc";
+    QDesktopServices::openUrl(QUrl(link));
+}
 
 //Shopping Links
 void ShoppingPage::on_pushButton_47_clicked()

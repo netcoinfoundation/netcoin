@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>342</height>
+    <width>745</width>
+    <height>519</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1006,7 +1006,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -1078,8 +1078,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>372</width>
-            <height>418</height>
+            <width>745</width>
+            <height>499</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -1156,6 +1156,29 @@ background-attachment: fixed;
            </item>
            <item row="1" column="0">
             <layout class="QGridLayout" name="gridLayout_3">
+             <item row="2" column="0">
+              <widget class="QPushButton" name="pushButton_2">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/cryptexNetBtc.png</normaloff>:/images/res/images/cryptexNetBtc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>168</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="pushButton_36">
                <property name="sizePolicy">
@@ -1206,107 +1229,7 @@ background-attachment: fixed;
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="pushButton_37">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>99999</width>
-                 <height>99999</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterCnyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../bitcoin.qrc">
-                 <normaloff>:/images/res/images/BterNetCnyImg.png</normaloff>:/images/res/images/BterNetCnyImg.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>161</width>
-                 <height>82</height>
-                </size>
-               </property>
-               <property name="autoDefault">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="pushButton_38">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>99999</width>
-                 <height>99999</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterLtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../bitcoin.qrc">
-                 <normaloff>:/images/res/images/BterNetLtcImg.png</normaloff>:/images/res/images/BterNetLtcImg.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>161</width>
-                 <height>82</height>
-                </size>
-               </property>
-               <property name="autoDefault">
-                <bool>false</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
+             <item row="0" column="2">
               <widget class="QPushButton" name="pushButton_39">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1356,31 +1279,174 @@ background-attachment: fixed;
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <spacer name="verticalSpacer_24">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="1" column="2">
+              <widget class="QPushButton" name="pushButton_38">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="sizeHint" stdset="0">
+               <property name="minimumSize">
                 <size>
-                 <width>20</width>
-                 <height>40</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
-              </spacer>
+               <property name="maximumSize">
+                <size>
+                 <width>99999</width>
+                 <height>99999</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterLtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/BterNetLtcImg.png</normaloff>:/images/res/images/BterNetLtcImg.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>161</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/cryptexNetLtc.png</normaloff>:/images/res/images/cryptexNetLtc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>168</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="pushButton_4">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/bittrexNetBtc.png</normaloff>:/images/res/images/bittrexNetBtc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>168</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="1" column="1">
-              <spacer name="verticalSpacer_25">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+              <widget class="QPushButton" name="pushButton_37">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="sizeHint" stdset="0">
+               <property name="minimumSize">
                 <size>
-                 <width>20</width>
-                 <height>40</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
-              </spacer>
+               <property name="maximumSize">
+                <size>
+                 <width>99999</width>
+                 <height>99999</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterCnyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/BterNetCnyImg.png</normaloff>:/images/res/images/BterNetCnyImg.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>161</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../bitcoin.qrc">
+                 <normaloff>:/images/res/images/bterNetBtc.png</normaloff>:/images/res/images/bterNetBtc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>168</width>
+                 <height>82</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1445,8 +1511,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>583</width>
-            <height>1112</height>
+            <width>728</width>
+            <height>1096</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -2629,8 +2695,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>342</width>
-            <height>297</height>
+            <width>745</width>
+            <height>499</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -2908,7 +2974,7 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>581</width>
+            <width>726</width>
             <height>805</height>
            </rect>
           </property>
@@ -5705,8 +5771,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>382</width>
-            <height>318</height>
+            <width>745</width>
+            <height>499</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -5954,8 +6020,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>553</width>
-            <height>297</height>
+            <width>745</width>
+            <height>499</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -6223,8 +6289,8 @@ background-attachment: fixed;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>321</width>
-            <height>456</height>
+            <width>745</width>
+            <height>499</height>
            </rect>
           </property>
           <property name="styleSheet">

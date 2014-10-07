@@ -50,16 +50,8 @@
         <file alias="about">res/images/about.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="backg">res/images/wallet.png</file>
-        <file alias="songs">res/images/songsoflove.png</file>
-        <file alias="scrypt">res/images/scryptcoinstore.png</file>
-        <file alias="indes">res/images/in-disguise.png</file>
-        <file alias="forum">res/images/forum.png</file>
-        <file alias="block">res/images/explorer.png</file>
-        <file>res/images/cryptocoinstuff.png</file>
         <file alias="coinrush">res/images/coinrush.png</file>
         <file alias="breihost">res/images/breihost.png</file>
-        <file alias="paper">res/images/paperwallet.png</file>
-        <file alias="backing">res/images/texture-6.jpg</file>
         <file alias="bkg">res/images/home-background.jpg</file>
         <file>res/images/AlpenShopImg.png</file>
         <file>res/images/AmazoniaShopImg.png</file>
@@ -104,6 +96,10 @@
         <file>res/images/HeaderText/UsefulLinks.png</file>
         <file>res/images/residencialCastor.png</file>
         <file>res/images/unbAuctions.png</file>
+        <file>res/images/cryptexNetBtc.png</file>
+        <file>res/images/cryptexNetLtc.png</file>
+        <file>res/images/bittrexNetBtc.png</file>
+        <file>res/images/bterNetBtc.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>
@@ -112,7 +108,6 @@
         <file alias="en">locale/bitcoin_en.qm</file>
         <file alias="ru">locale/bitcoin_ru.qm</file>
         <file alias="nl">locale/bitcoin_nl.qm</file>
-        <file alias="de">locale/bitcoin_de.qm</file>
     </qresource>
     <qresource prefix="/toolTip">
         <file>res/tooltips/stakingTooltip.png</file>

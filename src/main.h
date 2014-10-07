@@ -89,12 +89,14 @@ static const int fHaveUPnP = false;
 static const uint256 hashGenesisBlock("0x38624e3834cfdc4410a5acbc32f750171aadad9620e6ba6d5c73201c16f7c8d1");
 
 static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NOT CHANGE
-static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //
+static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
+static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START = 438500; //DIGISHIELD FIX FORK
 static const int BLOCK_HEIGHT_FINALPOW =  1296000; // this is where the proof of work reward drops to 1 coin. Approx 2.5 years after genesis block
 
 
 static const int BLOCK_HEIGHT_KGW_START_TESTNET = 5;
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
+static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
 static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  10000;
 
 static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
@@ -149,6 +151,7 @@ static const uint64_t nMinDiskSpace = 52428800;
 class CReserveKey;
 class CTxDB;
 class CTxIndex;
+
 
 void RegisterWallet(CWallet* pwalletIn);
 void UnregisterWallet(CWallet* pwalletIn);

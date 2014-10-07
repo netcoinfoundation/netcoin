@@ -2255,8 +2255,7 @@ Copyright © 2014 NetCoin Developers
 
 Lead Developer: Who
 design by: meee and regtable69
-Translated by: Tepelstreeltje - Dutch
-                           Yogibaer and Lumenzio - German</string>
+Translated by: Arjan Dekkers - Dutch</string>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>

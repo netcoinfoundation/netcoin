@@ -180,8 +180,19 @@ void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBa
     bool showImmature = immatureBalance != 0;
     ui->labelImmature->setVisible(showImmature);
     ui->labelImmatureText->setVisible(showImmature);
+
+    qint64 interest = model->getTransactionTableModel()->getInterestGenerated();
+     // Setup display values for 'interest summary' widget at bottom right
+    ui->labelInterest->setText(BitcoinUnits::formatWithUnit(unit, interest));
 }
 
+void OverviewPage::setInterest(qint64)
+{
+    qint64 interest = model->getTransactionTableModel()->getInterestGenerated();
+     // Setup display values for 'interest summary' widget at bottom right
+    ui->labelInterest->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), interest));
+
+}
 void OverviewPage::setNumTransactions(int count)
 {
     ui->labelNumTransactions->setText(QLocale::system().toString(count));
@@ -258,6 +269,8 @@ void OverviewPage::setModel(WalletModel *model)
         setNumTransactions(model->getNumTransactions());
         connect(model, SIGNAL(numTransactionsChanged(int)), this, SLOT(setNumTransactions(int)));
 
+        setInterest(model->getTransactionTableModel()->getInterestGenerated());
+        connect(model, SIGNAL(interestChanged(qint64)), this, SLOT(setInterest(qint64)));
 
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
     }

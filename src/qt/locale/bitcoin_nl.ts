@@ -51,21 +51,8 @@ Copyright © 2009-2012 Bitcoin Developers
 Copyright © 2012 PeerCoin Developers
 Copyright © 2014 NetCoin Developers
 design by meee meee and regtable69
-Translated by</source>
-        <translation>Copyright © 2009-2014 De Bitcoin ontwikkelaars
-Copyright © 2012-2014 De NovaCoin ontwikkelaars
-Copyright © 2014 De Netcoin ontwikkelaars
-Ontwerp meee meee and regtable69
-Vertalingen Tepelstreeltje(nl),Yogibaer(de),Lumenzio(de)</translation>
-    </message>
-    <message>
-        <source>
-Copyright © 2009-2012 Bitcoin Developers
-Copyright © 2012 PeerCoin Developers
-Copyright © 2014 NetCoin Developers
-design by meee meee and regtable69
 </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Copyright © 2009-2012 Bitcoin Developers
 Copyright © 2012 PeerCoin Developers
 Copyright © 2014 NetCoin Developers
@@ -721,7 +708,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
     <message>
         <location line="+2"/>
         <source>Not staking because you don&apos;t have mature coins</source>
-        <translation>Niet staken, geen volwassen munten</translation>
+        <translation>Niet staking omdat je geen mature munten hebt</translation>
     </message>
     <message numerus="yes">
         <location line="-441"/>
@@ -781,7 +768,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
     <message>
         <location line="+11"/>
         <source>Last received block was generated %1.</source>
-        <translation>Laatst ontvangen blok is gegenereerd %1.</translation>
+        <translation>Laatst ontvangen blok is gegenereerd op %1.</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1579,7 +1566,7 @@ Dit betekend dat een fee van %2 is vereist.</translation>
     <message>
         <location line="+942"/>
         <source>Wallet Breakdown</source>
-        <translation>Portemonnee Statistieken</translation>
+        <translation>portemonnee statistieken</translation>
     </message>
     <message>
         <location line="+958"/>
@@ -3353,7 +3340,7 @@ Transactie ID</translatorcomment>
     <message>
         <location line="+42"/>
         <source>Received with</source>
-        <translation>Ontvangen van</translation>
+        <translation>Ontvangen met</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3447,7 +3434,7 @@ Transactie ID</translatorcomment>
     <message>
         <location line="+12"/>
         <source>Received with</source>
-        <translation>Ontvangen van</translation>
+        <translation>Ontvangen met</translation>
     </message>
     <message>
         <location line="+2"/>

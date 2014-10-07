@@ -359,6 +359,8 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
         return tr("Payment to yourself");
     case TransactionRecord::Generated:
         return tr("Mined");
+    case TransactionRecord::Generated2:
+        return tr("Mined");
     default:
         return QString();
     }
@@ -369,6 +371,8 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx
     switch(wtx->type)
     {
     case TransactionRecord::Generated:
+        return QIcon(":/icons/tx_mined");
+    case TransactionRecord::Generated2:
         return QIcon(":/icons/tx_mined");
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
@@ -392,6 +396,8 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
         return lookupAddress(wtx->address, tooltip);
+    case TransactionRecord::Generated2:
+        return lookupAddress(wtx->address, tooltip);
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->address);
     case TransactionRecord::SendToSelf:
@@ -408,6 +414,7 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
+    case TransactionRecord::Generated2:
         {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
         if(label.isEmpty())
@@ -615,6 +622,27 @@ QModelIndex TransactionTableModel::index(int row, int column, const QModelIndex 
     }
 }
 
+qint64 TransactionTableModel::getInterestGenerated()
+{
+   //checkme: Paranoid? Not sure if entirely necessary.
+   LOCK(wallet->cs_wallet);
+
+   int64_t ret = 0;
+   for(int i=0; i < priv->size(); i++)
+   {
+       if(priv->cachedWallet[i].type == TransactionRecord::Generated2)
+       {
+           if(priv->cachedWallet[i].status.status == TransactionStatus::Confirmed)
+           {
+               //if(forAddress.isEmpty() || forAddress == priv->cachedWallet[i].address.c_str())
+               //{
+                   ret += priv->cachedWallet[i].credit - priv->cachedWallet[i].debit;
+               //}
+           }
+       }
+   }
+   return ret;
+}
 void TransactionTableModel::updateDisplayUnit()
 {
     // emit dataChanged to update Amount column with the current unit
