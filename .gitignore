@@ -54,7 +54,7 @@ local.properties
 x64/
 build/
 [Bb]in/
-[Oo]bj/
+
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -64,7 +64,6 @@ build/
 *_p.c
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
