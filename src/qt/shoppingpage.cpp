@@ -486,6 +486,12 @@ void ShoppingPage::on_pushButton_5_clicked()
     QDesktopServices::openUrl(QUrl(link));
 }
 
+void ShoppingPage::on_pushButton_4_clicked()
+{
+    QString link="https://bittrex.com/Market/?MarketName=BTC-NET";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
 //Shopping Links
 void ShoppingPage::on_pushButton_47_clicked()
 {

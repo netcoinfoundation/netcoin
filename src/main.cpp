@@ -3269,7 +3269,7 @@ unsigned char pchMessageStart[4] = { 0xfd, 0xb6, 0xa5, 0xdb };
 
 bool IsValidPeerVersion(int nVersion, string strSubVer)
 {
-    if (nVersion < MIN_PROTO_VERSION)
+    if (nVersion < CLIENT_VERSION)
     {
         // Since February 20, 2012, the protocol is initiated at version 209,
         // and earlier versions are no longer supported
