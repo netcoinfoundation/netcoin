@@ -16,6 +16,7 @@ class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
+class StakeForCharityDialog;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -70,6 +71,7 @@ private:
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
+    StakeForCharityDialog *stakeForCharityDialog;
 
     QLabel *labelEncryptionIcon;
     QLabel *labelStakingIcon;
@@ -99,7 +101,10 @@ private:
     QAction *unlockWalletAction;
     QAction *lockWalletAction;
     QAction *aboutQtAction;
+    QAction *themeCustomAction;
     QAction *openRPCConsoleAction;
+    QAction *charityAction;
+    QAction *calcAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -107,6 +112,18 @@ private:
     RPCConsole *rpcConsole;
 
     QMovie *syncIconMovie;
+	bool fStakeForCharity;
+	bool fS4CNotificator;
+	int nCharityPercent;
+	QString strCharityAddress;
+
+    /* Themes support */
+    QString selectedTheme;
+    QStringList themesList;
+    // Path to directory where all themes are (usable for some common images?...)
+    QString themesDir;
+    QAction *customActions[100];
+    /* /Themes support */
 
     /** Create the main UI actions. */
     void createActions();
@@ -166,6 +183,8 @@ private slots:
     void optionsClicked();
     /** Show about dialog */
     void aboutClicked();
+    /** Show Stake Calculator Dialog */
+    void calcClicked();
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -192,6 +211,12 @@ private slots:
     void toggleHidden();
 
     void updateStakingIcon();
+void charityClicked(QString addr = "");
+    /** Load external QSS stylesheet */
+    void changeTheme(QString theme);
+    void loadTheme(QString theme);
+    void listThemes(QStringList& themes);
+    void keyPressEvent(QKeyEvent * e);
 };
 
 #endif

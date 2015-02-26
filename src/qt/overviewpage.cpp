@@ -7,6 +7,8 @@
 #include "bitcoinunits.h"
 #include "init.h"
 #include "base58.h"
+#include "bitcoingui.h"
+#include "calcdialog.h"
 #include "optionsmodel.h"
 #include "transactiontablemodel.h"
 #include "transactionfilterproxy.h"
@@ -25,6 +27,7 @@
 #include <QFrame>
 #include <sstream>
 #include <string>
+#include <QMenu>
 
 #define DECORATION_SIZE 64
 #define NUM_ITEMS 3
@@ -131,7 +134,11 @@ OverviewPage::OverviewPage(QWidget *parent) :
         timerMyWeight->start(30 * 1000);
         updateMyWeight();
     }
+    QAction *stakeForCharityAction = new QAction(ui->startButton->text(), this);
 
+    contextMenu = new QMenu();
+    contextMenu->addAction(stakeForCharityAction);
+    connect(stakeForCharityAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
@@ -147,8 +154,10 @@ OverviewPage::OverviewPage(QWidget *parent) :
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
 
-    connect(ui->startButton, SIGNAL(pressed()), this, SLOT(updateStatistics()));
-
+    //set up a timer to auto refresh every 30 seconds to update the statistics
+    QTimer *timerNetworkStats = new QTimer();
+    connect(timerNetworkStats, SIGNAL(timeout()), this, SLOT(updateStatistics()));
+    timerNetworkStats->start(30 * 1000);
 
 }
 
@@ -186,13 +195,6 @@ void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBa
     ui->labelInterest->setText(BitcoinUnits::formatWithUnit(unit, interest));
 }
 
-void OverviewPage::setInterest(qint64)
-{
-    qint64 interest = model->getTransactionTableModel()->getInterestGenerated();
-     // Setup display values for 'interest summary' widget at bottom right
-    ui->labelInterest->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), interest));
-
-}
 void OverviewPage::setNumTransactions(int count)
 {
     ui->labelNumTransactions->setText(QLocale::system().toString(count));
@@ -239,10 +241,15 @@ void OverviewPage::updateMyWeight()
         else if (IsInitialBlockDownload())
             ui->labelMyWeight->setText(tr("Not staking because your wallet is syncing,<br> please wait for this process to end..."));
         else if (!nWeight)
-            ui->labelMyWeight->setText(tr("Not staking because you don't have mature coins,<br> coins are matured and begin staking after 100 confirmations."));
+            ui->labelMyWeight->setText(tr("Not staking because you don't have mature coins..."));
         else
             ui->labelMyWeight->setText(tr("Not staking"));
     }
+}
+
+void OverviewPage::on_startButton_clicked()
+{
+    return stakeForCharitySignal();
 }
 
 void OverviewPage::setModel(WalletModel *model)
@@ -269,9 +276,6 @@ void OverviewPage::setModel(WalletModel *model)
         setNumTransactions(model->getNumTransactions());
         connect(model, SIGNAL(numTransactionsChanged(int)), this, SLOT(setNumTransactions(int)));
 
-        setInterest(model->getTransactionTableModel()->getInterestGenerated());
-        connect(model, SIGNAL(interestChanged(qint64)), this, SLOT(setInterest(qint64)));
-
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
     }
 
@@ -285,7 +289,7 @@ void OverviewPage::setModel(WalletModel *model)
     WalletModel::EncryptionStatus status = model->getEncryptionStatus();
     if(status == WalletModel::Unencrypted)
     {
-    ui->unlockWalletActionNew->setDisabled(true);
+        ui->unlockWalletActionNew->setDisabled(true);
     }
     connect(ui->unlockWalletActionNew, SIGNAL(clicked()), this, SLOT(lockWalletToggle()));
 }
@@ -313,18 +317,18 @@ void OverviewPage::lockWalletToggle()
 {
     if(model->getEncryptionStatus() == WalletModel::Locked)
     {
-      AskPassphraseDialog dlg(AskPassphraseDialog::UnlockStaking, this);
-      dlg.setModel(model);
-    if(dlg.exec() == QDialog::Accepted)
-    {
-    ui->unlockWalletActionNew->setText(QString("Lock Wallet"));
-    }
+        AskPassphraseDialog dlg(AskPassphraseDialog::UnlockStaking, this);
+        dlg.setModel(model);
+        if(dlg.exec() == QDialog::Accepted)
+        {
+            ui->unlockWalletActionNew->setText("Lock Wallet");
+        }
     }
     else
     {
-    model->setWalletLocked(true);
-    ui->unlockWalletActionNew->setText(QString("Unlock Wallet"));
-     }
+        model->setWalletLocked(true);
+        ui->unlockWalletActionNew->setText("Unlock Wallet");
+    }
 }
 
 void OverviewPage::updateStatistics()
@@ -342,10 +346,6 @@ void OverviewPage::updateStatistics()
     int peers = this->modelStatistics->getNumConnections();
     pPawrate2 = (double)pPawrate;
     QString height = QString::number(nHeight);
-
-    {
-
-    }
     QString subsidy = QString::number(nSubsidy, 'f', 6);
     QString hardness = QString::number(pHardness, 'f', 6);
     QString hardness2 = QString::number(pHardness2, 'f', 6);
@@ -358,59 +358,82 @@ void OverviewPage::updateStatistics()
     if(nHeight > heightPrevious)
     {
         ui->heightBox->setText("<b><font color=\"green\">" + height + "</font></b>");
-    } else {
-    ui->heightBox->setText(height);
+    } 
+    else 
+    {
+        ui->heightBox->setText(height);
     }
 
     if(nSubsidy < rewardPrevious)
     {
         ui->rewardBox->setText("<b><font color=\"red\">" + subsidy + "</font></b>");
-    } else {
-    ui->rewardBox->setText(subsidy);
+    } 
+    else 
+    {
+        ui->rewardBox->setText(subsidy);
     }
 
     if(pHardness > hardnessPrevious)
     {
         ui->diffBox->setText("<b><font color=\"green\">" + hardness + "</font></b>");
-    } else if(pHardness < hardnessPrevious) {
+    } 
+    else if(pHardness < hardnessPrevious) 
+    {
         ui->diffBox->setText("<b><font color=\"red\">" + hardness + "</font></b>");
-    } else {
+    } 
+    else 
+    {
         ui->diffBox->setText(hardness);
     }
 
     if(pPawrate2 > netPawratePrevious)
     {
         ui->pawrateBox->setText("<b><font color=\"green\">" + pawrate + " MH/s</font></b>");
-    } else if(pPawrate2 < netPawratePrevious) {
+    } 
+    else if(pPawrate2 < netPawratePrevious) 
+    {
         ui->pawrateBox->setText("<b><font color=\"red\">" + pawrate + " MH/s</font></b>");
-    } else {
+    } 
+    else 
+    {
         ui->pawrateBox->setText(pawrate + " MH/s");
     }
 
     if(Qlpawrate != pawratePrevious)
     {
         ui->localBox->setText("<b><font color=\"green\">" + Qlpawrate + "</font></b>");
-    } else {
+    } 
+    else 
+    {
     ui->localBox->setText(Qlpawrate);
     }
 
     if(peers > connectionPrevious)
     {
         ui->connectionBox->setText("<b><font color=\"green\">" + QPeers + "</font></b>");
-    } else if(peers < connectionPrevious) {
+    } 
+    else if(peers < connectionPrevious) 
+    {
         ui->connectionBox->setText("<b><font color=\"red\">" + QPeers + "</font></b>");
-    } else {
+    } 
+    else 
+    {
         ui->connectionBox->setText(QPeers);
     }
 
     if(volume > volumePrevious)
     {
-        ui->volumeBox->setText("<b><font color=\"#ffaa00\">" + qVolume + " NET" + "</font></b>");
-    } else if(volume < volumePrevious) {
-        ui->volumeBox->setText("<b><font color=\"#ffaa00\">" + qVolume + " NET" + "</font></b>");
-    } else {
+        ui->volumeBox->setText("<b>" + qVolume + " NET" + "</font></b>");
+    } 
+    else if(volume < volumePrevious) 
+    {
+        ui->volumeBox->setText("<b>" + qVolume + " NET" + "</font></b>");
+    } 
+    else 
+    {
         ui->volumeBox->setText(qVolume + " NET");
     }
+    
     updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume);
 }
 
@@ -439,3 +462,5 @@ OverviewPage::~OverviewPage()
 {
     delete ui;
 }
+
+

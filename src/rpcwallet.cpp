@@ -3,6 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include <boost/assign/list_of.hpp>
 #include "wallet.h"
 #include "walletdb.h"
 #include "bitcoinrpc.h"
@@ -11,6 +12,9 @@
 
 using namespace json_spirit;
 using namespace std;
+using namespace boost;
+using namespace boost::assign;
+using namespace json_spirit;
 
 int64_t nWalletUnlockTime;
 static CCriticalSection cs_nWalletUnlockTime;
@@ -127,7 +131,10 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("connections",   (int)vNodes.size()));
     obj.push_back(Pair("proxy",         (proxy.first.IsValid() ? proxy.first.ToStringIPPort() : string())));
     obj.push_back(Pair("ip",            addrSeenByPeer.ToStringIP()));
-    obj.push_back(Pair("difficulty",    getdifficulty(params, false)));
+
+    diff.push_back(Pair("proof-of-work",  GetDifficulty()));
+    diff.push_back(Pair("proof-of-stake", GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    obj.push_back(Pair("difficulty",    diff));
     obj.push_back(Pair("testnet",       fTestNet));
     obj.push_back(Pair("keypoololdest", (boost::int64_t)pwalletMain->GetOldestKeyPoolTime()));
     obj.push_back(Pair("keypoolsize",   (int)pwalletMain->GetKeyPoolSize()));
@@ -253,6 +260,105 @@ Value getaccountaddress(const Array& params, bool fHelp)
     return ret;
 }
 
+Value stakeforcharity(const Array &params, bool fHelp)
+{
+    if (fHelp || params.size() < 2 || params.size() > 5)
+        throw runtime_error(
+            "stakeforcharity <Netcoin Address> <percent> [Change Address] [min amount] [max amount]\n"
+            "Gives a percentage of a found stake to a different address, after stake matures\n"
+            "Percent is a whole number 1 to 50.\n"
+			"Change Address, Min and Max Amount are optional\n"
+            "Set percentage to zero to turn off"
+            + HelpRequiringPassphrase());
+
+    CBitcoinAddress address(params[0].get_str());
+    if (!address.IsValid())
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid HyperStake address");
+
+    if (params[1].get_int() < 0)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected valid percentage");
+
+    if (pwalletMain->IsLocked())
+        throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
+
+    unsigned int nPer = (unsigned int) params[1].get_int();
+
+    int64_t nMinAmount = MIN_TXOUT_AMOUNT;
+	int64_t nMaxAmount = MAX_MONEY;
+	
+	// Optional Change Address
+    CBitcoinAddress changeAddress;
+    if (params.size() > 2) {
+        changeAddress = params[2].get_str();
+        if (!changeAddress.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Netcoin change address");
+    }
+
+    // Optional Min Amount
+    if (params.size() > 3)
+    {
+        int64_t nAmount = AmountFromValue(params[3]);
+        if (nAmount < MIN_TXOUT_AMOUNT)
+            throw JSONRPCError(-101, "Send amount too small");
+        else
+             nMinAmount = nAmount;
+    }
+
+    // Optional Max Amount
+    if (params.size() > 4)
+    {
+        int64_t nAmount = AmountFromValue(params[4]);
+
+        if (nAmount < MIN_TXOUT_AMOUNT)
+            throw JSONRPCError(-101, "Send amount too small");
+        else
+             nMaxAmount = nAmount;
+    }
+
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+	
+	LOCK(pwalletMain->cs_wallet);
+	{
+		bool fFileBacked = pwalletMain->fFileBacked;
+		//Turn off if we set to zero.
+		//Future: After we allow multiple addresses, only turn of this address
+		if(nPer == 0)
+		{
+			pwalletMain->fStakeForCharity = false;
+            pwalletMain->nStakeForCharityPercent = 0;
+            pwalletMain->nStakeForCharityMin = nMinAmount;
+            pwalletMain->nStakeForCharityMax = nMaxAmount;
+
+            if(fFileBacked)
+                walletdb.EraseStakeForCharity(pwalletMain->strStakeForCharityAddress.ToString());
+
+            pwalletMain->strStakeForCharityAddress = "";
+			pwalletMain->strStakeForCharityChangeAddress = "";
+
+            return Value::null;
+		}
+		//For now max percentage is 50.
+        if (nPer > 50 )
+			nPer = 50;
+			
+		if(fFileBacked)
+              walletdb.EraseStakeForCharity(pwalletMain->strStakeForCharityAddress.ToString());
+			  
+		pwalletMain->strStakeForCharityAddress = address;
+        pwalletMain->nStakeForCharityPercent = nPer;
+		pwalletMain->strStakeForCharityChangeAddress = changeAddress;
+        pwalletMain->fStakeForCharity = true;
+        pwalletMain->nStakeForCharityMin = nMinAmount;
+        pwalletMain->nStakeForCharityMax = nMaxAmount;
+		fGlobalStakeForCharity = true;
+		if(fFileBacked)
+			walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(), nMinAmount, nMaxAmount);
+			 
+     	if(fFileBacked)
+                walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(),nMinAmount,nMaxAmount);
+        }
+        return Value::null;
+}
 
 
 Value setaccount(const Array& params, bool fHelp)

@@ -13,7 +13,7 @@
 
 // These need to be macro's, as version.cpp's voodoo requires it
 #define CLIENT_VERSION_MAJOR       2
-#define CLIENT_VERSION_MINOR       2
+#define CLIENT_VERSION_MINOR       3
 #define CLIENT_VERSION_REVISION    0
 #define CLIENT_VERSION_BUILD       0
 
@@ -36,7 +36,7 @@ static const int BLOCKINDEX_VERSION_POS = 2010000;
 // network protocol versioning
 //
 
-static const int PROTOCOL_VERSION = 60001;
+static const int PROTOCOL_VERSION = 70001;
 
 // earlier versions not supported as of Feb 2012, and are disconnected
 static const int MIN_PROTO_VERSION = 209;

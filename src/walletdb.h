@@ -218,6 +218,30 @@ public:
         return Write(std::string("minversion"), nVersion);
     }
 
+    bool WriteStakeForCharity(std::string strStakeForCharityAddress,
+                              int nStakeForCharityPercent,
+                              std::string strStakeForCharityChangeAddress,
+                              int64_t nStakeForCharityMinAmount,
+                              int64_t nStakeForCharityMaxAmount)
+    {
+        nWalletDBUpdated++;
+        if (!Write(std::make_pair(std::string("s4c"), strStakeForCharityAddress),std::make_pair(strStakeForCharityChangeAddress ,nStakeForCharityPercent)))
+            return false;
+
+        return Write(std::make_pair(std::string("s4c2"), strStakeForCharityAddress),std::make_pair(nStakeForCharityMinAmount ,nStakeForCharityMaxAmount));
+
+    }
+
+    bool EraseStakeForCharity(std::string strStakeForCharityAddress)
+    {
+        nWalletDBUpdated++;
+
+        return Erase(std::make_pair(std::string("s4c"), strStakeForCharityAddress));
+        return Erase(std::make_pair(std::string("s4c2"), strStakeForCharityAddress));
+    }
+
+
+
     bool ReadAccount(const std::string& strAccount, CAccount& account);
     bool WriteAccount(const std::string& strAccount, const CAccount& account);
 private:

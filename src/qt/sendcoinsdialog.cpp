@@ -153,10 +153,6 @@ void SendCoinsDialog::on_sendButton_clicked()
     fNewRecipientAllowed = false;
 
     QMessageBox msgBox;
-     msgBox.setStyleSheet("background: url(:/images/res/images/dialogBackground.jpg);"
-                          "color: #ffaa00;"
-                          "font-family: Plantagenet Cherokee;"
-                          "font-size: 14px;");
      msgBox.setText("Confirm your transaction");
      msgBox.setInformativeText(tr("Are you sure you want to send %1?").arg(formatted.join(tr(" and "))));
      msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);

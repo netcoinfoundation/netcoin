@@ -7,6 +7,7 @@
 #include "optionsmodel.h"
 #include "guiutil.h"
 #include "guiconstants.h"
+#include "intro.h"
 
 #include "init.h"
 #include "ui_interface.h"
@@ -131,6 +132,9 @@ int main(int argc, char *argv[])
     // Command-line options take precedence:
     ParseParameters(argc, argv);
 
+    // Choose the directory for the blockchain:
+    // Intro::pickDataDirectory();
+
     // ... then bitcoin.conf:
     if (!boost::filesystem::is_directory(GetDataDir(false)))
     {
@@ -223,8 +227,6 @@ int main(int argc, char *argv[])
                 // Put this in a block, so that the Model objects are cleaned up before
                 // calling Shutdown().
 
-                optionsModel.Upgrade(); // Must be done after AppInit2
-
                 if (splashref)
                     splash.finish(&window);
 
@@ -257,6 +259,9 @@ int main(int argc, char *argv[])
             // Shutdown the core and its threads, but don't exit Bitcoin-Qt here
             Shutdown(NULL);
         }
+
+        // optionsModel.Upgrade(); // Must be done after AppInit2
+
         else
         {
             return 1;

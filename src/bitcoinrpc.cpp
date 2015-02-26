@@ -310,6 +310,7 @@ static const CRPCCommand vRPCCommands[] =
     { "resendtx",               &resendtx,               false,  true},
     { "makekeypair",            &makekeypair,            false,  true},
     { "sendalert",              &sendalert,              false,  false},
+	{ "stakeforcharity",        &stakeforcharity,        false,  false },
 };
 
 CRPCTable::CRPCTable()
@@ -1246,6 +1247,9 @@ Array RPCConvertValues(const std::string &strMethod, const std::vector<std::stri
     if (strMethod == "signrawtransaction"     && n > 1) ConvertTo<Array>(params[1], true);
     if (strMethod == "signrawtransaction"     && n > 2) ConvertTo<Array>(params[2], true);
     if (strMethod == "keypoolrefill"          && n > 0) ConvertTo<boost::int64_t>(params[0]);
+	if (strMethod == "stakeforcharity"        && n > 1) ConvertTo<int>(params[1]);
+	if (strMethod == "stakeforcharity"        && n > 3) ConvertTo<double>(params[3]);
+	if (strMethod == "stakeforcharity"        && n > 4) ConvertTo<double>(params[4]);
 
     return params;
 }

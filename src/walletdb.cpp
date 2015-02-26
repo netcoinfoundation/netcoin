@@ -424,6 +424,34 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             ssValue >> pwallet->nOrderPosNext;
         }
+		else if (strType == "s4c") // falsely names as autosavings, but for compat with older wallets keep using
+        {
+            string strS4CAccount;
+            ssKey >> strS4CAccount;
+            if (CBitcoinAddress(strS4CAccount).IsValid())
+            {
+                pwallet->fStakeForCharity = true;
+                pwallet->strStakeForCharityAddress = CBitcoinAddress(strS4CAccount).Get();
+                fGlobalStakeForCharity = true;
+                string strS4CChhangeAccount;
+                ssValue >> strS4CChhangeAccount;
+                if (CBitcoinAddress(strS4CChhangeAccount).IsValid())
+                    pwallet->strStakeForCharityChangeAddress = CBitcoinAddress(strS4CChhangeAccount).Get();
+                ssValue >> pwallet->nStakeForCharityPercent;
+            }
+
+        }
+        else if (strType == "s4c2")
+        {
+            string strS4CAccount;
+            ssKey >> strS4CAccount;
+            if (CBitcoinAddress(strS4CAccount).IsValid())
+            {
+                ssValue >> pwallet->nStakeForCharityMin;
+                ssValue >> pwallet->nStakeForCharityMax;
+            }
+        }
+
     } catch (...)
     {
         return false;

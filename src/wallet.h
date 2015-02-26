@@ -20,6 +20,13 @@
 #include "util.h"
 #include "walletdb.h"
 
+#include <stdexcept>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/regex.hpp>
+#include <boost/thread.hpp>
+extern bool fGlobalStakeForCharity;
+
 extern bool fWalletUnlockStakingOnly;
 extern bool fConfChange;
 class CAccountingEntry;
@@ -39,6 +46,7 @@ enum WalletFeature
 
     FEATURE_LATEST = 60000
 };
+
 
 /** A key pool entry */
 class CKeyPool
@@ -88,10 +96,21 @@ public:
     mutable CCriticalSection cs_wallet;
 
     bool fFileBacked;
+    bool fWalletUnlockStakingOnly;
+    bool fStakeForCharity;
+    int nStakeForCharityPercent;
+    int64_t nStakeForCharityMin;
+    int64_t nStakeForCharityMax;
+    CBitcoinAddress strStakeForCharityAddress;
+    CBitcoinAddress strStakeForCharityChangeAddress;
     std::string strWalletFile;
+    int64_t nReserveBalance;
+
+
 
     std::set<int64_t> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
+
 
     typedef std::map<unsigned int, CMasterKey> MasterKeyMap;
     MasterKeyMap mapMasterKeys;
@@ -115,6 +134,14 @@ public:
         nMasterKeyMaxID = 0;
         pwalletdbEncryption = NULL;
         nOrderPosNext = 0;
+        fWalletUnlockStakingOnly = false;
+        fStakeForCharity = false;
+        nStakeForCharityPercent = 0;
+        nStakeForCharityMin = MIN_TXOUT_AMOUNT;
+        nStakeForCharityMax = MAX_MONEY;
+        strStakeForCharityAddress = "";
+        strStakeForCharityChangeAddress = "";
+        nReserveBalance = 0;
     }
 
     std::map<uint256, CWalletTx> mapWallet;
@@ -124,7 +151,9 @@ public:
     std::map<CTxDestination, std::string> mapAddressBook;
 
     CPubKey vchDefaultKey;
+
     int64_t nTimeFirstKey;
+
 
     // check whether we are allowed to upgrade (or already support) to the named feature
     bool CanSupportFeature(enum WalletFeature wf) { return nWalletMaxVersion >= wf; }
@@ -157,7 +186,6 @@ public:
 
     void GetKeyBirthTimes(std::map<CKeyID, int64_t> &mapKeyBirth) const;
 
-
     /** Increment the next transaction order id
         @return next transaction order id
      */
@@ -186,18 +214,19 @@ public:
     int64_t GetImmatureBalance() const;
     int64_t GetStake() const;
     void GetMyWeight() const;
+	bool StakeForCharity();
     int64_t GetMyNetworkWeight() const;
     int64_t GetMyTimeToStake() const;
     int64_t GetNewMint() const;
-    bool CreateTransaction(const std::vector<std::pair<CScript, int64_t> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, std::string strTxComment, const CCoinControl *coinControl=NULL);
-    bool CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, std::string strTxComment, const CCoinControl *coinControl=NULL);
+    bool CreateTransaction(const std::vector<std::pair<CScript, int64_t> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, std::string strTxComment,  bool fAllowS4C=false, const CCoinControl *coinControl=NULL);
+    bool CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, std::string strTxComment, bool fAllowS4C=false, const CCoinControl *coinControl=NULL);
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);
 
     bool GetStakeWeight(const CKeyStore& keystore, uint64_t& nMinWeight, uint64_t& nMaxWeight, uint64_t& nWeight);
     bool CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int64_t nSearchInterval, int64_t nFees, CTransaction& txNew, unsigned int& nTxTime, CKey& key);
 
-    std::string SendMoney(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, std::string strTxComment="");
-    std::string SendMoneyToDestination(const CTxDestination &address, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, std::string strTxComment="");
+    std::string SendMoney(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, bool fAllowS4C=false, std::string strTxComment="");
+    std::string SendMoneyToDestination(const CTxDestination &address, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, bool fAllowS4C=false, std::string strTxComment="");
 
     bool NewKeyPool();
     bool TopUpKeyPool(unsigned int nSize = 0);
@@ -281,6 +310,7 @@ public:
 
     DBErrors LoadWallet(bool& fFirstRunRet);
 
+
     bool SetAddressBookName(const CTxDestination& address, const std::string& strName);
 
     bool DelAddressBookName(const CTxDestination& address);
@@ -330,6 +360,8 @@ public:
      */
     boost::signals2::signal<void (CWallet *wallet, const uint256 &hashTx, ChangeType status)> NotifyTransactionChanged;
 };
+
+
 
 /** A key allocated from the key pool. */
 class CReserveKey
@@ -809,7 +841,6 @@ public:
 class CAccountingEntry
 {
 public:
-
     std::string strAccount;
     int64_t nCreditDebit;
     int64_t nTime;

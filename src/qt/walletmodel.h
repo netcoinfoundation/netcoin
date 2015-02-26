@@ -17,6 +17,7 @@ class COutput;
 class COutPoint;
 class uint256;
 class CCoinControl;
+class CBitcoinAddress;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -96,6 +97,18 @@ public:
     // Wallet backup
     bool backupWallet(const QString &filename);
 
+    void setStakeForCharity(bool fStakeForCharity, int& nStakeForCharityPercent,
+                            CBitcoinAddress& strStakeForCharityAddress,
+                            CBitcoinAddress& strStakeForCharityChangeAddress,
+                            qint64& nStakeForCharityMinAmount,
+                            qint64& nStakeForCharityMaxAmount);
+    // Wallet Information about Stake For Charity
+    void getStakeForCharity(int& nStakeForCharityPercent,
+                            CBitcoinAddress& strStakeForCharityAddress,
+                            CBitcoinAddress& strStakeForCharityChangeAddress,
+                            qint64& nStakeForCharityMinAmount,
+                            qint64& nStakeForCharityMaxAmount);
+
     // RAI object for unlocking wallet, returned by requestUnlock()
     class UnlockContext
     {
@@ -125,6 +138,7 @@ public:
     void lockCoin(COutPoint& output);
     void unlockCoin(COutPoint& output);
     void listLockedCoins(std::vector<COutPoint>& vOutpts);
+	bool isMine(const CBitcoinAddress &address);
 
 private:
     CWallet *wallet;

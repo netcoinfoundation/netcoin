@@ -201,10 +201,13 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/coincontroltreewidget.h \
     src/qt/sendcoinsdialog.h \
     src/qt/addressbookpage.h \
+    src/qt/charitydialog.h \
     src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
+    src/qt/intro.h \
+    src/qt/calcdialog.h \
     src/alert.h \
     src/addrman.h \
     src/base58.h \
@@ -294,10 +297,13 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \
     src/qt/addressbookpage.cpp \
+    src/qt/charitydialog.cpp \
     src/qt/signverifymessagedialog.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
+    src/qt/calcdialog.cpp \
+    src/qt/intro.cpp \
     src/alert.cpp \
     src/version.cpp \
     src/sync.cpp \
@@ -385,6 +391,9 @@ FORMS += \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/shoppingpage.ui \
+    src/qt/forms/charitydialog.ui \
+    src/qt/forms/intro.ui \
+    src/qt/forms/calcdialog.ui \
     src/qt/forms/networkpage.ui
 
 contains(USE_QRCODE, 1) {

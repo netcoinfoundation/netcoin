@@ -48,8 +48,9 @@ CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 
 // initial netcoin difficulty params - preKGW then digishield
-static const int64_t nTargetTimespan = 60 * 60;						// NetCoin: every 60 minutes
-unsigned int nTargetSpacing = 1 * 60;								// NetCoin: 60 sec
+static const int64_t nTargetTimespan = 60 * 60;	// NetCoin: every 60 minutes
+unsigned int nTargetSpacing = 1 * 60; // NetCoin: 60 sec
+unsigned int nStakeTargetSpacing = 2 * 60; // NetCoin: 60 sec
 static const int64_t nInterval = nTargetTimespan / nTargetSpacing;	// 60 blocks
 unsigned int nStakeMinAge = 1 * 60 * 60; // 1 hour
 unsigned int nStakeMaxAge = 2592000; // 30 days
@@ -519,6 +520,7 @@ bool CTransaction::CheckTransaction() const
             return DoS(100, error("CTransaction::CheckTransaction() : txout empty for user transaction"));
         if (txout.nValue < 0)
             return DoS(100, error("CTransaction::CheckTransaction() : txout.nValue negative"));
+
         if (txout.nValue > MAX_MONEY)
             return DoS(100, error("CTransaction::CheckTransaction() : txout.nValue too high"));
         nValueOut += txout.nValue;
@@ -1477,11 +1479,58 @@ unsigned int GetNextProofOfWork(const CBlockIndex* pindexLast, const CBlock* pbl
     return GetNextWorkRequired_V1(pindexLastPOW,pblock);
 }
 
+// select stake target limit according to hard-coded conditions
+CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
+{
+    if(fTestNet) // separate proof of stake target limit for testnet
+        return bnProofOfStakeLimit;
+    else
+        return bnProofOfStakeLimit;
+    // return bnProofOfWorkLimit; // return bnProofOfWorkLimit of none matched
+}
+
+unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
+{
+    CBigNum bnTargetLimit = !fProofOfStake ? bnProofOfWorkLimit : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
+
+    if (pindexLast == NULL)
+        return bnTargetLimit.GetCompact(); // genesis block
+        const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
+
+    if (pindexPrev->pprev == NULL)        
+        return bnTargetLimit.GetCompact(); // first block
+        const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
+
+    if (pindexPrevPrev->pprev == NULL)
+        return bnTargetLimit.GetCompact(); // second block
+
+    int64 nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
+
+    // Netcoin: target change every block
+    // Netcoin: retarget with exponential moving toward target spacing
+    CBigNum bnNew;
+    bnNew.SetCompact(pindexPrev->nBits);
+    int64 nInterval = nTargetTimespan / nStakeTargetSpacing;
+    bnNew *= ((nInterval - 1) * nStakeTargetSpacing + nActualSpacing + nActualSpacing);
+    bnNew /= ((nInterval + 1) * nStakeTargetSpacing);
+    if (bnNew > bnTargetLimit)
+        bnNew = bnTargetLimit;
+
+    return bnNew.GetCompact();
+}
+
+
 // GET NEXT WORK REQUIRED - MAIN FUNCTION ROUTER FOR DIFFERENT AGE AND TYPE OF BLOCKS
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlock* pblock, bool fProofOfStake)
 {
     if(fProofOfStake)
+    {
+        if (pindexLast->nHeight > 530000)
+        {
+            return GetNextTargetRequired(pindexLast, true);
+        }
         return GetNextTrust_DigiShield(pindexLast, true); // first proof of stake blocks use digishield
+    }
     else
         return GetNextProofOfWork(pindexLast, pblock);
 }
@@ -2758,7 +2807,10 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 
     printf("ProcessBlock: ACCEPTED\n");
 
-    // ppcoin: if responsible for sync-checkpoint send it
+	if (fGlobalStakeForCharity && !IsInitialBlockDownload())
+        pwalletMain->StakeForCharity();
+
+   // ppcoin: if responsible for sync-checkpoint send it
     if (pfrom && !CSyncCheckpoint::strMasterPrivKey.empty())
         Checkpoints::SendSyncCheckpoint(Checkpoints::AutoSelectSyncCheckpoint());
 

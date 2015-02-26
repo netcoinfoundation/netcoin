@@ -29,6 +29,7 @@ class WalletModel;
 class TxViewDelegate;
 class TransactionFilterProxy;
 class QLabel;
+class QMenu;
 class QFrame;
 class QHBoxLayout;
 
@@ -57,7 +58,6 @@ public:
 
 public slots:
     void setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
-    void setInterest(qint64);
     void setNumTransactions(int count);
     void setStatistics(ClientModel *modelStatistics);
     void lockWalletToggle();
@@ -77,6 +77,7 @@ private:
     qint64 interest;
     qint64 currentUnconfirmedBalance;
     qint64 currentImmatureBalance;
+    QMenu *contextMenu;
 
 
     //Weight label
@@ -91,7 +92,10 @@ private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
     void updateMyWeight();
+    void on_startButton_clicked();
 
+signals:
+    void stakeForCharitySignal();
 };
 
 #endif // OVERVIEWPAGE_H

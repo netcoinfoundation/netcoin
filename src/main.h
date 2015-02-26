@@ -46,6 +46,7 @@ static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64_t DUST_SOFT_LIMIT = 100000000;
 static const int64_t DUST_HARD_LIMIT = 1000000;
 static const int64_t MAX_MONEY = 325000000 * COIN; // NetCoin: maximum of 325M coins
+static const int64_t MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 
 
 // Netcoin PIR personal staking interest rate is organised into percentage reward bands based on the value of the coins being staked
@@ -97,7 +98,7 @@ static const int BLOCK_HEIGHT_FINALPOW =  1296000; // this is where the proof of
 static const int BLOCK_HEIGHT_KGW_START_TESTNET = 5;
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
-static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  10000;
+static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  5000;
 
 static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
 

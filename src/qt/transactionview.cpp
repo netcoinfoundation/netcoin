@@ -61,7 +61,6 @@ TransactionView::TransactionView(QWidget *parent) :
     dateWidget->setFixedWidth(120);    
 #endif
 
-    dateWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     dateWidget->setContentsMargins(1,1,1,1);
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
@@ -79,7 +78,6 @@ TransactionView::TransactionView(QWidget *parent) :
 #else
     typeWidget->setFixedWidth(120);
 #endif
-    typeWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
                                         TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
@@ -94,7 +92,6 @@ TransactionView::TransactionView(QWidget *parent) :
     addressWidget = new QLineEdit(this);
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    addressWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
     addressWidget->setContentsMargins(1,1,1,1);
 #endif
@@ -103,7 +100,6 @@ TransactionView::TransactionView(QWidget *parent) :
     amountWidget = new QLineEdit(this);
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    amountWidget->setStyleSheet("background: black; font-size: 14px; selection-background-color: rgb(255, 170, 0, 145);");
     amountWidget->setPlaceholderText(tr("Min amount"));
     amountWidget->setContentsMargins(1,1,1,1);
 #endif
@@ -138,7 +134,6 @@ TransactionView::TransactionView(QWidget *parent) :
     view->setContextMenuPolicy(Qt::CustomContextMenu);
 
     transactionView = view;
-    setStyleSheet("background: url(:/images/res/images/home-background.png); background-attachment: fixed; color: #ffaa00; selection-background-color: rgb(255, 170, 0, 145); selection-color: white; font-family: Plantagenet Cherokee; font-size: 14px;");
 
     // Actions
 
@@ -151,7 +146,6 @@ TransactionView::TransactionView(QWidget *parent) :
     QAction *viewOnPandachain = new QAction(tr("Show transaction on the Netcoin Block Explorer"), this);
 
     contextMenu = new QMenu();
-    contextMenu->setStyleSheet("background: url(:/images/res/images/dialogBackground.jpg); background-attachment: fixed; color: #ffaa00; selection-background-color: rgb(255, 170, 0, 145); font-family: Plantagenet Cherokee; font-size: 14px; selection-color: white;");
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(copyAmountAction);
