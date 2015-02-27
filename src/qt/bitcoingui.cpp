@@ -1131,9 +1131,9 @@ void BitcoinGUI::calcClicked()
 void BitcoinGUI::changeTheme(QString theme)
 {
     // load Default theme first (if present) to apply default styles
-    loadTheme("default");
+    loadTheme("Default");
 
-    if (theme != "default") {
+    if (theme != "Default") {
         loadTheme(theme);
     }
 }
@@ -1248,9 +1248,9 @@ void BitcoinGUI::listThemes(QStringList& themes)
     // get selected theme from registry (if any)
     QSettings settings;
     selectedTheme = settings.value("Template").toString();
-    // or use default theme - HyperBlue
+    // or use default theme - Default
     if (selectedTheme=="") {
-        selectedTheme = "HyperBlue";
+        selectedTheme = "Default";
     }
     // load it!
     loadTheme(selectedTheme);

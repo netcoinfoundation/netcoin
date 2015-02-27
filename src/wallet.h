@@ -225,8 +225,8 @@ public:
     bool GetStakeWeight(const CKeyStore& keystore, uint64_t& nMinWeight, uint64_t& nMaxWeight, uint64_t& nWeight);
     bool CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int64_t nSearchInterval, int64_t nFees, CTransaction& txNew, unsigned int& nTxTime, CKey& key);
 
-    std::string SendMoney(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, bool fAllowS4C=false, std::string strTxComment="");
-    std::string SendMoneyToDestination(const CTxDestination &address, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, bool fAllowS4C=false, std::string strTxComment="");
+    std::string SendMoney(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, std::string strTxComment="", bool fAllowS4C=false);
+    std::string SendMoneyToDestination(const CTxDestination &address, int64_t nValue, CWalletTx& wtxNew, bool fAskFee=false, std::string strTxComment="", bool fAllowS4C=false);
 
     bool NewKeyPool();
     bool TopUpKeyPool(unsigned int nSize = 0);

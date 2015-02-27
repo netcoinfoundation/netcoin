@@ -41,7 +41,7 @@ QMainWindow {
 
 /* Dialog */
 #calcDialog, #RPCConsole, #AboutDialog, #AskPassphraseDialog, #EditAddressDialog, #QRCodeDialog,
-#SignVerifyMessageDialog, #CoinControlDialog, #OptionsDialog, #TransactionDescDialog{
+#SignVerifyMessageDialog, #CoinControlDialog, #OptionsDialog, #TransactionDescDialog, #aboutQt{
 	border-image: url($themes-dir/default/diab.jpg);
 	font-size: 22px;
 }
