@@ -110,7 +110,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation type="obsolete">Kopieer het huidig geselecteerde adres naar het klembord</translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+116"/>
         <source>&amp;New Address</source>
         <translation>&amp;Nieuw adres</translation>
     </message>
@@ -119,17 +119,17 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation type="obsolete">Dit zijn al jou Netcoin adressen om betalingen mee te ontvangen. Je kunt iedere verzender een apart adres geven zodat je kunt volgen wie jou betaald.</translation>
     </message>
     <message>
-        <location line="-346"/>
+        <location line="-81"/>
         <source>Here are your NetCoin addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you.</source>
         <translation>Dit zijn je Netcoinadressen voor ontvangende transacties. Je kunt iedereen een ander adres geven zodat je weet wie je terugbetaalt.</translation>
     </message>
     <message>
-        <location line="+279"/>
+        <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/doubleClickToEditTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+30"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/deleteCurrentAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -272,7 +272,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Herhaal wachtwoord</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+33"/>
         <source>Serves to disable trivial use of sendmoney when the OS account is compromised. Provides no real security.</source>
         <translation>Probeert misbruik te voorkomen wanneer het besturingssysteem onveilig is.Helaas bied het geen echte bescherming.</translation>
     </message>
@@ -412,12 +412,12 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>&amp;Onderteken bericht...</translation>
     </message>
     <message>
-        <location line="+295"/>
+        <location line="+292"/>
         <source>Synchronizing with network...</source>
         <translation>Synchroniseren met netwerk...</translation>
     </message>
     <message>
-        <location line="-390"/>
+        <location line="-384"/>
         <source>&amp;Overview</source>
         <translation>&amp;Overzicht</translation>
     </message>
@@ -458,7 +458,17 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>&amp;Verstuur munten</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+38"/>
+        <source>&amp;PIR Calculator</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open PIR Calculator</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>E&amp;xit</source>
         <translation>&amp;Afsluiten</translation>
     </message>
@@ -473,7 +483,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Toon informatie over Netcoin</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
         <source>About &amp;Qt</source>
         <translation>Over &amp;Qt</translation>
     </message>
@@ -503,7 +513,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>&amp;Wijzig Wachtwoord...</translation>
     </message>
     <message numerus="yes">
-        <location line="+304"/>
+        <location line="+301"/>
         <source>~%n block(s) remaining</source>
         <translation>
             <numerusform>~%n blok nodig</numerusform>
@@ -516,7 +526,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>%1 van %2 aan transactie historie blokken gedownload (%3% klaar).</translation>
     </message>
     <message>
-        <location line="-301"/>
+        <location line="-298"/>
         <source>&amp;Export...</source>
         <translation>&amp;Exporteren...</translation>
     </message>
@@ -574,7 +584,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Portemonnee</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+163"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/overviewTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -619,32 +629,16 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>&amp;Stake Calculator</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Open Stake Calculator</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+25"/>
+        <location line="+33"/>
         <source>&amp;About Netcoin</source>
         <translation>&amp;Over Netcoin</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>&amp;S4E</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Enable Stake For Charity</source>
         <translation>Doneer stake voor goed doel</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>&amp;Show / Hide</source>
         <translation>&amp;Toon / Verberg</translation>
     </message>
@@ -669,7 +663,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+52"/>
         <source>&amp;File</source>
         <translation>&amp;Bestand</translation>
     </message>
@@ -684,7 +678,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>T&amp;hema&apos;s</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>&amp;Help</source>
         <translation>&amp;Hulp</translation>
     </message>
@@ -694,7 +688,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Tab-werkbalk</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>Actions toolbar</source>
         <translation>Acties werkbalk</translation>
     </message>
@@ -724,12 +718,12 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>%1 blokken van transactie geschiedenis gedownload.</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+156"/>
         <source>Sent S4C transaction</source>
         <translation>Zend S4E transactie</translation>
     </message>
     <message>
-        <location line="+150"/>
+        <location line="+148"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/encryptedUnlockedTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -739,7 +733,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation></translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+269"/>
         <source>.</source>
         <translation></translation>
     </message>
@@ -753,7 +747,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation type="obsolete">Staking. &lt;br&gt; Uw gewicht wordt  %1 &lt;br&gt; Network gewicht is %2 &lt;br&gt; Verwachte tijd om beloning te verdienen is %3</translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="-142"/>
         <source>Not staking because wallet is locked</source>
         <translation>Niet staking portemonnee geblokkeerd</translation>
     </message>
@@ -773,7 +767,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Niet staking geen geconformeerde munten</translation>
     </message>
     <message numerus="yes">
-        <location line="-429"/>
+        <location line="-426"/>
         <source>%n second(s) ago</source>
         <translation>
             <numerusform>%n seconden geleden</numerusform>
@@ -789,12 +783,12 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation type="obsolete">Toon informatie over Netcoin card</translation>
     </message>
     <message>
-        <location line="-339"/>
+        <location line="-336"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>&amp;Deblokkeerl portemonnee...</translation>
     </message>
     <message numerus="yes">
-        <location line="+343"/>
+        <location line="+340"/>
         <source>%n minute(s) ago</source>
         <translation>
             <numerusform>%n minuut geleden</numerusform>
@@ -843,7 +837,7 @@ Dit product bevat software ontwikkeld door het OpenSSL Project voor het gebruik 
         <translation>Bevestig transactie kosten</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+27"/>
         <source>Sent transaction</source>
         <translation>Verzonden transactie</translation>
     </message>
@@ -866,7 +860,7 @@ Adres: %4
 </translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+112"/>
         <location line="+15"/>
         <source>URI handling</source>
         <translation>URI-behandeling</translation>
@@ -940,7 +934,7 @@ Adres: %4
     <message>
         <location line="+4"/>
         <source>Staking.&lt;br&gt;Your weight: %1&lt;br&gt;Network weight: %2&lt;br&gt;Expected time to earn reward: %3</source>
-        <translation>Staken.&lt;br&gt;Het gewicht: %1&lt;br&gt;Netwerk gewicht: %2&lt;br&gt;Verwachte tijd tot beloning: %3</translation>
+        <translation>Staken.&lt;br&gt;Je gewicht: %1&lt;br&gt;Netwerk gewicht: %2&lt;br&gt;Verwachte tijd tot beloning: %3</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1465,62 +1459,56 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OptionsDialog</name>
     <message>
-        <location filename="../forms/optionsdialog.ui" line="+462"/>
+        <location filename="../forms/optionsdialog.ui" line="+14"/>
         <source>Options</source>
         <translation>Opties</translation>
     </message>
     <message>
-        <location line="+510"/>
+        <location line="+16"/>
         <source>&amp;Main</source>
         <translation>&amp;Algemeen</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+6"/>
         <source>Optional transaction fee per kB that helps make sure your transactions are processed quickly. Most transactions are 1 kB. Fee 0.01 recommended.</source>
         <translation>Optionele transactiekosten per kB,  maar het helpt ervoor te zorgen dat uw transacties snel worden verwerkt. De meeste transacties zijn 1 kB.Kosten 0.01 aanbevolen.</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+15"/>
         <source>Pay transaction &amp;fee</source>
         <translation>Betaal transactie&amp;kosten</translation>
     </message>
     <message>
-        <location line="+332"/>
         <source>Automatically start NetCoin after logging in to the system.</source>
         <translation>Start Netcoin automatisch na inloggen van het systeem.</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>&amp;Start NetCoin on system login</source>
         <translation>&amp;Start NetCoin met systeem start</translation>
     </message>
     <message>
-        <location line="+755"/>
         <source>Automatically open the NetCoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Open automatisch de Netcoin client poort van de router.Dit werkt alleen wanneer de router UPnP ondersteund en ingeschakeld is.</translation>
     </message>
     <message>
-        <location line="+80"/>
         <source>Connect to the NetCoin network through a SOCKS proxy (e.g. when connecting through Tor).</source>
         <translation>Verbindt met het Netcoin netwerk doormiddel van een  SOCKS proxy(b.v wanneer je verbindt doormiddel van Tor).</translation>
     </message>
     <message>
-        <location line="+5570"/>
         <source>The user interface language can be set here. This setting will take effect after restarting NetCoin.</source>
         <translation>De gebruikte taal kan hier bepaald worden.De effecten vinden plaats na het herstarten van Netcoin.</translation>
     </message>
     <message>
-        <location line="+1350"/>
         <source>Whether to show NetCoin addresses in the transaction list or not.</source>
         <translation>Laat wel of geen Netcoin adressen zien in de transatielijst.</translation>
     </message>
     <message>
-        <location line="+576"/>
+        <location line="+31"/>
         <source>Reserved amount does not participate in staking and is therefore spendable at any time.</source>
         <translation>Gereserveerd bedrag doet niet mee in staking en is daarom altijd te gebruiken.</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="+15"/>
         <source>Reserve</source>
         <translation>Gereserveerd</translation>
     </message>
@@ -1529,11 +1517,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Automatisch starten van Netcoin na inloggen van het systeem.</translation>
     </message>
     <message>
+        <location line="+34"/>
         <source>&amp;Start Netcoin on system login</source>
-        <translation type="obsolete">&amp;Start Netcoin bij systeem aanmelding</translation>
+        <translation>&amp;Start Netcoin bij opstarten systeem</translation>
     </message>
     <message>
-        <location line="-8145"/>
+        <location line="+7"/>
         <source>Detach block and address databases at shutdown. This means they can be moved to another data directory, but it slows down shutdown. The wallet is always detached.</source>
         <translation>Ontkoppel blok en adressenbestanden bij het afsluiten. Dit betekent dat ze naar een ander data-map worden verplaatst, maar het vertraagd ​​het afsluiten. De portemonnee is altijd ontkoppeld.</translation>
     </message>
@@ -1543,7 +1532,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Ontkoppel database bij afsluiten</translation>
     </message>
     <message>
-        <location line="+569"/>
+        <location line="+21"/>
         <source>&amp;Network</source>
         <translation>&amp;Netwerk</translation>
     </message>
@@ -1552,7 +1541,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">De Netcoin client poort automatisch openen op de router. Dit werkt alleen wanneer uw router UPnP ondersteunt en deze is ingeschakeld.</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+9"/>
         <source>Map port using &amp;UPnP</source>
         <translation>Portmapping via &amp;UPnP</translation>
     </message>
@@ -1561,47 +1550,62 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Verbinding maken met het Netcoin netwerk via een SOCKS proxy (bijvoorbeeld als U gebruik maakt van Tor).</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="-43"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically start Netcoin after logging in to the system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start Netcoin automatisch bij opstarten systeem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically open the Netcoin client port on the router. This only works when your router supports UPnP and it is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open automatisch de Netcoin client poort op de router. Dit werkt alleen als de router UPnP ondersteund en is ingeschakeld.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connect to the Netcoin network through a SOCKS proxy (e.g. when connecting through Tor).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verbind naar het netwerk met een SOCKS proxy (b.v verbinden met tor).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&amp;Connect through SOCKS proxy:</source>
         <translation>&amp;Verbind met SOCKS proxy:</translation>
     </message>
     <message>
-        <location line="+457"/>
+        <location line="+9"/>
         <source>Proxy &amp;IP:</source>
         <translation>Proxy &amp;IP:</translation>
     </message>
     <message>
-        <location line="+467"/>
+        <location line="+19"/>
         <source>IP address of the proxy (e.g. 127.0.0.1)</source>
         <translation>IP adres van de proxy (bijv. 127.0.0.1)</translation>
     </message>
     <message>
-        <location line="+455"/>
+        <location line="+7"/>
         <source>&amp;Port:</source>
         <translation>&amp;Poort:</translation>
     </message>
     <message>
-        <location line="+467"/>
+        <location line="+19"/>
         <source>Port of the proxy (e.g. 9050)</source>
         <translation>Poort van de proxy (bijv. 9050)</translation>
     </message>
     <message>
-        <location line="+455"/>
+        <location line="+7"/>
         <source>SOCKS &amp;Version:</source>
         <translation>SOCKS-&amp;Versie:</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+13"/>
         <source>SOCKS version of the proxy (e.g. 5)</source>
         <translation>SOCKS-versie van de proxy (bijv. 5)</translation>
     </message>
     <message>
-        <location line="+558"/>
+        <location line="+36"/>
         <source>&amp;Window</source>
         <translation>&amp;Venster</translation>
     </message>
     <message>
-        <location line="+427"/>
+        <location line="+6"/>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Laat alleen een systeemvak-icoon zien wanneer het venster geminimaliseerd is.</translation>
     </message>
@@ -1611,7 +1615,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Minimaliseer naar het systeemvak in plaats van de taakbalk</translation>
     </message>
     <message>
-        <location line="+428"/>
+        <location line="+7"/>
         <source>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Quit in the menu.</source>
         <translation>Minimaliseer het venster in de plaats van de applicatie af te sluiten als het venster gesloten wordt. Wanneer deze optie aan staan, kan de applicatie alleen worden afgesloten door Afsluiten te kiezen in het menu.</translation>
     </message>
@@ -1621,26 +1625,36 @@ p, li { white-space: pre-wrap; }
         <translation>Minimaliseer bij sluiten van het &amp;venster</translation>
     </message>
     <message>
-        <location line="+469"/>
+        <location line="+21"/>
         <source>&amp;Display</source>
         <translation>&amp;Scherm</translation>
     </message>
     <message>
-        <location line="+456"/>
+        <location line="+8"/>
         <source>User Interface &amp;language:</source>
         <translation>&amp;Taal instellingen:</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The user interface language can be set here. This setting will take effect after restarting Netcoin.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;De gebruikers taal kan hier ingesteld worden.Herstart vereist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether to show Netcoin addresses in the transaction list or not.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Laat de Netcoin adressen wel of niet zien in de transactielijst.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting Netcoin.</source>
         <translation type="obsolete">De user interface-taal kan hier ingesteld worden. Deze instelling word toegepast na Netcoin opnieuw op te starten.</translation>
     </message>
     <message>
-        <location line="+920"/>
+        <location line="-22"/>
         <source>&amp;Unit to show amounts in:</source>
         <translation>&amp;Eenheid om bedrag in te tonen:</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+13"/>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
         <translation>Kies de standaard onderverdelingseenheid om weer te geven in uw programma, en voor het versturen van munten.</translation>
     </message>
@@ -1649,12 +1663,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Netcoin adressen in de transactielijst weergeven of niet.</translation>
     </message>
     <message>
-        <location line="+433"/>
+        <location line="+12"/>
         <source>&amp;Display addresses in transaction list</source>
         <translation>&amp;Toon adressen in de transactielijst</translation>
     </message>
     <message>
-        <location line="+428"/>
+        <location line="+7"/>
         <source>Whether to show coin control features or not.</source>
         <translation>Munt controle functies weergeven of niet.</translation>
     </message>
@@ -1664,17 +1678,17 @@ p, li { white-space: pre-wrap; }
         <translation>Laat munt &amp;controle functies zien (enkel voor gevorderden!)</translation>
     </message>
     <message>
-        <location line="+1356"/>
+        <location line="+71"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location line="+458"/>
+        <location line="+7"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Annuleren</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+10"/>
         <source>&amp;Apply</source>
         <translation>&amp;Toepassen</translation>
     </message>
@@ -1709,7 +1723,7 @@ p, li { white-space: pre-wrap; }
         <translation>Lijst</translation>
     </message>
     <message>
-        <location line="+576"/>
+        <location line="+534"/>
         <source>Recent Transactions</source>
         <translation>Recente transacties</translation>
     </message>
@@ -1719,26 +1733,31 @@ p, li { white-space: pre-wrap; }
         <translation>(niet gesynchroniseerd)</translation>
     </message>
     <message>
-        <location line="-504"/>
+        <location line="-462"/>
         <source>Wallet Breakdown</source>
-        <translation>portemonnee statistieken</translation>
+        <translation>Portemonnee statistieken</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-22"/>
+        <source>Stake for Education</source>
+        <translation>Stake voor scholing</translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/spendableTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+32"/>
-        <location line="+38"/>
-        <location line="+38"/>
+        <location line="+32"/>
+        <location line="+32"/>
         <location line="+32"/>
         <source>0 NET</source>
         <translation>0 NET</translation>
     </message>
     <message>
-        <location line="-127"/>
+        <location line="-115"/>
         <source>Maturing Stake:</source>
         <translation>Conformeren stake:</translation>
     </message>
@@ -1748,12 +1767,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+32"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unconfirmedTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+32"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/immatureTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -1768,7 +1787,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+90"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Hoogte&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1778,13 +1797,13 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+124"/>
+        <location line="+13"/>
+        <location line="+106"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;250&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-114"/>
+        <location line="-96"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW difficulty&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW moeilijkheid&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1799,7 +1818,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 MH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -1809,7 +1828,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Vorig blok&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 KH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -1829,14 +1848,14 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Totale hoeveelheid&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW Block Reward&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW Blok beloning&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>Number of Transactions:</source>
-        <translation>Aantal transacties:</translation>
+        <translation>Aantal Transacties:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1844,19 +1863,18 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <location line="-319"/>
+        <location line="-289"/>
         <source>Unlock</source>
         <translation>Deblokkeer</translation>
     </message>
     <message>
-        <location line="-244"/>
         <source>Refresh POW Statistics</source>
-        <translation>ververs POW statistieken</translation>
+        <translation>Ververs POW Statistieken</translation>
     </message>
     <message>
-        <location line="+297"/>
+        <location line="+47"/>
         <source>POW Statistics</source>
-        <translation>POW statistieken</translation>
+        <translation>POW Statistieken</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; color:#ffaa00;&quot;&gt;Block Height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -1883,12 +1901,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; color:#ffaa00;&quot;&gt;PoW Blok beloning&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-46"/>
+        <location line="-40"/>
         <source>POS Statistics</source>
-        <translation>POS statistieken</translation>
+        <translation>POS Statistieken</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+12"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/stakingTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -1901,7 +1919,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Stake:</translation>
     </message>
     <message>
-        <location line="-166"/>
+        <location line="-148"/>
         <source>Unconfirmed:</source>
         <translation>Onbevestigd:</translation>
     </message>
@@ -1919,7 +1937,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Uw beschikbare saldo</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+96"/>
         <source>Immature:</source>
         <translation>conformeren:</translation>
     </message>
@@ -1928,7 +1946,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gedolven saldo dat nog niet tot wasdom is gekomen</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+35"/>
         <source>Total:</source>
         <translation>Totaal:</translation>
     </message>
@@ -1949,12 +1967,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Totaal aantal munten dat was staked, en nog niet telt voor huidige balans</translation>
     </message>
     <message>
-        <location filename="../overviewpage.cpp" line="+145"/>
+        <location filename="../overviewpage.cpp" line="+152"/>
         <source>out of sync</source>
         <translation>niet gesynchroniseerd</translation>
     </message>
     <message numerus="yes">
-        <location line="+71"/>
+        <location line="+66"/>
         <source>%n second(s)</source>
         <translation>
             <numerusform>%n seconden</numerusform>
@@ -2003,10 +2021,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Not staking because your wallet is syncing,&lt;br&gt; please wait for this process to end...</source>
-        <translation>Niet aan het staken portemonnee is aan het bijwerken,&lt;br&gt;wacht tot het proces beeindigt is ...</translation>
+        <translation>Niet aan het staken portemonnee is aan het bijwerken,&lt;br&gt;wacht tot het proces beeindigd is ...</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>Not staking because you don&apos;t have mature coins...</source>
+        <translation>Niet aan het staken geen geconformeerde munten...</translation>
+    </message>
+    <message>
         <source>Not staking because you don&apos;t have mature coins,&lt;br&gt; coins are matured and begin staking after 100 confirmations.</source>
         <translation>Niet aan het staken, geen geconformeerde munten,&lt;br&gt;munten zijn geconformeerd en beginnen met staken na 60 conformaties.</translation>
     </message>
@@ -2564,17 +2586,17 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+36"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/sendToAddressLabelTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+13"/>
         <source>A&amp;mount:</source>
         <translation>B&amp;edrag:</translation>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-118"/>
         <source>Pay &amp;To:</source>
         <translation>Betaal &amp;Aan:</translation>
     </message>
@@ -2589,7 +2611,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vul een Netcoin adres in (b.v nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
     </message>
     <message>
-        <location filename="../forms/sendcoinsentry.ui" line="+109"/>
+        <location filename="../forms/sendcoinsentry.ui" line="+89"/>
         <source>&amp;Label:</source>
         <translation>&amp;Label:</translation>
     </message>
@@ -2602,7 +2624,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Kies adres uit adresboek</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="-7"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
@@ -2645,22 +2667,17 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Beurs eigenaar?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ffffff;&quot;&gt; Wil je graag Netcoin toevoegen aan je beurs neem contact op met support@netcoinfoundation.org.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+158"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/cryptsyBtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+173"/>
+        <location line="+100"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterCnyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-73"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterLtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-167"/>
+        <location line="-180"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;You can never have too many Netcoins!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Je kan nooit genoeg Netcoins hebben!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -2670,12 +2687,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Beurs eigenaar?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If&lt;/span&gt;&lt;span&gt;Wil je Netcoin toevoegen aan je beurs neem gelieve contact op met support@netcoinfoundation.org.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/cryptsyLtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+131"/>
         <source>Shops</source>
         <translation>Winkels</translation>
     </message>
@@ -2689,22 +2706,62 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/SpendNetcoins.png&quot;/&gt;&lt;br/&gt;&lt;span&gt;Zorg dat je altijd de laatste update hebt omdat de winkels soms geupdate worden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+124"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/planetWomanTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/btcIntroTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/essentialOilsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+118"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/proxyshTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/aboveAllHousePlansTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/azariusTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bitstickersTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/amazeTreatsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/uTopTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/progMegastoreTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/tuffwrapsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+63"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/scryptstoreTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+102"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/mastermindTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+141"/>
+        <location line="+206"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/retroTowersTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -2714,13 +2771,8 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+92"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/wrolTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/zetasteamTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
@@ -2729,32 +2781,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/castorTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/amazoniaTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
+        <location line="-1062"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unbAuctionsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/alpenToolTip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/cryptodirectTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
+        <location line="+1112"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/grKreationsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -2764,12 +2796,32 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/piccaTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location line="+141"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/getpryptoTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/meplus1Tooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/influxStrategiesTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/oVPNTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/gekkotelTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Are you a store owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If you would like to accept Netcoins at your store or service then please get in touch at support@netcoinfoundation.org You will be added to the wallet and websites upon the next update.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Ben je een winkel eigenaar?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Als je Netcoin wilt accepteren in je winkel of voor je dienst neem gelieve contact om met support@netcoinfoundation.org .Je wordt dan toegevoegd aan de volgende update.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -2789,7 +2841,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Anonimiteit is een groot probleem voor mensen tegenwoordig omdat bepaalde mensen steeds nieuwsgieriger en indringerig worden.Wil je anonimiteit met Netcoin doneer op het onderstaande adres.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+867"/>
+        <location line="+638"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/diceFortuneTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+229"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Here are some other links you may find useful.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Hier vind je misschien iets wat je interesseert.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -2893,11 +2950,16 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;In:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
+        <location line="+59"/>
+        <source>Pools</source>
+        <translation>Poelen</translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Are you a store owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ffffff;&quot;&gt;If you would like to accept Netcoins at your store or service then please get in touch at support@netcoinfoundation.org You will be added to the wallet and websites upon the next update.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Ben je een winkel eigenaar?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ffffff;&quot;&gt;Als je Netcoin wilt accepteren in je winkel of voor je diensten neem contact op met support@netcoinfoundation.org Je wordt dan toegevoegt met de volgende update.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-3769"/>
+        <location line="-3828"/>
         <source>Charities</source>
         <translation>Goede doelen</translation>
     </message>
@@ -2994,12 +3056,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+58"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/ecasinoTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+63"/>
+        <location line="+121"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/lotteryTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -3387,16 +3444,19 @@ Transactie ID</translatorcomment>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../charitydialog.cpp" line="+21"/>
         <source>Enter % to Give (1-50)</source>
         <translation>Vul % voor donatie (1-50)</translation>
     </message>
     <message>
         <location line="+10"/>
+        <location filename="../charitydialog.cpp" line="+2"/>
         <source>Enter Min Amount (optional)</source>
         <translation>Vul min bedrag in (optioneel)</translation>
     </message>
     <message>
         <location line="+13"/>
+        <location filename="../charitydialog.cpp" line="+1"/>
         <source>Enter Max Amount (optional)</source>
         <translation>Vul max bedrag (optioneel)</translation>
     </message>
@@ -3444,6 +3504,7 @@ Transactie ID</translatorcomment>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../charitydialog.cpp" line="+1"/>
         <source>Enter Change Address (optional)</source>
         <translation>Vul restant adres in(optioneel)</translation>
     </message>
@@ -3473,25 +3534,37 @@ Transactie ID</translatorcomment>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;S4E maakt het mogelijk om automatisch max 50% van je rente te doneren aan een ander adres na conformatie.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Gelieve vul een percentage in en een donatie adres.Min , Max bedrag en restant adress zijn optioneel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../charitydialog.cpp" line="+49"/>
         <source>You are now giving to
 </source>
         <translation>Je doneerd nu aan
 </translation>
     </message>
     <message>
-        <location line="+0"/>
-        <location line="+131"/>
+        <location filename="../charitydialog.cpp" line="-3"/>
+        <source>Enter Charity Address</source>
+        <translation>Vul goede doel adres in</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <location line="+124"/>
         <source>.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="-124"/>
+        <location line="+124"/>
+        <source>Thank you for giving to
+</source>
+        <translation>Bedankt voor doneren aan
+</translation>
+    </message>
+    <message>
+        <location line="-82"/>
         <source>Please unlock wallet before starting stake for charity.</source>
         <translation>Gelieve deblokkeer portemonnee voor je begint met doneren.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>The entered address:
 </source>
         <translation>Het opgegeven adres:
@@ -3499,35 +3572,35 @@ Transactie ID</translatorcomment>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+57"/>
+        <location line="+52"/>
         <source> is invalid.
 Please check the address and try again.</source>
         <translation>is ongeldig
 Gelieve controleer het adres en probeer opnieuw.</translation>
     </message>
     <message>
-        <location line="-47"/>
+        <location line="-43"/>
         <source>Please Enter 1 - 50 for percent.</source>
         <translation>Gelieve vul in 1 - 50 procent.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Min Amount out of Range, please re-enter.</source>
         <translation>Min bedrag buiten bereik, vull ander in.</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+12"/>
         <source>Max Amount out of Range, please re-enter.</source>
         <translation>Max bedrag buiten bereik,vul ander in.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Min Amount &gt; Max Amount, please re-enter.</source>
         <translation>Min bedrag groter dan Max bedrag, vul ander in.</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+8"/>
+        <location line="+11"/>
+        <location line="+7"/>
         <source>The entered change address:
 </source>
         <translation>Het ingevulde restant adres:
@@ -3541,14 +3614,17 @@ Please check the address and try again.</source>
 Gelieve controleer het adres en probeer opnieuw.</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+29"/>
+        <source>Stake for Charity is now off</source>
+        <translation>Stake voor goede doel staat uit</translation>
+    </message>
+    <message>
         <source>You are now sending to
 </source>
         <translation>Je doneerd nu aan
 </translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>Stake For Charity is now off</source>
         <translation>Doneren uitgeschakeld</translation>
     </message>
@@ -3752,12 +3828,12 @@ Gelieve controleer het adres en probeer opnieuw.</translation>
 <context>
     <name>TransactionDescDialog</name>
     <message>
-        <location filename="../forms/transactiondescdialog.ui" line="+462"/>
+        <location filename="../forms/transactiondescdialog.ui" line="+14"/>
         <source>Transaction details</source>
         <translation>Transactie details</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+6"/>
         <source>This pane shows a detailed description of the transaction</source>
         <translation>Dit venster laat een uitgebreide beschrijving van de transactie zien</translation>
     </message>
@@ -3901,13 +3977,13 @@ Gelieve controleer het adres en probeer opnieuw.</translation>
 <context>
     <name>TransactionView</name>
     <message>
-        <location filename="../transactionview.cpp" line="+66"/>
-        <location line="+17"/>
+        <location filename="../transactionview.cpp" line="+65"/>
+        <location line="+16"/>
         <source>All</source>
         <translation>Alles</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-15"/>
         <source>Today</source>
         <translation>Vandaag</translation>
     </message>
@@ -3937,7 +4013,7 @@ Gelieve controleer het adres en probeer opnieuw.</translation>
         <translation>Bereik...</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Received with</source>
         <translation>Ontvangen met</translation>
     </message>
@@ -3962,12 +4038,12 @@ Gelieve controleer het adres en probeer opnieuw.</translation>
         <translation>Anders</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Enter address or label to search</source>
         <translation>Vul adres of label in om te zoeken</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Min amount</source>
         <translation>Min. bedrag</translation>
     </message>
@@ -4817,34 +4893,42 @@ Als het bestand niet bestaat, maak het dan aan, met een alleen-lezen permissie.<
 <context>
     <name>calcDialog</name>
     <message>
-        <location filename="../forms/calcdialog.ui" line="+14"/>
-        <location line="+148"/>
-        <source>Stake Calculator</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-138"/>
         <source>Yearly APR</source>
         <translation>Jaarlijks percentage</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Daily interest:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Dagelijkse rente:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+13"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
+        <location filename="../forms/calcdialog.ui" line="+14"/>
+        <location line="+148"/>
+        <source>PIR Calculator</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="-138"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Yearly APR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Jaarlijks percentage&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Daily interest:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Dagelijkse rente:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
         <location line="+7"/>
-        <source>%</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
@@ -4859,6 +4943,10 @@ Als het bestand niet bestaat, maak het dan aan, met een alleen-lezen permissie.<
     </message>
     <message>
         <location line="+12"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;This calculator gives you the daily return and your yearly APR based off the amount entered.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Enter an amount below and click calculate.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Deze calculator geeft je de dagelijkse rente en percentage weer van het ingevulde bedrag.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Vul een bedrag in en klik bereken.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;This calculator gives you the daily return and your yearly APR based off the amount entered.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Enter an amount below and click calculate.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Deze calculator geeft je dagelijkse rente en jaarljks percentage weer gebaseerd op het ingevulde bedrag.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Vul een bedrag in en klik bereken.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
