@@ -36,18 +36,18 @@
 
 /* Window */
 QMainWindow {
-	border-image: url($themes-dir/default/hm-bg.png);
+	border-image: url($themes-dir/Default/hm-bg.png);
 }
 
 /* Dialog */
 #calcDialog, #RPCConsole, #AboutDialog, #AskPassphraseDialog, #EditAddressDialog, #QRCodeDialog,
 #SignVerifyMessageDialog, #CoinControlDialog, #OptionsDialog, #TransactionDescDialog, #aboutQt{
-	border-image: url($themes-dir/default/diab.jpg);
+	border-image: url($themes-dir/Default/diab.jpg);
 	font-size: 22px;
 }
 
 #coinLogo {
-	qproperty-pixmap: url($themes-dir/default/netcoin.png);
+	qproperty-pixmap: url($themes-dir/Default/netcoin.png);
 	qproperty-alignment: 'AlignBottom | AlignLeft';
 }
 
@@ -241,16 +241,16 @@ QComboBox::drop-down:disabled {
 
 QComboBox::down-arrow {
 	/* Custom dropdown symbol */
-	image: url($themes-dir/default/down-arrow.png);
+	image: url($themes-dir/Default/down-arrow.png);
 }
 
 QComboBox::down-arrow:disabled {
-	image: url($themes-dir/default/down-arrow-disabled.png);
+	image: url($themes-dir/Default/down-arrow-disabled.png);
 }
 
 QComboBox::down-arrow:on {
 	/* Custom dropdown symbol */
-	image: url($themes-dir/default/up-arrow.png);
+	image: url($themes-dir/Default/up-arrow.png);
 }
 
 QComboBox::drop-down {
@@ -290,11 +290,11 @@ QDateTimeEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled {
 }
 
 QDateTimeEdit::down-arrow {
-	image: url($themes-dir/default/calendar.png);
+	image: url($themes-dir/Default/calendar.png);
 }
 
 QDateTimeEdit::down-arrow:disabled {
-	image: url($themes-dir/default/calendar-disabled.png);
+	image: url($themes-dir/Default/calendar-disabled.png);
 }
 
 QDateTimeEdit::drop-down {
@@ -303,11 +303,11 @@ QDateTimeEdit::drop-down {
 }
 
 QDoubleSpinBox::down-button {
-	image: url($themes-dir/default/down-arrow.png);
+	image: url($themes-dir/Default/down-arrow.png);
 }
 
 QDoubleSpinBox::up-button {
-	image: url($themes-dir/default/up-arrow.png);
+	image: url($themes-dir/Default/up-arrow.png);
 }
 
 /* Button */
@@ -368,7 +368,7 @@ QToolBar {
 
 QToolBar::handle {
 	padding: 0px;
-	background-image: url($themes-dir/default/toolbar-handle.png);
+	background-image: url($themes-dir/Default/toolbar-handle.png);
 	background-repeat: repeat-y;
 	background-position: top center;
 }
@@ -409,7 +409,7 @@ QToolBar QToolButton:disabled {
 
 /* Tool buttons - buttons with icons */
 #qt_toolbar_ext_button {
-	qproperty-icon: url($themes-dir/default/arrow-down.png);
+	qproperty-icon: url($themes-dir/Default/arrow-down.png);
 	border-radius: 0px;
 	margin-top: 0px;
 	color: #fff;
@@ -558,35 +558,35 @@ QCheckBox::indicator {
 }
 
 QCheckBox::indicator:unchecked {
-	image: url($themes-dir/default/cb.png);
+	image: url($themes-dir/Default/cb.png);
 }
 
 QCheckBox::indicator:unchecked:hover {
-	image: url($themes-dir/default/cb-hover.png);
+	image: url($themes-dir/Default/cb-hover.png);
 }
 
 QCheckBox::indicator:unchecked:pressed {
-	/*image: url($themes-dir/default/checkbox_unchecked_pressed.png);*/
+	/*image: url($themes-dir/Default/checkbox_unchecked_pressed.png);*/
 }
 
 QCheckBox::indicator:checked {
-	image: url($themes-dir/default/cb-checked.png);
+	image: url($themes-dir/Default/cb-checked.png);
 }
 
 QCheckBox::indicator:checked:hover {
-	image: url($themes-dir/default/cb-checked-hover.png);
+	image: url($themes-dir/Default/cb-checked-hover.png);
 }
 
 QCheckBox::indicator:checked:pressed {
-	/*image: url($themes-dir/default/checkbox_checked_pressed.png);*/
+	/*image: url($themes-dir/Default/checkbox_checked_pressed.png);*/
 }
 
 QCheckBox::indicator:indeterminate:hover {
-	/*image: url($themes-dir/default/checkbox_indeterminate_hover.png);*/
+	/*image: url($themes-dir/Default/checkbox_indeterminate_hover.png);*/
 }
 
 QCheckBox::indicator:indeterminate:pressed {
-	/*image: url($themes-dir/default/checkbox_indeterminate_pressed.png);*/
+	/*image: url($themes-dir/Default/checkbox_indeterminate_pressed.png);*/
 }
 
 /* Radio button */
@@ -600,27 +600,27 @@ QRadioButton::indicator {
 }
 
 QRadioButton::indicator::unchecked {
-	image: url($themes-dir/default/r.png);
+	image: url($themes-dir/Default/r.png);
 }
 
 QRadioButton::indicator:unchecked:hover {
-	image: url($themes-dir/default/r-hover.png);
+	image: url($themes-dir/Default/r-hover.png);
 }
 
 QRadioButton::indicator:unchecked:pressed {
-	/*image: url($themes-dir/default/rpressed.png);*/
+	/*image: url($themes-dir/Default/rpressed.png);*/
 }
 
 QRadioButton::indicator::checked {
-	image: url($themes-dir/default/r-checked.png);
+	image: url($themes-dir/Default/r-checked.png);
 }
 
 QRadioButton::indicator:checked:hover {
-	image: url($themes-dir/default/r-checked-hover.png);
+	image: url($themes-dir/Default/r-checked-hover.png);
 }
 
 QRadioButton::indicator:checked:pressed {
-	/*image: url($themes-dir/default/radiobutton_checked_pressed.png);*/
+	/*image: url($themes-dir/Default/radiobutton_checked_pressed.png);*/
 }
 
 /* Tabs */
@@ -717,7 +717,7 @@ QCalendarWidget QAbstractItemView:disabled { color: $main-color-xd }
 
 /* Window resize grip */
 QSizeGrip {
-	image: url($themes-dir/default/sizegrip.png);
+	image: url($themes-dir/Default/sizegrip.png);
 	width: 16px;
 	height: 16px;
 }
