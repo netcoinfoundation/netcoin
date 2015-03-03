@@ -50,7 +50,7 @@ Read all about Netcoins "Fair Weight" method.
 
 http://forum.netcoinfoundation.org/thread/719/netcoin-weight-protocol-another-clone?page=1&scrollTo=10447
 
-Read about Netcoins "POSV" method
+Read about Netcoins "OWI" method
 
 http://forum.netcoinfoundation.org/thread/721/posv-rewards-blockchain-guardians-netcoin
 	

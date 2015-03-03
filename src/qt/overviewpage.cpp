@@ -153,12 +153,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
-
-    //set up a timer to auto refresh every 30 seconds to update the statistics
-    QTimer *timerNetworkStats = new QTimer();
-    connect(timerNetworkStats, SIGNAL(timeout()), this, SLOT(updateStatistics()));
-    timerNetworkStats->start(30 * 1000);
-
 }
 
 
@@ -284,6 +278,11 @@ void OverviewPage::setModel(WalletModel *model)
 
     // update statistics
     updateStatistics();
+
+    //set up a timer to auto refresh every 30 seconds to update the statistics
+    QTimer *timerNetworkStats = new QTimer();
+    connect(timerNetworkStats, SIGNAL(timeout()), this, SLOT(updateStatistics()));
+    timerNetworkStats->start(30 * 1000);
 
     // Unlock wallet button
     WalletModel::EncryptionStatus status = model->getEncryptionStatus();
