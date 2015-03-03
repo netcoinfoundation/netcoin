@@ -1248,7 +1248,7 @@ bool CWallet::StakeForCharity()
             }
             else
             {
-                SendMoneyToDestination(strStakeForCharityAddress.Get(), nNet, wtx, true, false);
+                SendMoneyToDestination(strStakeForCharityAddress.Get(), nNet, wtx, false, "", true);
                 nPrevS4CHeight = nBestHeight;
             }
         }
