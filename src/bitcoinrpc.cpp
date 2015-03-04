@@ -310,7 +310,7 @@ static const CRPCCommand vRPCCommands[] =
     { "resendtx",               &resendtx,               false,  true},
     { "makekeypair",            &makekeypair,            false,  true},
     { "sendalert",              &sendalert,              false,  false},
-	{ "stakeforcharity",        &stakeforcharity,        false,  false },
+	{ "stakeforcharity",        &stakeforcharity,        false,  false }
 };
 
 CRPCTable::CRPCTable()
@@ -1096,10 +1096,11 @@ json_spirit::Value CRPCTable::execute(const std::string &strMethod, const json_s
         {
             if (pcmd->unlocked)
                 result = pcmd->actor(params, false);
-            else {
-            LOCK2(cs_main, pwalletMain->cs_wallet);
-            result = pcmd->actor(params, false);
-        }
+            else 
+            {
+                LOCK2(cs_main, pwalletMain->cs_wallet);
+                result = pcmd->actor(params, false);
+            }
         }
         return result;
     }
