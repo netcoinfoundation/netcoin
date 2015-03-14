@@ -1972,7 +1972,7 @@ p, li { white-space: pre-wrap; }
         <translation>niet gesynchroniseerd</translation>
     </message>
     <message numerus="yes">
-        <location line="+66"/>
+        <location line="+60"/>
         <source>%n second(s)</source>
         <translation>
             <numerusform>%n seconden</numerusform>
@@ -2601,7 +2601,7 @@ p, li { white-space: pre-wrap; }
         <translation>Betaal &amp;Aan:</translation>
     </message>
     <message>
-        <location filename="../sendcoinsentry.cpp" line="+25"/>
+        <location filename="../sendcoinsentry.cpp" line="+26"/>
         <source>Enter a label for this address to add it to your address book</source>
         <translation>Vul een label in voor dit adres om het toe te voegen aan je adresboek</translation>
     </message>
@@ -3773,6 +3773,10 @@ Gelieve controleer het adres en probeer opnieuw.</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Generated coins must mature 70 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
+        <translation>Gegenereerde munten moeten 70 blokken oud zijn voor je ze kunt gebruiken.Als een blok gegenereerd is word het naar het netwerk verzonden om opgenomen te worden in de blokketen.Wanneer een blok geweigerd word veranderd de status van het blok naar &quot;niet geaccepteerd&quot; en krijg je geen beloning.Dit gebeurd sporadisch wanneer verschillende blokken bijna tegelijk gegenereerd worden.</translation>
+    </message>
+    <message>
         <source>Generated coins must mature 5o blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
         <translation>Gegenereerde munten moeten 50 blokken oud zijn voor je ze kunt gebruiken.Als een blok gegenereerd is word het naar het netwerk verzonden om opgenomen te worden in de blokketen.Wanneer een blok geweigerd word veranderd de status van het blok naar &quot;niet geaccepteerd&quot; en krijg je geen beloning.Dit gebeurd sporadisch wanneer verschillende blokken bijna tegelijk gegenereerd worden.</translation>
     </message>
