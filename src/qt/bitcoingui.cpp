@@ -300,7 +300,7 @@ void BitcoinGUI::createActions()
 
     calcAction = new QAction(QIcon(":/icons/bitcoin"), tr("&PIR Calculator"), this);
     calcAction->setToolTip(tr("Open PIR Calculator"));
-    calcAction->setMenuRole(QAction::AboutRole);
+    //calcAction->setMenuRole(QAction::AboutRole);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
