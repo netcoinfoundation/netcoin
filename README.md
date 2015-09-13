@@ -2,7 +2,7 @@ NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investm
 
 
  - The default ports: Connection 11310, and RPC 11311
- - No premine
+ - No premine 
 
 POW Details
 
@@ -54,6 +54,7 @@ Read about Netcoins "OWI" method
 
 http://forum.netcoinfoundation.org/thread/721/posv-rewards-blockchain-guardians-netcoin
 	
+Go NET :)
 	
 Development process
 ===================
