@@ -38,7 +38,7 @@ PIR Values Year 1
           signing lots of POS blocks
 
  - 6 confirmations for transaction
- - 50 confirmations for minted blocks
+ - 70 confirmations for minted blocks
 
  - POSV - stake once each month to earn highest possible rewards
           incentivises running full nodes to increase POS security
