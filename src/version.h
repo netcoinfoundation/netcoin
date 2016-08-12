@@ -33,6 +33,11 @@ extern const std::string CLIENT_DATE;
 static const int BLOCKINDEX_VERSION_POS = 2010000;
 
 //
+// database format versioning
+//
+static const int DATABASE_VERSION = 70501;
+
+//
 // network protocol versioning
 //
 

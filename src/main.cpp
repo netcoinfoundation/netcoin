@@ -1213,7 +1213,7 @@ unsigned int static GetNextWorkRequired_V1(const CBlockIndex* pindexLast, const 
     {
         // Special difficulty rule for testnet:
         if (fTestNet)
-        {
+      {
             // If the new block's timestamp is more than 2*nTargetSpacing minutes
             // then allow mining of a min-difficulty block.
             if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
@@ -2494,7 +2494,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
         if (!SetBestChain(txdb, pindexNew))
             return false;
 
-    txdb.Close();
+    // txdb.Close();
 
     if (pindexNew == pindexBest)
     {
