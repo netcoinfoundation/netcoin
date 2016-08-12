@@ -367,7 +367,7 @@ void OverviewPage::updateStatistics()
     int pPawrate = GetPoWMHashPS();
     double pPawrate2 = 0.000;
     int nHeight = pindexBest->nHeight;
-    double nSubsidy = GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/COIN;
+    double nSubsidy = double (GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/ double (COIN));
     uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
     pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
     uint64_t nNetworkWeight = GetPoSKernelPS();
@@ -411,6 +411,19 @@ void OverviewPage::updateStatistics()
         ui->diffBox->setText("<b><font color=\"red\">" + hardness + "</font></b>");
     } 
     else 
+    {
+        ui->diffBox->setText(hardness);
+    }
+
+    if(pHardness2 > hardnessPrevious2)
+    {
+        ui->diffBox2->setText("<b><font color=\"green\">" + hardness2 + "</font></b>");
+    }
+    else if(pHardness2 < hardnessPrevious2)
+    {
+        ui->diffBox2->setText("<b><font color=\"red\">" + hardness2 + "</font></b>");
+    }
+    else
     {
         ui->diffBox->setText(hardness);
     }

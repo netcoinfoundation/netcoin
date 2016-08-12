@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+#include <stdint.h>
+
 class TransactionTableModel;
 class ClientModel;
 class WalletModel;
@@ -112,6 +114,9 @@ private:
     RPCConsole *rpcConsole;
 
     QMovie *syncIconMovie;
+
+    uint64_t nWeight;
+
 	bool fStakeForCharity;
 	bool fS4CNotificator;
 	int nCharityPercent;
@@ -210,6 +215,7 @@ private slots:
     /** simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
 
+    void updateWeight();
     void updateStakingIcon();
 void charityClicked(QString addr = "");
     /** Load external QSS stylesheet */
