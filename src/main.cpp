@@ -3406,7 +3406,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         // Change version
         pfrom->PushMessage("verack");
-        pfrom->vSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+        // pfrom->vSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+        pfrom->ssSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
 
         if (!pfrom->fInbound)
         {
@@ -4029,9 +4030,11 @@ bool ProcessMessages(CNode* pfrom)
     // for (; nMsgPos < pfrom->vRecvMsg.size(); nMsgPos++)
     //{
     std::deque<CNetMessage>::iterator it = pfrom->vRecvMsg.begin();
-    while (it != pfrom->vRecvMsg.end()) {
+    // while (it != pfrom->vRecvMsg.end()) {
+    while (!pfrom->fDisconnect && it != pfrom->vRecvMsg.end()) {
         // Don't bother if send buffer is too full to respond anyway
-        if (pfrom->vSend.size() >= SendBufferSize())
+        // if (pfrom->vSend.size() >= SendBufferSize())
+        if (pfrom->nSendSize >= SendBufferSize())
             break;
   /*
         // Scan for message start
@@ -4163,7 +4166,11 @@ bool ProcessMessages(CNode* pfrom)
                               pfrom->vRecvMsg.begin() + nMsgPos);
     return true;
  */
-    pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+    // pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+    // In case the connection got shut down, its receive buffer was wiped
+     if (!pfrom->fDisconnect)
+         pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+
     return fOk;
 }
 
@@ -4178,7 +4185,8 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
         // Keep-alive ping. We send a nonce of zero because we don't use it anywhere
         // right now.
-        if (pto->nLastSend && GetTime() - pto->nLastSend > 30 * 60 && pto->vSend.empty()) {
+        // if (pto->nLastSend && GetTime() - pto->nLastSend > 30 * 60 && pto->vSend.empty()) {
+        if (pto->nLastSend && GetTime() - pto->nLastSend > 30 * 60 && pto->vSendMsg.empty()) {
             uint64_t nonce = 0;
             if (pto->nVersion > BIP0031_VERSION)
                 pto->PushMessage("ping", nonce);
