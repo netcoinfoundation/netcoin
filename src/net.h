@@ -27,7 +27,8 @@ extern int nBestHeight;
 
 
 
-inline unsigned int ReceiveBufferSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
+// inline unsigned int ReceiveBufferSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
+inline unsigned int ReceiveFloodSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
 inline unsigned int SendBufferSize() { return 1000*GetArg("-maxsendbuffer", 1*1000); }
 
 void AddOneShot(std::string strDest);
@@ -42,6 +43,7 @@ unsigned short GetListenPort();
 bool BindListenPort(const CService &bindAddr, std::string& strError=REF(std::string()));
 void StartNode(void* parg);
 bool StopNode();
+void SocketSendData(CNode *pnode);
 
 enum
 {
@@ -130,6 +132,45 @@ extern std::map<CInv, int64_t> mapAlreadyAskedFor;
 
 
 
+class CNetMessage {
+public:
+    bool in_data;                   // parsing header (false) or data (true)
+
+    CDataStream hdrbuf;             // partially received header
+    CMessageHeader hdr;             // complete header
+    unsigned int nHdrPos;
+
+    CDataStream vRecv;              // received message data
+    unsigned int nDataPos;
+
+    // int64_t nTime;                  // time (in microseconds) of message receipt.
+
+    CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn) {
+        hdrbuf.resize(24);
+        in_data = false;
+        nHdrPos = 0;
+        nDataPos = 0;
+        // nTime = 0;
+    }
+
+    bool complete() const
+    {
+        if (!in_data)
+            return false;
+        return (hdr.nMessageSize == nDataPos);
+    }
+
+    void SetVersion(int nVersionIn)
+    {
+        hdrbuf.SetVersion(nVersionIn);
+        vRecv.SetVersion(nVersionIn);
+    }
+
+    int readHeader(const char *pch, unsigned int nBytes);
+    int readData(const char *pch, unsigned int nBytes);
+};
+
+
 
 class CNodeStats
 {
@@ -159,9 +200,15 @@ public:
     uint64_t nServices;
     SOCKET hSocket;
     CDataStream vSend;
-    CDataStream vRecv;
+    // CDataStream vRecv;
     CCriticalSection cs_vSend;
-    CCriticalSection cs_vRecv;
+    // CCriticalSection cs_vRecv;
+
+    // std::vector<CNetMessage> vRecvMsg;
+    std::deque<CNetMessage> vRecvMsg;
+    CCriticalSection cs_vRecvMsg;
+    int nRecvVersion;
+
     int64_t nLastSend;
     int64_t nLastRecv;
     int64_t nLastSendEmpty;
@@ -212,10 +259,12 @@ public:
     CCriticalSection cs_inventory;
     std::multimap<int64_t, CInv> mapAskFor;
 
-    CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION), vRecv(SER_NETWORK, MIN_PROTO_VERSION)
+    // CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION), vRecv(SER_NETWORK, MIN_PROTO_VERSION)
+    CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION)
     {
         nServices = 0;
         hSocket = hSocketIn;
+        nRecvVersion = MIN_PROTO_VERSION;
         nLastSend = 0;
         nLastRecv = 0;
         nLastSendEmpty = GetTime();
@@ -267,6 +316,32 @@ public:
     {
         return std::max(nRefCount, 0) + (GetTime() < nReleaseTime ? 1 : 0);
     }
+
+
+    // requires LOCK(cs_vRecvMsg)
+    unsigned int GetTotalRecvSize()
+    {
+        unsigned int total = 0;
+        BOOST_FOREACH(const CNetMessage &msg, vRecvMsg)
+            total += msg.vRecv.size() + 24;
+        // for (unsigned int i = 0; i < vRecvMsg.size(); i++)
+        //    total += vRecvMsg[i].vRecv.size();
+        return total;
+    }
+
+    // requires LOCK(cs_vRecvMsg)
+    bool ReceiveMsgBytes(const char *pch, unsigned int nBytes);
+
+    // requires LOCK(cs_vRecvMsg)
+    void SetRecvVersion(int nVersionIn)
+    {
+        nRecvVersion = nVersionIn;
+         BOOST_FOREACH(CNetMessage &msg, vRecvMsg)
+            msg.SetVersion(nVersionIn);
+        // for (unsigned int i = 0; i < vRecvMsg.size(); i++)
+        //     vRecvMsg[i].SetVersion(nVersionIn);
+    }
+
 
     CNode* AddRef(int64_t nTimeout=0)
     {
@@ -389,6 +464,10 @@ public:
         if (fDebug) {
             printf("(%d bytes)\n", nSize);
         }
+
+        // If write queue empty, attempt "optimistic write"
+        if (nHeaderStart == 0)
+             SocketSendData(this);
 
         nHeaderStart = -1;
         nMessageStart = -1;

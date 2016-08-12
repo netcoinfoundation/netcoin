@@ -3482,7 +3482,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
     else if (strCommand == "verack")
     {
-        pfrom->vRecv.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+        // pfrom->vRecv.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+        pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
     }
 
 
@@ -4003,11 +4004,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
 bool ProcessMessages(CNode* pfrom)
 {
-    CDataStream& vRecv = pfrom->vRecv;
-    if (vRecv.empty())
-        return true;
+    // CDataStream& vRecv = pfrom->vRecv;
+    // if (vRecv.empty())
+    // if (pfrom->vRecvMsg.empty())
+    //    return true;
     //if (fDebug)
     //    printf("ProcessMessages(%u bytes)\n", vRecv.size());
+    //    printf("ProcessMessages(%zu messages)\n", pfrom->vRecvMsg.size());
 
     //
     // Message format
@@ -4018,12 +4021,19 @@ bool ProcessMessages(CNode* pfrom)
     //  (x) data
     //
 
-    while (true)
-    {
+    // while (true)
+
+    bool fOk = true;
+
+    // unsigned int nMsgPos = 0;
+    // for (; nMsgPos < pfrom->vRecvMsg.size(); nMsgPos++)
+    //{
+    std::deque<CNetMessage>::iterator it = pfrom->vRecvMsg.begin();
+    while (it != pfrom->vRecvMsg.end()) {
         // Don't bother if send buffer is too full to respond anyway
         if (pfrom->vSend.size() >= SendBufferSize())
             break;
-
+  /*
         // Scan for message start
         CDataStream::iterator pstart = search(vRecv.begin(), vRecv.end(), BEGIN(pchMessageStart), END(pchMessageStart));
         int nHeaderSize = vRecv.GetSerializeSize(CMessageHeader());
@@ -4034,16 +4044,40 @@ bool ProcessMessages(CNode* pfrom)
                 printf("\n\nPROCESSMESSAGE MESSAGESTART NOT FOUND\n\n");
                 vRecv.erase(vRecv.begin(), vRecv.end() - nHeaderSize);
             }
+   */
+        // get next message; end, if an incomplete message is found
+        CNetMessage& msg = *it;
+        // CNetMessage& msg = pfrom->vRecvMsg[nMsgPos];
+
+        //if (fDebug)
+        //    printf("ProcessMessages(message %u msgsz, %zu bytes, complete:%s)\n",
+        //            msg.hdr.nMessageSize, msg.vRecv.size(),
+        //            msg.complete() ? "Y" : "N");
+
+        // end, if an incomplete message is found
+        if (!msg.complete())
+            break;
+
+        // at this point, any failure means we can delete the current message
+        it++;
+
+        // Scan for message start
+        if (memcmp(msg.hdr.pchMessageStart, pchMessageStart, sizeof(pchMessageStart)) != 0) {
+            printf("\n\nPROCESSMESSAGE: INVALID MESSAGESTART\n\n");
+            // return false;
+            fOk = false;
             break;
         }
-        if (pstart - vRecv.begin() > 0)
-            printf("\n\nPROCESSMESSAGE SKIPPED %"PRIpdd" BYTES\n\n", pstart - vRecv.begin());
-        vRecv.erase(vRecv.begin(), pstart);
+
+        // if (pstart - vRecv.begin() > 0)
+        //    printf("\n\nPROCESSMESSAGE SKIPPED %"PRIpdd" BYTES\n\n", pstart - vRecv.begin());
+        // vRecv.erase(vRecv.begin(), pstart);
 
         // Read header
-        vector<char> vHeaderSave(vRecv.begin(), vRecv.begin() + nHeaderSize);
-        CMessageHeader hdr;
-        vRecv >> hdr;
+        // vector<char> vHeaderSave(vRecv.begin(), vRecv.begin() + nHeaderSize);
+        // CMessageHeader hdr;
+        // vRecv >> hdr;
+        CMessageHeader& hdr = msg.hdr;
         if (!hdr.IsValid())
         {
             printf("\n\nPROCESSMESSAGE: ERRORS IN HEADER %s\n\n\n", hdr.GetCommand().c_str());
@@ -4053,7 +4087,7 @@ bool ProcessMessages(CNode* pfrom)
 
         // Message size
         unsigned int nMessageSize = hdr.nMessageSize;
-        if (nMessageSize > MAX_SIZE)
+  /*      if (nMessageSize > MAX_SIZE)
         {
             printf("ProcessMessages(%s, %u bytes) : nMessageSize > MAX_SIZE\n", strCommand.c_str(), nMessageSize);
             continue;
@@ -4064,8 +4098,10 @@ bool ProcessMessages(CNode* pfrom)
             vRecv.insert(vRecv.begin(), vHeaderSave.begin(), vHeaderSave.end());
             break;
         }
+  */
 
         // Checksum
+        CDataStream& vRecv = msg.vRecv;
         uint256 hash = Hash(vRecv.begin(), vRecv.begin() + nMessageSize);
         unsigned int nChecksum = 0;
         memcpy(&nChecksum, &hash, sizeof(nChecksum));
@@ -4077,8 +4113,8 @@ bool ProcessMessages(CNode* pfrom)
         }
 
         // Copy message to its own buffer
-        CDataStream vMsg(vRecv.begin(), vRecv.begin() + nMessageSize, vRecv.nType, vRecv.nVersion);
-        vRecv.ignore(nMessageSize);
+        // CDataStream vMsg(vRecv.begin(), vRecv.begin() + nMessageSize, vRecv.nType, vRecv.nVersion);
+        // vRecv.ignore(nMessageSize);
 
         // Process message
         bool fRet = false;
@@ -4086,10 +4122,12 @@ bool ProcessMessages(CNode* pfrom)
         {
             {
                 LOCK(cs_main);
-                fRet = ProcessMessage(pfrom, strCommand, vMsg);
+                // fRet = ProcessMessage(pfrom, strCommand, vMsg);
+                fRet = ProcessMessage(pfrom, strCommand, vRecv);
             }
             if (fShutdown)
-                return true;
+                // return true;
+                break;
         }
         catch (std::ios_base::failure& e)
         {
@@ -4118,8 +4156,15 @@ bool ProcessMessages(CNode* pfrom)
             printf("ProcessMessage(%s, %u bytes) FAILED\n", strCommand.c_str(), nMessageSize);
     }
 
-    vRecv.Compact();
+    // vRecv.Compact();
+ /*   // remove processed messages; one incomplete message may remain
+    if (nMsgPos > 0)
+        pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(),
+                              pfrom->vRecvMsg.begin() + nMsgPos);
     return true;
+ */
+    pfrom->vRecvMsg.erase(pfrom->vRecvMsg.begin(), it);
+    return fOk;
 }
 
 
