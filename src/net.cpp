@@ -837,11 +837,14 @@ void ThreadSocketHandler2(void* parg)
             }
             else if (nInbound >= GetArg("-maxconnections", 125) - MAX_OUTBOUND_CONNECTIONS)
             {
+             /*
                 {
                     LOCK(cs_setservAddNodeAddresses);
                     if (!setservAddNodeAddresses.count(addr))
                         closesocket(hSocket);
                 }
+              */
+                closesocket(hSocket);
             }
             else if (CNode::IsBanned(addr))
             {
