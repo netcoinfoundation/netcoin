@@ -1406,10 +1406,36 @@ void ThreadDNSAddressSeed2(void* parg)
 
 
 
-
+/*
 unsigned int pnSeed[] =
 {
 };
+*/
+
+struct SeedSpec6 {
+    uint8_t addr[16];
+    uint16_t port;
+};
+
+#include "chainparamsseeds.h"
+
+// Convert the pnSeeds6 array into usable address objects.
+static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data, unsigned int count)
+{
+    // It'll only connect to one or two seed nodes because once it connects,
+    // it'll get a pile of addresses with newer timestamps.
+    // Seed nodes are given a random 'last seen time' of between one and two
+    // weeks ago.
+    const int64_t nOneWeek = 7*24*60*60;
+    for (unsigned int i = 0; i < count; i++)
+    {
+        struct in6_addr ip;
+        memcpy(&ip, data[i].addr, sizeof(ip));
+        CAddress addr(CService(ip, data[i].port));
+        addr.nTime = GetTime() - GetRand(nOneWeek) - nOneWeek;
+        vSeedsOut.push_back(addr);
+    }
+}
 
 void DumpAddresses()
 {
@@ -1561,7 +1587,7 @@ void ThreadOpenConnections2(void* parg)
         if (addrman.size()==0 && (GetTime() - nStart > 60) && !fTestNet)
         {
             std::vector<CAddress> vAdd;
-            for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
+   /*         for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
             {
                 // It'll only connect to one or two seed nodes because once it connects,
                 // it'll get a pile of addresses with newer timestamps.
@@ -1574,6 +1600,8 @@ void ThreadOpenConnections2(void* parg)
                 addr.nTime = GetTime()-GetRand(nOneWeek)-nOneWeek;
                 vAdd.push_back(addr);
             }
+    */
+            convertSeed6(vAdd, pnSeed6_main, ARRAYLEN(pnSeed6_main));
             addrman.Add(vAdd, CNetAddr("127.0.0.1"));
         }
 
