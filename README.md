@@ -8,8 +8,8 @@ POW Details
 
  - 120 seconds block time POW
  - scrypt algorithm
- - 384 POW coins per block. Halves every 129600 blocks (3 months)
- - 8X reward random super block each hour
+ - 384 POW coins per block. Halves every 129600 blocks (3 months) -Currently 6.25 NET reward
+ - 8X reward random super block each hour -Currently 50 NET reward
  - difficulty retargets on every block
 
 
@@ -21,15 +21,16 @@ POSV Details
           the coins staked on a sliding scale using the
    following thresholds
 
-PIR Values Year 1
-
+PIR Values  -- Currently on year 2 
+ Year 1 (ended Block # 945,600)
  NET Staked APR %
- 0               10
- 1,000           15
- 10,000          20
- 100,000         30
- 1,000,000       80
- 10,000,000+     100
+ |      -Year 1-    Ended       | Year 2 Ends Block 1,471,200  | Year 3 Ends Block #1,996,800 |
+ 1               10  %          |  1                  20 %     |  1                 20 %      |
+ 1,000           15  %          |  1,000              25 %     |  1,000             22 %      |
+ 10,000          20  %          |  10,000             30 %     |  10,000            24 %      |
+ 100,000         30  %          |  100,000            35 %     |  100,000           26 %      |
+ 1,000,000       80  %          |  1,000,000          40 %     |  1,000,000         28 %      |
+ 10,000,000+     100 %          |  10,000,000+        45 %     |  10,000,000+       30 %      |
 
  - 120 seconds block time POS
  - 1 hour minimum age for staking.  30 days max age.
@@ -48,11 +49,11 @@ Articles of interest
 ====================
 Read all about Netcoins "Fair Weight" method.
 
-http://forum.netcoinfoundation.org/thread/719/netcoin-weight-protocol-another-clone?page=1&scrollTo=10447
+http://cryptomunity.boards.net/thread/719/netcoin-weight-protocol-another-clone?page=1&scrollTo=10447
 
 Read about Netcoins "OWI" method
 
-http://forum.netcoinfoundation.org/thread/721/posv-rewards-blockchain-guardians-netcoin
+http://cryptomunity.boards.net/thread/721/posv-rewards-blockchain-guardians-netcoin
 	
 Go NET :)
 	
