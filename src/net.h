@@ -25,7 +25,10 @@ class CNode;
 class CBlockIndex;
 extern int nBestHeight;
 
-
+/** Time between pings automatically sent out for latency probing and keepalive (in seconds). */
+static const int PING_INTERVAL = 2 * 60;
+/** Time after which to disconnect, after waiting for a ping response (or inactivity). */
+static const int TIMEOUT_INTERVAL = 20 * 60;
 
 // inline unsigned int ReceiveBufferSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
 inline unsigned int ReceiveFloodSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
@@ -145,14 +148,14 @@ public:
     CDataStream vRecv;              // received message data
     unsigned int nDataPos;
 
-    // int64_t nTime;                  // time (in microseconds) of message receipt.
+    int64_t nTime;                  // time (in microseconds) of message receipt.
 
     CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn) {
         hdrbuf.resize(24);
         in_data = false;
         nHdrPos = 0;
         nDataPos = 0;
-        // nTime = 0;
+        nTime = 0;
     }
 
     bool complete() const
@@ -188,6 +191,8 @@ public:
     int64 nReleaseTime;
     int nStartingHeight;
     int nMisbehavior;
+    double dPingTime;
+    double dPingWait;
 };
 
 
@@ -217,7 +222,7 @@ public:
 
     int64_t nLastSend;
     int64_t nLastRecv;
-    int64_t nLastSendEmpty;
+    // int64_t nLastSendEmpty;
     int64_t nTimeConnected;
     // int nHeaderStart;
     // unsigned int nMessageStart;
@@ -266,6 +271,16 @@ public:
     CCriticalSection cs_inventory;
     std::multimap<int64_t, CInv> mapAskFor;
 
+    // Ping time measurement.
+    // The pong reply we're expecting, or 0 if no pong expected.
+    uint64_t nPingNonceSent;
+    // Time (in usec) the last ping was sent, or 0 if no ping was ever sent.
+    int64_t nPingUsecStart;
+    // Last measured round-trip time.
+    int64_t nPingUsecTime;
+    // Whether a ping is requested.
+    bool fPingQueued;
+
     // CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION), vRecv(SER_NETWORK, MIN_PROTO_VERSION)
     // CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION)
     // CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : ssSend(SER_NETWORK, MIN_PROTO_VERSION)
@@ -278,7 +293,7 @@ public:
         nRecvVersion = INIT_PROTO_VERSION;
         nLastSend = 0;
         nLastRecv = 0;
-        nLastSendEmpty = GetTime();
+        // nLastSendEmpty = GetTime();
         nTimeConnected = GetTime();
         // nHeaderStart = -1;
         // nMessageStart = -1;
@@ -304,6 +319,10 @@ public:
         nMisbehavior = 0;
         hashCheckpointKnown = 0;
         setInventoryKnown.max_size(SendBufferSize() / 1000);
+        nPingNonceSent = 0;
+        nPingUsecStart = 0;
+        nPingUsecTime = 0;
+        fPingQueued = false;
 
         // Be shy and don't send version until we hear
         if (hSocket != INVALID_SOCKET && !fInbound)
