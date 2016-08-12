@@ -1,7 +1,8 @@
 /**
- * Girly Heart Qt Theme - v1.0
+ * World Qt Theme - v1.0
  * Created: 22/2/2015
  * Author: tepelstreeltje (Based on HyperBlue by Zeewolf) 
+ * ##Netcoin (freenode)
  */
 
 /**
@@ -10,12 +11,35 @@
  * http://qt-project.org/doc/qt-4.8/stylesheet-examples.html
  */
 
+/**
+ * HOW TO MAKE CUSTOM:
+ * Add .jpg image in the custom folder.
+ * For other formats change the .jpg in Overview and Dialogs.
+ * (Just after [VARS} )
+ * For overview page name image: custom.
+ * For dialogs-> name image: custom1.
+ * Find a color hex(search google)for the text and change      
+ * -- $text-color = #hex
+ * -- $accent-color = #hex
+ * -- $main-color-xl = #hex
+ * Those 3 vars are usually enough to get a nice looking costum 
+ * wallet but you can always play with the other vars.
+ * To change the font size change font-size px in: 
+ * -- QDialog
+ * -- QGroupbox
+ * -- QWidget
+ * -- QLabel
+ * -- QToolBar QToolButton
+ * Reload theme to see the result after a change.
+ * Happy customizing :)
+ */ 
+
  
 /** [VARS]
-	$text-color = #EBD6FF
+	$text-color = #11A5EF
 	$main-color-l = #142930
-	$main-color-xl = #EBD6FF
-	$main-color-d = #342D7E
+	$main-color-xl = #6D7B8D
+	$main-color-d = #0E5017
 	$main-color-xd = #0C090A
 	$main-color-transparent-0 = rgba(37,56,60,50)
 	$main-color-transparent-1 = rgba(37,56,60,100)
@@ -24,7 +48,7 @@
 	$shade-transparent-2 = rgba(0,0,0,50)
 	$main-color = #25383C
 	$text-grey-d = #0c191d
-	$accent-color = #FFB2FF
+	$accent-color = #11A5EF
 	$brightest-color = #fff
 	$input-border-color = #0c191d
 	$header-font = "Verdana, Geneva, sans-serif"
@@ -34,15 +58,15 @@
 
 * { gridline-color: $main-color }
 
-/* Window */
+/* Overview */
  QMainWindow {
-	border-image: url($themes-dir/girly heart/heart.png);
+	border-image: url($themes-dir/Net-lightning/lightning_cell.png);
 }
 
-/* Dialog */
+/* Dialogs */
 QDialog, QTableView{
-	border-image: url($themes-dir/world/black.png);
-     font-size: 14px;
+	border-image: url($themes-dir/default/diab.png);
+     font-size: 14px
 }
 
 /* Group Box */
@@ -55,6 +79,7 @@ QGroupBox {
 QWidget{
      font-size: 14px
 }
+
 
 /* Frames */
 QFrame {	
@@ -74,7 +99,7 @@ QStatusBar::item {
 /* Label */
 QLabel {
 	color: $text-color;
-     font-size: 14px;
+     font-size: 14px
 }
 
 QLabel[error="true"], QLabel[status="error"] {
@@ -424,7 +449,9 @@ QProgressBar {
 }
 
 QProgressBar::chunk {
-	background-color: $main-color-xd;
+	background-color: rgba(136,193,208,80);
+	width: 3px;
+	margin: 0.5px;
 }
 
 /* Table */

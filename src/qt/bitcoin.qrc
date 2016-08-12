@@ -100,6 +100,15 @@
         <file>res/images/bittrexNetBtc.png</file>
         <file>res/images/bterNetBtc.png</file>
         <file>res/images/crytpsyNetXrpIng.png</file>
+        <file>res/images/Cryptopia.png</file>
+        <file>res/images/Cryptopia2.png</file>
+        <file>res/images/BTCPool.png</file>
+        <file>res/images/Forum.png</file>
+        <file>res/images/coinserver2.png</file>
+        <file>res/images/coinserver1.png</file>
+        <file>res/images/payservices.png</file>
+        <file>res/images/foundation.png</file>
+        <file>res/images/Site.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="update_spinner">res/movies/update_spinner.mng</file>
@@ -192,6 +201,15 @@
         <file>res/tooltips/gekkotelTooltip.png</file>
         <file>res/tooltips/azariusTooltip.png</file>
         <file>res/tooltips/diceFortuneTooltip.png</file>
+        <file>res/tooltips/bittrexBtcTooltip.png</file>
+        <file>res/tooltips/btcpoolBtcTooltip.png</file>
+        <file>res/tooltips/cryptopiaBtcTooltip.png</file>
+        <file>res/tooltips/CoinserverTooltip.png</file>
+        <file>res/tooltips/coinpayments2Tooltip.png</file>
+        <file>res/tooltips/exchangeTooltip.png</file>
+        <file>res/tooltips/coinserverexpTooltip.png</file>
+        <file>res/tooltips/infositeTooltip.png</file>
+        <file>res/tooltips/foundationsiteTooltip.png</file>
     </qresource>
     <qresource prefix="/">
         <file>res/images/netcoinPool.png</file>

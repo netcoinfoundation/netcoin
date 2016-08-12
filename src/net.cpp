@@ -502,7 +502,8 @@ CNode* FindNode(const CService& addr)
     return NULL;
 }
 
-CNode* ConnectNode(CAddress addrConnect, const char *pszDest, int64 nTimeout)
+// CNode* ConnectNode(CAddress addrConnect, const char *pszDest, int64 nTimeout)
+CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 {
     if (pszDest == NULL) {
         if (IsLocal(addrConnect))
@@ -512,9 +513,9 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest, int64 nTimeout)
         CNode* pnode = FindNode((CService)addrConnect);
         if (pnode)
         {
-            if (nTimeout != 0)
-                pnode->AddRef(nTimeout);
-            else
+            // if (nTimeout != 0)
+            //    pnode->AddRef(nTimeout);
+            //else
                 pnode->AddRef();
             return pnode;
         }
@@ -547,9 +548,9 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest, int64 nTimeout)
 
         // Add node
         CNode* pnode = new CNode(hSocket, addrConnect, pszDest ? pszDest : "", false);
-        if (nTimeout != 0)
-            pnode->AddRef(nTimeout);
-        else
+        // if (nTimeout != 0)
+        //    pnode->AddRef(nTimeout);
+        // else
             pnode->AddRef();
 
         {
@@ -675,7 +676,7 @@ void CNode::copyStats(CNodeStats &stats)
     X(nVersion);
     X(strSubVer);
     X(fInbound);
-    X(nReleaseTime);
+    // X(nReleaseTime);
     X(nStartingHeight);
     X(nMisbehavior);
 
@@ -895,7 +896,7 @@ void ThreadSocketHandler2(void* parg)
                     pnode->Cleanup();
 
                     // hold in disconnected pool until all refs are released
-                    pnode->nReleaseTime = max(pnode->nReleaseTime, GetTime() + 15 * 60);
+                    // pnode->nReleaseTime = max(pnode->nReleaseTime, GetTime() + 15 * 60);
                     if (pnode->fNetworkNode || pnode->fInbound)
                         pnode->Release();
                     vNodesDisconnected.push_back(pnode);
@@ -1021,11 +1022,11 @@ void ThreadSocketHandler2(void* parg)
         BOOST_FOREACH(SOCKET hListenSocket, vhListenSocket)
         if (hListenSocket != INVALID_SOCKET && FD_ISSET(hListenSocket, &fdsetRecv))
         {
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
             struct sockaddr_storage sockaddr;
-#else
-            struct sockaddr sockaddr;
-#endif
+// #else
+            // struct sockaddr sockaddr;
+// #endif
             socklen_t len = sizeof(sockaddr);
             SOCKET hSocket = accept(hListenSocket, (struct sockaddr*)&sockaddr, &len);
             CAddress addr;
@@ -2048,11 +2049,11 @@ bool BindListenPort(const CService &addrBind, string& strError)
 #endif
 
     // Create socket for listening for incoming connections
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
     struct sockaddr_storage sockaddr;
-#else
-    struct sockaddr sockaddr;
-#endif
+// #else
+//    struct sockaddr sockaddr;
+// #endif
     socklen_t len = sizeof(sockaddr);
     if (!addrBind.GetSockAddr((struct sockaddr*)&sockaddr, &len))
     {
@@ -2093,7 +2094,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
         return false;
     }
 
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
     // some systems don't have IPV6_V6ONLY but are always v6only; others do have the option
     // and enable it by default or not. Try to enable it, if possible.
     if (addrBind.IsIPv6()) {
@@ -2111,7 +2112,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
         setsockopt(hListenSocket, IPPROTO_IPV6, nParameterId, (const char*)&nProtLevel, sizeof(int));
 #endif
     }
-#endif
+// #endif
 
     if (::bind(hListenSocket, (struct sockaddr*)&sockaddr, len) == SOCKET_ERROR)
     {
@@ -2178,7 +2179,7 @@ void static Discover()
                 if (AddLocal(addr, LOCAL_IF))
                     printf("IPv4 %s: %s\n", ifa->ifa_name, addr.ToString().c_str());
             }
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
             else if (ifa->ifa_addr->sa_family == AF_INET6)
             {
                 struct sockaddr_in6* s6 = (struct sockaddr_in6*)(ifa->ifa_addr);
@@ -2186,7 +2187,7 @@ void static Discover()
                 if (AddLocal(addr, LOCAL_IF))
                     printf("IPv6 %s: %s\n", ifa->ifa_name, addr.ToString().c_str());
             }
-#endif
+// #endif
         }
         freeifaddrs(myaddrs);
     }

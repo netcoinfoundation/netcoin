@@ -1057,12 +1057,46 @@ boost::filesystem::path GetConfigFile()
     return pathConfigFile;
 }
 
+string random(int len)
+{
+    string a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    string r;
+    srand(time(NULL));
+    for(int i = 0; i < len; i++) r.push_back(a.at(size_t(rand() % 62)));
+    return r;
+}
+
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
+    boost::filesystem::ifstream streamConfigCheck(GetConfigFile());
+    if (!streamConfigCheck.good())
+    {
+        // Open the new config file
+        boost::filesystem::ofstream pathConfigFile(GetConfigFile());
+
+        // Construct the new config file
+        std::string configLine = "listen=1\nserver=1\ndaemon=1\nrpcuser=";
+        configLine += random(8);
+        configLine += "\nrpcpassword=";
+        configLine += random(16);
+        configLine += "\naddnode=netexplorer.coin-server.com";
+        configLine += "\naddnode=84.25.192.90";
+        configLine += "\naddnode=173.57.104.222";
+        configLine += "\naddnode=93.123.163.96";
+        configLine += "\naddnode=84.105.200.241";
+        configLine += "\naddnode=71.9.170.207";
+        configLine += "\naddnode=101.184.130.85";
+
+        // Write the new config file
+        pathConfigFile << configLine;
+        pathConfigFile.flush();
+        pathConfigFile.close();
+    }
+
     boost::filesystem::ifstream streamConfig(GetConfigFile());
-    if (!streamConfig.good())
-        return; // No NetCoin.conf file is OK
+    // if (!streamConfig.good())
+    //    return; // No NetCoin.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
