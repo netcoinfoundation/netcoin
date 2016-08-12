@@ -133,6 +133,7 @@ extern const std::string strMessageMagic;
 extern double dHashesPerSec;
 extern int64_t nHPSTimerStart;
 extern int64_t nTimeBestReceived;
+extern bool fReindex;
 extern CCriticalSection cs_setpwalletRegistered;
 extern std::set<CWallet*> setpwalletRegistered;
 extern unsigned char pchMessageStart[4];
@@ -158,6 +159,9 @@ class CTxIndex;
 void RegisterWallet(CWallet* pwalletIn);
 void UnregisterWallet(CWallet* pwalletIn);
 void SyncWithWallets(const CTransaction& tx, const CBlock* pblock = NULL, bool fUpdate = false, bool fConnect = true);
+
+void PushGetBlocks(CNode* pnode, CBlockIndex* pindexBegin, uint256 hashEnd);
+
 bool ProcessBlock(CNode* pfrom, CBlock* pblock);
 bool CheckDiskSpace(uint64_t nAdditionalBytes=0);
 FILE* OpenBlockFile(unsigned int nFile, unsigned int nBlockPos, const char* pszMode="rb");
