@@ -102,7 +102,6 @@
         <file>res/images/crytpsyNetXrpIng.png</file>
         <file>res/images/Cryptopia.png</file>
         <file>res/images/Cryptopia2.png</file>
-        <file>res/images/BTCPool.png</file>
         <file>res/images/Forum.png</file>
         <file>res/images/coinserver2.png</file>
         <file>res/images/coinserver1.png</file>
@@ -202,7 +201,6 @@
         <file>res/tooltips/azariusTooltip.png</file>
         <file>res/tooltips/diceFortuneTooltip.png</file>
         <file>res/tooltips/bittrexBtcTooltip.png</file>
-        <file>res/tooltips/btcpoolBtcTooltip.png</file>
         <file>res/tooltips/cryptopiaBtcTooltip.png</file>
         <file>res/tooltips/CoinserverTooltip.png</file>
         <file>res/tooltips/coinpayments2Tooltip.png</file>
