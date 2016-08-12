@@ -25,6 +25,7 @@ QT_END_NAMESPACE
 namespace Ui {
     class OverviewPage;
 }
+class ClientModel;
 class WalletModel;
 class TxViewDelegate;
 class TransactionFilterProxy;
@@ -41,7 +42,9 @@ public:
     explicit OverviewPage(QWidget *parent = 0);
     ~OverviewPage();
 
-    void setModel(WalletModel *model);
+    // void setModel(WalletModel *model);
+    void setClientModel(ClientModel *clientModel);
+    void setWalletModel(WalletModel *walletModel);
     void showOutOfSyncWarning(bool fShow);
 
     int heightPrevious;
@@ -69,7 +72,9 @@ signals:
 
 private:
     Ui::OverviewPage *ui;
-    WalletModel *model;
+    // WalletModel *model;
+    ClientModel *clientModel;
+    WalletModel *walletModel;
     CWallet *wallet;
     ClientModel *modelStatistics;
     qint64 currentBalance;
@@ -91,6 +96,7 @@ private:
 private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
+    void updateAlerts(const QString &warnings);
     void updateMyWeight();
     void on_startButton_clicked();
 
