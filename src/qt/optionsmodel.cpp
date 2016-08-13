@@ -27,10 +27,10 @@ bool static ApplyProxySettings()
     if (!IsLimited(NET_IPV4))
         SetProxy(NET_IPV4, addrProxy, nSocksVersion);
     if (nSocksVersion > 4) {
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
         if (!IsLimited(NET_IPV6))
             SetProxy(NET_IPV6, addrProxy, nSocksVersion);
-#endif
+// #endif
         SetNameProxy(addrProxy, nSocksVersion);
     }
     return true;

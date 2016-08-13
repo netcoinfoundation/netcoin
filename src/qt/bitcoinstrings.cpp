@@ -155,7 +155,7 @@ QT_TRANSLATE_NOOP("bitcoin-core", "Cannot resolve -externalip address: '%s'"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Invalid amount for -reservebalance=<amount>"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Unable to sign checkpoint, wrong checkpointkey?\n"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Loading block index..."),
-QT_TRANSLATE_NOOP("bitcoin-core", "Error loading blkindex.dat"),
+QT_TRANSLATE_NOOP("bitcoin-core", "Error loading block database"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Loading wallet..."),
 QT_TRANSLATE_NOOP("bitcoin-core", "Error loading wallet.dat: Wallet corrupted"),
 QT_TRANSLATE_NOOP("bitcoin-core", ""

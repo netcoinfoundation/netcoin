@@ -35,12 +35,12 @@
 
 /* Overview */
  QMainWindow {
-	border-image: url($themes-dir/black-wood/wood.jpg);
+	border-image: url($themes-dir/black-wood/wood.png);
 }
 
 /* Dialogs */
 QDialog, QTableView{
-	border-image: url($themes-dir/world/black.jpg);
+	border-image: url($themes-dir/world/black.png);
      font-size: 14px;
 }
 /* Group Box */

@@ -74,10 +74,10 @@ class CNetAddr
         int GetReachabilityFrom(const CNetAddr *paddrPartner = NULL) const;
         void print() const;
 
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
         CNetAddr(const struct in6_addr& pipv6Addr);
         bool GetIn6Addr(struct in6_addr* pipv6Addr) const;
-#endif
+// #endif
 
         friend bool operator==(const CNetAddr& a, const CNetAddr& b);
         friend bool operator!=(const CNetAddr& a, const CNetAddr& b);
@@ -118,10 +118,10 @@ class CService : public CNetAddr
         std::string ToStringIPPort() const;
         void print() const;
 
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
         CService(const struct in6_addr& ipv6Addr, unsigned short port);
         CService(const struct sockaddr_in6& addr);
-#endif
+// #endif
 
         IMPLEMENT_SERIALIZE
             (

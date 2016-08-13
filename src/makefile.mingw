@@ -56,7 +56,6 @@ OBJS= \
     obj/key.o \
     obj/db.o \
     obj/init.o \
-    obj/irc.o \
     obj/keystore.o \
     obj/main.o \
     obj/net.o \
@@ -71,7 +70,6 @@ OBJS= \
     obj/script.o \
     obj/scrypt.o \
     obj/sync.o \
-    obj/txdb.o \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \
@@ -79,6 +77,14 @@ OBJS= \
 
 
 all: netcoind.exe
+
+LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
+OBJS += obj/txdb-leveldb.o
+leveldb/libleveldb.a:
+	cd leveldb; make; cd ..
+obj/txdb-leveldb.o: leveldb/libleveldb.a
 
 obj/scrypt.o: scrypt.c
 	gcc -c $(CFLAGS) -o $@ $^

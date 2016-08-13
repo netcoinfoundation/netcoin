@@ -254,10 +254,12 @@ std::string HelpMessage()
         "  -externalip=<ip>       " + _("Specify your own public address") + "\n" +
         "  -onlynet=<net>         " + _("Only connect to nodes in network <net> (IPv4, IPv6 or Tor)") + "\n" +
         "  -discover              " + _("Discover own IP address (default: 1 when listening and no -externalip)") + "\n" +
-        "  -irc                   " + _("Find peers using internet relay chat (default: 0)") + "\n" +
+        // "  -irc                   " + _("Find peers using internet relay chat (default: 0)") + "\n" +
         "  -listen                " + _("Accept connections from outside (default: 1 if no -proxy or -connect)") + "\n" +
         "  -bind=<addr>           " + _("Bind to given address. Use [host]:port notation for IPv6") + "\n" +
-        "  -dnsseed               " + _("Find peers using DNS lookup (default: 1)") + "\n" +
+        // "  -dnsseed               " + _("Find peers using DNS lookup (default: 1)") + "\n" +
+        "  -dnsseed               " + _("Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)") + "\n" +
+        "  -forcednsseed          " + _("Always query for peer addresses via DNS lookup (default: 0)") + "\n" +
         "  -staking               " + _("Stake your coins to support network and gain reward (default: 1)") + "\n" +
         "  -synctime              " + _("Sync time with other nodes. Disable if time on your system is precise e.g. syncing with NTP (default: 1)") + "\n" +
         "  -cppolicy              " + _("Sync checkpoints policy (default: strict)") + "\n" +
@@ -295,6 +297,7 @@ std::string HelpMessage()
         "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 11311 or testnet 21311)") + "\n" +
         "  -rpcallowip=<ip>       " + _("Allow JSON-RPC connections from specified IP address") + "\n" +
         "  -rpcconnect=<ip>       " + _("Send commands to node running on <ip> (default: 127.0.0.1)") + "\n" +
+        "  -rpcwait               " + _("Wait for RPC server to start") + "\n";
         "  -blocknotify=<cmd>     " + _("Execute command when the best block changes (%s in cmd is replaced by block hash)") + "\n" +
         "  -walletnotify=<cmd>    " + _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)") + "\n" +
         "  -confchange            " + _("Require a confirmations for change (default: 0)") + "\n" +
@@ -393,7 +396,7 @@ bool AppInit2()
     // NetCoin: Keep irc seeding on by default for now.
 //    if (fTestNet)
 //    {
-        SoftSetBoolArg("-irc", true);
+//        SoftSetBoolArg("-irc", true);
 //    }
 
     if (mapArgs.count("-bind")) {
@@ -411,6 +414,9 @@ bool AppInit2()
     if (mapArgs.count("-proxy")) {
         // to protect privacy, do not listen by default if a proxy server is specified
         SoftSetBoolArg("-listen", false);
+
+        // to protect privacy, do not discover addresses by default
+        if (SoftSetBoolArg("-discover", false));
     }
 
     if (!GetBoolArg("-listen", true)) {
@@ -601,12 +607,14 @@ bool AppInit2()
                 SetLimited(net);
         }
     }
+ /*
 #if defined(USE_IPV6)
 #if ! USE_IPV6
     else
         SetLimited(NET_IPV6);
 #endif
 #endif
+ */
 
     CService addrProxy;
     bool fProxy = false;
@@ -618,10 +626,10 @@ bool AppInit2()
         if (!IsLimited(NET_IPV4))
             SetProxy(NET_IPV4, addrProxy, nSocksVersion);
         if (nSocksVersion > 4) {
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
             if (!IsLimited(NET_IPV6))
                 SetProxy(NET_IPV6, addrProxy, nSocksVersion);
-#endif
+// #endif
             SetNameProxy(addrProxy, nSocksVersion);
         }
         fProxy = true;
@@ -662,10 +670,10 @@ bool AppInit2()
         } else {
             struct in_addr inaddr_any;
             inaddr_any.s_addr = INADDR_ANY;
-#ifdef USE_IPV6
+// #ifdef USE_IPV6
             if (!IsLimited(NET_IPV6))
                 fBound |= Bind(CService(in6addr_any, GetListenPort()), false);
-#endif
+// #endif
             if (!IsLimited(NET_IPV4))
                 fBound |= Bind(CService(inaddr_any, GetListenPort()), !fBound);
         }
@@ -723,7 +731,7 @@ bool AppInit2()
     printf("Loading block index...\n");
     nStart = GetTimeMillis();
     if (!LoadBlockIndex())
-        return InitError(_("Error loading blkindex.dat"));
+        return InitError(_("Error loading block database"));
 
 
     // as LoadBlockIndex can take several minutes, it's possible the user

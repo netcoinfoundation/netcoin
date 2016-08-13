@@ -88,7 +88,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     aboutQtAction(0),
     trayIcon(0),
     notificator(0),
-    rpcConsole(0)
+    rpcConsole(0),
+    nWeight(0)
 {
 
     resize(850, 500);
@@ -498,6 +499,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         // Report errors from network/worker thread
         connect(clientModel, SIGNAL(error(QString,QString,bool)), this, SLOT(error(QString,QString,bool)));
 
+        overviewPage->setClientModel(clientModel);
         rpcConsole->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
@@ -515,7 +517,8 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         // Put transaction list in tabs
         transactionView->setModel(walletModel);
 
-        overviewPage->setModel(walletModel);
+        // overviewPage->setModel(walletModel);
+        overviewPage->setWalletModel(walletModel);
         addressBookPage->setModel(walletModel->getAddressTableModel());
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
@@ -627,7 +630,7 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
         return;
     }
 
-    QString strStatusBarWarnings = clientModel->getStatusBarWarnings();
+    // QString strStatusBarWarnings = clientModel->getStatusBarWarnings();
     QString tooltip;
 
     if(count < nTotalBlocks)
@@ -635,7 +638,7 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
         int nRemainingBlocks = nTotalBlocks - count;
         float nPercentageDone = count / (nTotalBlocks * 0.01f);
 
-        if (strStatusBarWarnings.isEmpty())
+      /*  if (strStatusBarWarnings.isEmpty())
         {
             progressBarLabel->setText(tr("Synchronizing with network..."));
 
@@ -645,26 +648,35 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
             progressBar->setValue(count);
             progressBar->setVisible(true);
         }
-
+    */
+        progressBarLabel->setText(tr("Synchronizing with network..."));
+        progressBarLabel->setVisible(true);
+        progressBar->setFormat(tr("~%n block(s) remaining", "", nRemainingBlocks));
+        progressBar->setMaximum(nTotalBlocks);
+        progressBar->setValue(count);
+        progressBar->setVisible(true);
+        // fShowStatusBar = true;
         tooltip = tr("Downloaded %1 of %2 blocks of transaction history (%3% done).").arg(count).arg(nTotalBlocks).arg(nPercentageDone, 0, 'f', 2);
 
     }
     else
     {
-        if (strStatusBarWarnings.isEmpty())
-            progressBarLabel->setVisible(false);
+        // if (strStatusBarWarnings.isEmpty())
+        //    progressBarLabel->setVisible(false);
+        progressBarLabel->setVisible(false);
 
         progressBar->setVisible(false);
         tooltip = tr("Downloaded %1 blocks of transaction history.").arg(count);
     }
 
-    // Override progressBarLabel text and hide progress bar, when we have warnings to display
+ /*   // Override progressBarLabel text and hide progress bar, when we have warnings to display
     if (!strStatusBarWarnings.isEmpty())
     {
         progressBarLabel->setText(strStatusBarWarnings);
         progressBarLabel->setVisible(true);
         progressBar->setVisible(false);
     }
+  */
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
@@ -1060,11 +1072,30 @@ void BitcoinGUI::toggleHidden()
     showNormalIfMinimized(true);
 }
 
+void BitcoinGUI::updateWeight()
+{
+    if (!pwalletMain)
+        return;
+
+    TRY_LOCK(cs_main, lockMain);
+    if (!lockMain)
+        return;
+
+    TRY_LOCK(pwalletMain->cs_wallet, lockWallet);
+    if (!lockWallet)
+        return;
+
+    uint64_t nMinWeight = 0, nMaxWeight = 0;
+    pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+}
+
 void BitcoinGUI::updateStakingIcon()
 {
-    uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
-    if (nLastCoinStakeSearchInterval && pwalletMain && !IsInitialBlockDownload()) //netcoin GetStakeWeight requires mutex lock on wallet which tends to freeze initial block downloads
-        pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+    // uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
+    // if (nLastCoinStakeSearchInterval && pwalletMain && !IsInitialBlockDownload()) //netcoin GetStakeWeight requires mutex lock on wallet which tends to freeze initial block downloads
+    //    pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
+
+    updateWeight();
 
     if (nLastCoinStakeSearchInterval && nWeight)
     {

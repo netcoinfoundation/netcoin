@@ -114,6 +114,8 @@ public:
 OverviewPage::OverviewPage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OverviewPage),
+    clientModel(0),
+    walletModel(0),
     currentBalance(-1),
     currentStake(0),
     currentUnconfirmedBalance(-1),
@@ -167,7 +169,8 @@ void OverviewPage::handleTransactionClicked(const QModelIndex &index)
 
 void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance)
 {
-    int unit = model->getOptionsModel()->getDisplayUnit();
+    // int unit = model->getOptionsModel()->getDisplayUnit();
+    int unit = walletModel->getOptionsModel()->getDisplayUnit();
     currentBalance = balance;
     currentStake = stake;
     currentUnconfirmedBalance = unconfirmedBalance;
@@ -184,7 +187,8 @@ void OverviewPage::setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBa
     ui->labelImmature->setVisible(showImmature);
     ui->labelImmatureText->setVisible(showImmature);
 
-    qint64 interest = model->getTransactionTableModel()->getInterestGenerated();
+    // qint64 interest = model->getTransactionTableModel()->getInterestGenerated();
+    qint64 interest = walletModel->getTransactionTableModel()->getInterestGenerated();
      // Setup display values for 'interest summary' widget at bottom right
     ui->labelInterest->setText(BitcoinUnits::formatWithUnit(unit, interest));
 }
@@ -246,9 +250,22 @@ void OverviewPage::on_startButton_clicked()
     return stakeForCharitySignal();
 }
 
-void OverviewPage::setModel(WalletModel *model)
+// void OverviewPage::setModel(WalletModel *model)
+void OverviewPage::setClientModel(ClientModel *model)
 {
-    this->model = model;
+    // this->model = model;
+    this->clientModel = model;
+    if(model)
+    {
+        // Show warning if this is a prerelease version
+        connect(model, SIGNAL(alertsChanged(QString)), this, SLOT(updateAlerts(QString)));
+        updateAlerts(model->getStatusBarWarnings());
+    }
+}
+
+void OverviewPage::setWalletModel(WalletModel *model)
+{
+    this->walletModel = model;
     if(model && model->getOptionsModel())
     {
         // Set up transaction list
@@ -295,16 +312,26 @@ void OverviewPage::setModel(WalletModel *model)
 
 void OverviewPage::updateDisplayUnit()
 {
-    if(model && model->getOptionsModel())
+    // if(model && model->getOptionsModel())
+    if(walletModel && walletModel->getOptionsModel())
     {
         if(currentBalance != -1)
-            setBalance(currentBalance, model->getStake(), currentUnconfirmedBalance, currentImmatureBalance);
+            // setBalance(currentBalance, model->getStake(), currentUnconfirmedBalance, currentImmatureBalance);
+            setBalance(currentBalance, walletModel->getStake(), currentUnconfirmedBalance, currentImmatureBalance);
 
         // Update txdelegate->unit with the current unit
-        txdelegate->unit = model->getOptionsModel()->getDisplayUnit();
+        // txdelegate->unit = model->getOptionsModel()->getDisplayUnit();
+        txdelegate->unit = walletModel->getOptionsModel()->getDisplayUnit();
 
         ui->listTransactions->update();
     }
+}
+
+void OverviewPage::updateAlerts(const QString &warnings)
+{
+    this->ui->labelAlerts->setVisible(!warnings.isEmpty());
+    this->ui->labelAlerts->setText(warnings);
+
 }
 
 void OverviewPage::showOutOfSyncWarning(bool fShow)
@@ -314,10 +341,12 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 
 void OverviewPage::lockWalletToggle()
 {
-    if(model->getEncryptionStatus() == WalletModel::Locked)
+    // if(model->getEncryptionStatus() == WalletModel::Locked)
+    if(walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
         AskPassphraseDialog dlg(AskPassphraseDialog::UnlockStaking, this);
-        dlg.setModel(model);
+        // dlg.setModel(model);
+        dlg.setModel(walletModel);
         if(dlg.exec() == QDialog::Accepted)
         {
             ui->unlockWalletActionNew->setText("Lock Wallet");
@@ -325,7 +354,8 @@ void OverviewPage::lockWalletToggle()
     }
     else
     {
-        model->setWalletLocked(true);
+        // model->setWalletLocked(true);
+        walletModel->setWalletLocked(true);
         ui->unlockWalletActionNew->setText("Unlock Wallet");
     }
 }
@@ -337,7 +367,7 @@ void OverviewPage::updateStatistics()
     int pPawrate = GetPoWMHashPS();
     double pPawrate2 = 0.000;
     int nHeight = pindexBest->nHeight;
-    double nSubsidy = GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/COIN;
+    double nSubsidy = double (GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/ double (COIN));
     uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
     pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
     uint64_t nNetworkWeight = GetPoSKernelPS();
@@ -381,6 +411,19 @@ void OverviewPage::updateStatistics()
         ui->diffBox->setText("<b><font color=\"red\">" + hardness + "</font></b>");
     } 
     else 
+    {
+        ui->diffBox->setText(hardness);
+    }
+
+    if(pHardness2 > hardnessPrevious2)
+    {
+        ui->diffBox2->setText("<b><font color=\"green\">" + hardness2 + "</font></b>");
+    }
+    else if(pHardness2 < hardnessPrevious2)
+    {
+        ui->diffBox2->setText("<b><font color=\"red\">" + hardness2 + "</font></b>");
+    }
+    else
     {
         ui->diffBox->setText(hardness);
     }

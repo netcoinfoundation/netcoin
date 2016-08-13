@@ -5,6 +5,7 @@
 #ifndef BITCOIN_VERSION_H
 #define BITCOIN_VERSION_H
 
+#include "clientversion.h"
 #include <string>
 
 //
@@ -12,10 +13,10 @@
 //
 
 // These need to be macro's, as version.cpp's voodoo requires it
-#define CLIENT_VERSION_MAJOR       2
-#define CLIENT_VERSION_MINOR       3
-#define CLIENT_VERSION_REVISION    1
-#define CLIENT_VERSION_BUILD       0
+// #define CLIENT_VERSION_MAJOR       2
+// #define CLIENT_VERSION_MINOR       3
+// #define CLIENT_VERSION_REVISION    1
+// #define CLIENT_VERSION_BUILD       0
 
 static const int CLIENT_VERSION =
                            1000000 * CLIENT_VERSION_MAJOR
@@ -33,13 +34,24 @@ extern const std::string CLIENT_DATE;
 static const int BLOCKINDEX_VERSION_POS = 2010000;
 
 //
+// database format versioning
+//
+static const int DATABASE_VERSION = 70501;
+
+//
 // network protocol versioning
 //
 
 static const int PROTOCOL_VERSION = 70001;
 
 // earlier versions not supported as of Feb 2012, and are disconnected
-static const int MIN_PROTO_VERSION = 209;
+// static const int MIN_PROTO_VERSION = 209;
+
+// intial proto version, to be increased after version/verack negotiation
+static const int INIT_PROTO_VERSION = 209;
+
+// disconnect from peers older than this proto version
+static const int MIN_PEER_PROTO_VERSION = 209;
 
 // nTime field added to CAddress, starting with this version;
 // if possible, avoid requesting addresses nodes older than this

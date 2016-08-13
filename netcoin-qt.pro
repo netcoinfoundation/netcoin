@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = netcoin-qt
-VERSION = 2.3.1
+VERSION = 2.4.0
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -27,19 +27,21 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # Dependency library locations can be customized with:
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
+
 win32 {
     BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
-    BOOST_INCLUDE_PATH=C:/deps32/boost_1_55_0
-    BOOST_LIB_PATH=C:/deps32/boost_1_55_0/stage/lib
-    BDB_INCLUDE_PATH=C:/deps32/db-4.8.30.NC/build_unix
-    BDB_LIB_PATH=C:/deps32/db-4.8.30.NC/build_unix
-    OPENSSL_INCLUDE_PATH=C:/deps32/openssl-1.0.1l/include
-    OPENSSL_LIB_PATH=C:/deps32/openssl-1.0.1l
-    MINIUPNPC_INCLUDE_PATH=C:/deps32/
-    MINIUPNPC_LIB_PATH=C:/deps32/miniupnpc
-    QRENCODE_INCLUDE_PATH=C:/deps32/qrencode-3.4.4
-    QRENCODE_LIB_PATH=C:/deps32/qrencode-3.4.4/.libs
+    BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
+    BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
+    BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
+    BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
+    OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2h/include
+    OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2h
+    MINIUPNPC_INCLUDE_PATH=C:/deps/
+    MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
+    QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
+    QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 }
+
 OBJECTS_DIR = build
 MOC_DIR = build
 UI_DIR = build
@@ -85,7 +87,7 @@ contains(USE_UPNP, -) {
     count(USE_UPNP, 0) {
         USE_UPNP=1
     }
-    DEFINES += USE_UPNP=$$USE_UPNP STATICLIB
+    DEFINES += USE_UPNP=$$USE_UPNP STATICLIB MINIUPNP_STATICLIB
     INCLUDEPATH += $$MINIUPNPC_INCLUDE_PATH
     LIBS += $$join(MINIUPNPC_LIB_PATH,,-L,) -lminiupnpc
     win32:LIBS += -liphlpapi
@@ -96,18 +98,6 @@ contains(USE_DBUS, 1) {
     message(Building with DBUS (Freedesktop notifications) support)
     DEFINES += USE_DBUS
     QT += dbus
-}
-
-# use: qmake "USE_IPV6=1" ( enabled by default; default)
-#  or: qmake "USE_IPV6=0" (disabled by default)
-#  or: qmake "USE_IPV6=-" (not supported)
-contains(USE_IPV6, -) {
-    message(Building without IPv6 support)
-} else {
-    count(USE_IPV6, 0) {
-        USE_IPV6=1
-    }
-    DEFINES += USE_IPV6=$$USE_IPV6
 }
 
 contains(BITCOIN_NEED_QT_PLUGINS, 1) {
@@ -164,6 +154,27 @@ macx: {
     QMAKE_CXXFLAGS_THREAD += -pthread
 }
 
+INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+SOURCES += src/txdb-leveldb.cpp
+!win32 {
+    # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
+    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
+} else {
+    # make an educated guess about what the ranlib command is called
+    isEmpty(QMAKE_RANLIB) {
+        QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
+    }
+    LIBS += -lshlwapi
+    #genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+}
+genleveldb.target = $$PWD/src/leveldb/libleveldb.a
+genleveldb.depends = FORCE
+PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
+QMAKE_EXTRA_TARGETS += genleveldb
+# Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
+QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+
 # regenerate src/build.h
 !windows|contains(USE_BUILD_INFO, 1) {
     genbuild.depends = FORCE
@@ -212,6 +223,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
+    src/chainparamsseeds.h \
     src/checkpoints.h \
     src/compat.h \
     src/coincontrol.h \
@@ -243,7 +255,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/walletdb.h \
     src/script.h \
     src/init.h \
-    src/irc.h \
     src/mruset.h \
     src/json/json_spirit_writer_template.h \
     src/json/json_spirit_writer.h \
@@ -315,7 +326,6 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/miner.cpp \
     src/init.cpp \
     src/net.cpp \
-    src/irc.cpp \
     src/checkpoints.cpp \
     src/addrman.cpp \
     src/db.cpp \
@@ -370,7 +380,6 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/zerocoin/SerialNumberSignatureOfKnowledge.cpp \
     src/zerocoin/SpendMetaData.cpp \
     src/zerocoin/ZeroTest.cpp \
-    src/txdb.cpp \
     src/qt/networkpage.cpp \
     src/qt/shoppingpage.cpp
 

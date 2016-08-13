@@ -49,23 +49,23 @@ void calcDialog::pushButtonClicked()
         double dReward = 0;
 
         if(dUserBlock >= 0 && dUserBlock < 1000) {
-        dReward  = (((dUserBlock - 0.0) / 1000.0) * 5 + 10);
+        dReward  = (((dUserBlock - 0.0) / 1000.0) * 5 + 20);
         }
         else
         if(dUserBlock >= 1000 && dUserBlock < 10000) {
-        dReward  = (((dUserBlock - 1000.0) / 9000.0) * 5 + 15);
+        dReward  = (((dUserBlock - 1000.0) / 9000.0) * 5 + 25);
         }
         else
         if(dUserBlock >= 10000 && dUserBlock < 100000) {
-        dReward  = (((dUserBlock - 10000.0) / 90000.0) * 10 + 20);
+        dReward  = (((dUserBlock - 10000.0) / 90000.0) * 10 + 30);
         }
         else
         if(dUserBlock >= 100000 && dUserBlock < 1000000) {
-        dReward  = (((dUserBlock - 100000.0) / 900000.0) * 50 + 30);
+        dReward  = (((dUserBlock - 100000.0) / 900000.0) * 50 + 35);
         }
         else
         if(dUserBlock >= 1000000) {
-        dReward  = (min(((dUserBlock - 1000000.0) / 9000000.0), 1) * 20 + 80);
+        dReward  = (min(((dUserBlock - 1000000.0) / 9000000.0), 1) * 5 + 40);
         }
         ui->yearlyAPR->setText(QString::number(dReward));
         ui->dayResult->setText(QString::number(dReward / 36500.0 * dUserBlock));
