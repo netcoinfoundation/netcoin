@@ -60,7 +60,7 @@
 
 /* Overview */
  QMainWindow {
-	border-image: url($themes-dir/custom/Net-eye.png);
+	border-image: url($themes-dir/Net-eye/Net-eye.png);
 }
 
 /* Dialogs */
