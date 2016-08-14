@@ -119,13 +119,10 @@ OBJS= \
     obj/script.o \
     obj/scrypt.o \
     obj/sync.o \
-    obj/txdb.o \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \
     obj/noui.o
-
-
 
 all: netcoind
 
