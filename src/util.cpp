@@ -1080,13 +1080,6 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
         configLine += random(8);
         configLine += "\nrpcpassword=";
         configLine += random(16);
-        configLine += "\naddnode=netexplorer.coin-server.com";
-        configLine += "\naddnode=84.25.192.90";
-        configLine += "\naddnode=173.57.104.222";
-        configLine += "\naddnode=93.123.163.96";
-        configLine += "\naddnode=84.105.200.241";
-        configLine += "\naddnode=71.9.170.207";
-        configLine += "\naddnode=101.184.130.85";
 
         // Write the new config file
         pathConfigFile << configLine;
