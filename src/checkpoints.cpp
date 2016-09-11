@@ -371,6 +371,21 @@ const std::string CSyncCheckpoint::strMasterPubKey = "046b2e58c8c0502bea592b7ec5
 
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 
+bool CSyncCheckpoint::RelayTo(CNode* pnode) const
+{
+    // don't relay to nodes which haven't sent their version message
+    if (pnode->nVersion == 0)
+        return false;
+    // returns true if wasn't already sent
+    if (pnode->hashCheckpointKnown != hashCheckpoint)
+    {
+        pnode->hashCheckpointKnown = hashCheckpoint;
+        pnode->PushMessage("checkpoint", *this);
+        return true;
+    }
+    return false;
+}
+
 // ppcoin: verify signature of sync-checkpoint message
 bool CSyncCheckpoint::CheckSignature()
 {

@@ -73,8 +73,17 @@ bool fReindex = false;
 
 CMedianFilter<int> cPeerBlockCounts(5, 0); // Amount of blocks that other nodes claim to have
 
-map<uint256, CBlock*> mapOrphanBlocks;
-multimap<uint256, CBlock*> mapOrphanBlocksByPrev;
+// map<uint256, CBlock*> mapOrphanBlocks;
+// multimap<uint256, CBlock*> mapOrphanBlocksByPrev;
+
+struct COrphanBlock {
+    uint256 hashBlock;
+    uint256 hashPrev;
+    std::pair<COutPoint, unsigned int> stake;
+    vector<unsigned char> vchBlock;
+};
+map<uint256, COrphanBlock*> mapOrphanBlocks;
+multimap<uint256, COrphanBlock*> mapOrphanBlocksByPrev;
 set<pair<COutPoint, unsigned int> > setStakeSeenOrphan;
 
 map<uint256, CTransaction> mapOrphanTransactions;
@@ -1242,21 +1251,58 @@ bool CBlock::ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions)
     return true;
 }
 
-uint256 static GetOrphanRoot(const CBlock* pblock)
+uint256 static GetOrphanRoot(const uint256& hash)
 {
+    map<uint256, COrphanBlock*>::iterator it = mapOrphanBlocks.find(hash);
+       if (it == mapOrphanBlocks.end())
+          return hash;
+
     // Work back to the first block in the orphan chain
-    while (mapOrphanBlocks.count(pblock->hashPrevBlock))
-        pblock = mapOrphanBlocks[pblock->hashPrevBlock];
-    return pblock->GetHash();
+
+    // while (mapOrphanBlocks.count(pblock->hashPrevBlock))
+    //    pblock = mapOrphanBlocks[pblock->hashPrevBlock];
+    // return pblock->GetHash();
+       do {
+              map<uint256, COrphanBlock*>::iterator it2 = mapOrphanBlocks.find(it->second->hashPrev);
+               if (it2 == mapOrphanBlocks.end())
+                   return it->first;
+               it = it2;
+           } while(true);
 }
 
 // ppcoin: find block wanted by given orphan block
-uint256 WantedByOrphan(const CBlock* pblockOrphan)
+uint256 WantedByOrphan(const COrphanBlock* pblockOrphan)
 {
     // Work back to the first block in the orphan chain
-    while (mapOrphanBlocks.count(pblockOrphan->hashPrevBlock))
-        pblockOrphan = mapOrphanBlocks[pblockOrphan->hashPrevBlock];
-    return pblockOrphan->hashPrevBlock;
+    while (mapOrphanBlocks.count(pblockOrphan->hashPrev))
+        pblockOrphan = mapOrphanBlocks[pblockOrphan->hashPrev];
+    return pblockOrphan->hashPrev;
+}
+
+// Remove a random orphan block (which does not have any dependent orphans).
+void static PruneOrphanBlocks()
+{
+    if (mapOrphanBlocksByPrev.size() <= (size_t)std::max((int64_t)0, GetArg("-maxorphanblocks", DEFAULT_MAX_ORPHAN_BLOCKS)))
+        return;
+
+    // Pick a random orphan block.
+    int pos = insecure_rand() % mapOrphanBlocksByPrev.size();
+    std::multimap<uint256, COrphanBlock*>::iterator it = mapOrphanBlocksByPrev.begin();
+    while (pos--) it++;
+
+    // As long as this block has other orphans depending on it, move to one of those successors.
+    do {
+        std::multimap<uint256, COrphanBlock*>::iterator it2 = mapOrphanBlocksByPrev.find(it->second->hashBlock);
+        if (it2 == mapOrphanBlocksByPrev.end())
+            break;
+        it = it2;
+    } while(1);
+
+    setStakeSeenOrphan.erase(it->second->stake);
+    uint256 hash = it->second->hashBlock;
+    delete it->second;
+    mapOrphanBlocksByPrev.erase(it);
+    mapOrphanBlocks.erase(hash);
 }
 
 int static generateMTRandom(unsigned int s, int range)
@@ -2721,7 +2767,7 @@ bool CBlock::GetCoinAge(uint64_t& nCoinAge) const
 
 bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const uint256& hashProof)
 {
-    // AssertLockHeld(cs_main);
+    AssertLockHeld(cs_main);
 
     // Check for duplicate
     uint256 hash = GetHash();
@@ -2774,7 +2820,7 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
     if (!txdb.TxnCommit())
         return false;
 
-    LOCK(cs_main);
+    // LOCK(cs_main);
 
     // New best
     if (pindexNew->nChainTrust > nBestChainTrust)
@@ -3082,7 +3128,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
-        printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().c_str());
+        // printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().c_str());
+        printf("ProcessBlock: ORPHAN BLOCK %lu, prev=%s\n", (unsigned long)mapOrphanBlocks.size(), pblock->hashPrevBlock.ToString().c_str());
+
         // CBlock* pblock2 = new CBlock(*pblock);
         // ppcoin: check proof-of-stake
         // if (pblock2->IsProofOfStake())
@@ -3116,16 +3164,28 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
                 // Duplicate stake allowed only when there is orphan child block
                 if (setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
                     return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
-                else
-                    setStakeSeenOrphan.insert(pblock->GetProofOfStake());
+                // else
+                //    setStakeSeenOrphan.insert(pblock->GetProofOfStake());
             }
-            CBlock* pblock2 = new CBlock(*pblock);
+            PruneOrphanBlocks();
+            // CBlock* pblock2 = new CBlock(*pblock);
+            COrphanBlock* pblock2 = new COrphanBlock();
+            {
+                CDataStream ss(SER_DISK, CLIENT_VERSION);
+                ss << *pblock;
+                pblock2->vchBlock = std::vector<unsigned char>(ss.begin(), ss.end());
+            }
+            pblock2->hashBlock = hash;
+            pblock2->hashPrev = pblock->hashPrevBlock;
+            pblock2->stake = pblock->GetProofOfStake();
             mapOrphanBlocks.insert(make_pair(hash, pblock2));
-            mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrevBlock, pblock2));
+            mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrev, pblock2));
+            if (pblock->IsProofOfStake())
+                setStakeSeenOrphan.insert(pblock->GetProofOfStake());
 
                     // Ask this guy to fill in what we're missing
             // pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(pblock2));
-            PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(pblock2));
+            PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(hash));
             // ppcoin: getblocks may not obtain the ancestor block rejected
             // earlier by duplicate-stake check so we ask for it again directly
             if (!IsInitialBlockDownload())
@@ -3144,16 +3204,28 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     for (unsigned int i = 0; i < vWorkQueue.size(); i++)
     {
         uint256 hashPrev = vWorkQueue[i];
-        for (multimap<uint256, CBlock*>::iterator mi = mapOrphanBlocksByPrev.lower_bound(hashPrev);
+        for (multimap<uint256, COrphanBlock*>::iterator mi = mapOrphanBlocksByPrev.lower_bound(hashPrev);
              mi != mapOrphanBlocksByPrev.upper_bound(hashPrev);
              ++mi)
         {
-            CBlock* pblockOrphan = (*mi).second;
+   /*          CBlock* pblockOrphan = (*mi).second;
             if (pblockOrphan->AcceptBlock())
                 vWorkQueue.push_back(pblockOrphan->GetHash());
             mapOrphanBlocks.erase(pblockOrphan->GetHash());
             setStakeSeenOrphan.erase(pblockOrphan->GetProofOfStake());
             delete pblockOrphan;
+    */
+            CBlock block;
+            {
+                CDataStream ss(mi->second->vchBlock, SER_DISK, CLIENT_VERSION);
+                ss >> block;
+            }
+            block.BuildMerkleTree();
+            if (block.AcceptBlock())
+                vWorkQueue.push_back(mi->second->hashBlock);
+            mapOrphanBlocks.erase(mi->second->hashBlock);
+            setStakeSeenOrphan.erase(block.GetProofOfStake());
+            delete mi->second;
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
@@ -4086,7 +4158,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 pfrom->AskFor(inv);
             else if (inv.type == MSG_BLOCK && mapOrphanBlocks.count(inv.hash)) {
                 // pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(mapOrphanBlocks[inv.hash]));
-                 PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(mapOrphanBlocks[inv.hash]));
+                 PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(inv.hash));
             } else if (nInv == nLastBlock) {
                 // In case we are on a very long side-chain, it is possible that we already have
                 // the last block in an inv bundle sent in response to getblocks. Try to detect
