@@ -41,6 +41,18 @@ enum
     SCRIPT_VERIFY_NONE      = 0,
     SCRIPT_VERIFY_NOCACHE   = (1U << 0), // do not store results in signature cache (but do query it)
     SCRIPT_VERIFY_NULLDUMMY = (1U << 1), // verify dummy stack item consumed by CHECKMULTISIG is of zero-length
+
+    // Discourage use of NOPs reserved for upgrades (NOP1-10)
+    //
+    // Provided so that nodes can avoid accepting or mining transactions
+    // containing executed NOP's whose meaning may change after a soft-fork,
+    // thus rendering the script invalid; with this flag set executing
+    // discouraged NOPs fails the script. This verification flag will never be
+    // a mandatory flag applied to scripts in a block. NOPs that are not
+    // executed, e.g. within an unexecuted IF ENDIF block, are *not* rejected.
+    SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS = (1U << 2),
+
+    SCRIPT_VERIFY_STRICTENC = (1U << 3),
 };
 
 // Mandatory script verification flags that all new blocks must comply with for
@@ -51,7 +63,9 @@ static const unsigned int MANDATORY_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_NONE;
 // with. However scripts violating these flags may still be present in valid
 // blocks and we must accept those blocks.
 static const unsigned int STANDARD_SCRIPT_VERIFY_FLAGS = MANDATORY_SCRIPT_VERIFY_FLAGS |
-                                                         SCRIPT_VERIFY_NULLDUMMY;
+                                                         SCRIPT_VERIFY_STRICTENC |
+                                                         SCRIPT_VERIFY_NULLDUMMY |
+                                                         SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS;
 // For convenience, standard but not mandatory verify flags.
 static const unsigned int STANDARD_NOT_MANDATORY_VERIFY_FLAGS = STANDARD_SCRIPT_VERIFY_FLAGS & ~MANDATORY_SCRIPT_VERIFY_FLAGS;
 
@@ -698,7 +712,7 @@ public:
 
 
 
-
+bool IsDERSignature(const valtype &vchSig, bool haveHashType = true);
 bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, const CTransaction& txTo, unsigned int nIn, unsigned int flags,int nHashType);
 bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::vector<unsigned char> >& vSolutionsRet);
 int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned char> >& vSolutions);

@@ -6,6 +6,7 @@
 #ifndef BITCOIN_UINT256_H
 #define BITCOIN_UINT256_H
 
+#include <assert.h>
 #include <stdint.h>
 #include <limits.h>
 #include <stdio.h>
@@ -189,7 +190,8 @@ public:
     {
         // prefix operator
         int i = 0;
-        while (--pn[i] == -1 && i < WIDTH-1)
+        // while (--pn[i] == -1 && i < WIDTH-1)
+        while (--pn[i] == (uint32_t)-1 && i < WIDTH-1)
             i++;
         return *this;
     }
@@ -358,9 +360,11 @@ public:
         return sizeof(pn);
     }
 
-    uint64_t Get64(int n=0) const
+    uint64_t GetLow64(int n=0) const
     {
-        return pn[2*n] | (uint64_t)pn[2*n+1] << 32;
+        // return pn[2*n] | (uint64_t)pn[2*n+1] << 32;
+        assert(WIDTH >= 2);
+        return pn[0] | (uint64_t)pn[1] << 32;
     }
 
 //    unsigned int GetSerializeSize(int nType=0, int nVersion=PROTOCOL_VERSION) const
@@ -383,6 +387,22 @@ public:
         s.read((char*)pn, sizeof(pn));
     }
 
+    // Temporary for migration to opaque uint160/256
+    uint64_t GetCheapHash() const
+    {
+        return GetLow64();
+    }
+    void SetNull()
+    {
+        memset(pn, 0, sizeof(pn));
+    }
+    bool IsNull() const
+    {
+        for (int i = 0; i < WIDTH; i++)
+            if (pn[i] != 0)
+                return false;
+        return true;
+    }
 
     friend class uint160;
     friend class uint256;
@@ -769,4 +789,7 @@ inline int Testuint256AdHoc(std::vector<std::string> vArg)
 
 #endif
 
-#endif
+// Temporary for migration to opaque uint160/256
+inline uint256 uint256S(const std::string &x) { return uint256(x); }
+
+#endif // BITCOIN_UINT256_H

@@ -257,7 +257,8 @@ const char* GetOpName(opcodetype opcode)
     }
 }
 
-static bool IsCanonicalPubKey(const valtype &vchPubKey) {
+// static bool IsCanonicalPubKey(const valtype &vchPubKey) {
+static bool IsCompressedOrUncompressedPubKey(const valtype &vchPubKey) {
     if (vchPubKey.size() < 33)
         return error("Non-canonical public key: too short");
     if (vchPubKey[0] == 0x04) {
@@ -272,7 +273,8 @@ static bool IsCanonicalPubKey(const valtype &vchPubKey) {
     return true;
 }
 
-static bool IsCanonicalSignature(const valtype &vchSig) {
+// static bool IsCanonicalSignature(const valtype &vchSig) {
+bool IsDERSignature(const valtype &vchSig, bool haveHashType) {
     // See https://bitcointalk.org/index.php?topic=8392.msg127623#msg127623
     // A canonical signature exists of: <30> <total len> <02> <len R> <R> <02> <len S> <S> <hashtype>
     // Where R and S are not negative (their first byte has its highest bit not set), and not
@@ -282,18 +284,20 @@ static bool IsCanonicalSignature(const valtype &vchSig) {
         return error("Non-canonical signature: too short");
     if (vchSig.size() > 73)
         return error("Non-canonical signature: too long");
-    unsigned char nHashType = vchSig[vchSig.size() - 1] & (~(SIGHASH_ANYONECANPAY));
-    if (nHashType < SIGHASH_ALL || nHashType > SIGHASH_SINGLE)
-        return error("Non-canonical signature: unknown hashtype byte");
+    // unsigned char nHashType = vchSig[vchSig.size() - 1] & (~(SIGHASH_ANYONECANPAY));
+    // if (nHashType < SIGHASH_ALL || nHashType > SIGHASH_SINGLE)
+    //    return error("Non-canonical signature: unknown hashtype byte");
     if (vchSig[0] != 0x30)
         return error("Non-canonical signature: wrong type");
-    if (vchSig[1] != vchSig.size()-3)
+    // if (vchSig[1] != vchSig.size()-3)
+    if (vchSig[1] != vchSig.size() - (haveHashType ? 3 : 2))
         return error("Non-canonical signature: wrong length marker");
     unsigned int nLenR = vchSig[3];
     if (5 + nLenR >= vchSig.size())
         return error("Non-canonical signature: S length misplaced");
     unsigned int nLenS = vchSig[5+nLenR];
-    if ((unsigned long)(nLenR+nLenS+7) != vchSig.size())
+    // if ((unsigned long)(nLenR+nLenS+7) != vchSig.size())
+    if ((unsigned long)(nLenR + nLenS + (haveHashType ? 7 : 6)) != vchSig.size())
         return error("Non-canonical signature: R+S length mismatch");
 
     const unsigned char *R = &vchSig[4];
@@ -316,6 +320,17 @@ static bool IsCanonicalSignature(const valtype &vchSig) {
     if (nLenS > 1 && (S[0] == 0x00) && !(S[1] & 0x80))
         return error("Non-canonical signature: S value excessively padded");
 
+    return true;
+}
+
+bool static IsLowDERSignature(const valtype &vchSig) {
+    if (!IsDERSignature(vchSig)) {
+        return false;
+    }
+    unsigned int nLenR = vchSig[3];
+    unsigned int nLenS = vchSig[5+nLenR];
+    const unsigned char *S = &vchSig[6+nLenR];
+
     // If the S value is above the order of the curve divided by two, its
     // complement modulo the order could have been used instead, which is
     // one byte shorter when encoded correctly.
@@ -326,6 +341,32 @@ static bool IsCanonicalSignature(const valtype &vchSig) {
             return error("Non-canonical signature: S value is unnecessarily high");
     }
 
+    return true;
+}
+
+bool static IsDefinedHashtypeSignature(const valtype &vchSig) {
+    if (vchSig.size() == 0) {
+        return false;
+    }
+    unsigned char nHashType = vchSig[vchSig.size() - 1] & (~(SIGHASH_ANYONECANPAY));
+    if (nHashType < SIGHASH_ALL || nHashType > SIGHASH_SINGLE)
+        return error("Non-canonical signature: unknown hashtype byte");
+
+    return true;
+}
+bool static CheckSignatureEncoding(const valtype &vchSig) {
+    if (!IsLowDERSignature(vchSig)) {
+        return false;
+    } else if (!IsDefinedHashtypeSignature(vchSig)) {
+        return false;
+    }
+    return true;
+}
+
+bool static CheckPubKeyEncoding(const valtype &vchSig) {
+    if (!IsCompressedOrUncompressedPubKey(vchSig)) {
+        return false;
+    }
     return true;
 }
 
@@ -415,8 +456,14 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                 // Control
                 //
                 case OP_NOP:
+                break;
+
                 case OP_NOP1: case OP_NOP2: case OP_NOP3: case OP_NOP4: case OP_NOP5:
                 case OP_NOP6: case OP_NOP7: case OP_NOP8: case OP_NOP9: case OP_NOP10:
+                {
+                    if (flags & SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS)
+                        return false;
+                }
                 break;
 
                 case OP_IF:
@@ -1022,7 +1069,11 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                     // Drop the signature, since there's no way for a signature to sign itself
                     scriptCode.FindAndDelete(CScript(vchSig));
 
-                    bool fSuccess = IsCanonicalSignature(vchSig) && IsCanonicalPubKey(vchPubKey) &&
+                    if ((flags & SCRIPT_VERIFY_STRICTENC) && (!CheckSignatureEncoding(vchSig) || !CheckPubKeyEncoding(vchPubKey)))
+                        return false;
+
+                    // bool fSuccess = IsCanonicalSignature(vchSig) && IsCanonicalPubKey(vchPubKey) &&
+                    bool fSuccess = CheckSignatureEncoding(vchSig) && CheckPubKeyEncoding(vchPubKey) &&
                         CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
 
                     popstack(stack);
@@ -1082,8 +1133,12 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                         valtype& vchSig    = stacktop(-isig);
                         valtype& vchPubKey = stacktop(-ikey);
 
+                        if ((flags & SCRIPT_VERIFY_STRICTENC) && (!CheckSignatureEncoding(vchSig) || !CheckPubKeyEncoding(vchPubKey)))
+                            return false;
+
                         // Check signature
-                        bool fOk = IsCanonicalSignature(vchSig) && IsCanonicalPubKey(vchPubKey) &&
+                        // bool fOk = IsCanonicalSignature(vchSig) && IsCanonicalPubKey(vchPubKey) &&
+                        bool fOk = CheckSignatureEncoding(vchSig) && CheckPubKeyEncoding(vchPubKey) &&
                             CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
 
                         if (fOk)

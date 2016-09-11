@@ -462,13 +462,13 @@ bool IsStandardTx(const CTransaction& tx, string& strReason)
     BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
         // Biggest 'standard' txin is a 15-of-15 P2SH multisig with compressed
-                // keys. (remember the 520 byte limit on redeemScript size) That works
-                // out to a (15*(33+1))+3=513 byte redeemScript, 513+1+15*(73+1)+3=1627
-                // bytes of scriptSig, which we round off to 1650 bytes for some minor
-                // future-proofing. That's also enough to spend a 20-of-20
-                // CHECKMULTISIG scriptPubKey, though such a scriptPubKey is not
-                // considered standard)
-                if (txin.scriptSig.size() > 1650) {
+        // keys. (remember the 520 byte limit on redeemScript size) That works
+        // out to a (15*(33+1))+3=513 byte redeemScript, 513+1+15*(73+1)+3=1627
+        // bytes of scriptSig, which we round off to 1650 bytes for some minor
+        // future-proofing. That's also enough to spend a 20-of-20
+        // CHECKMULTISIG scriptPubKey, though such a scriptPubKey is not
+        // considered standard)
+        if (txin.scriptSig.size() > 1650) {
             strReason = "scriptsig-size";
             return false;
         }
@@ -531,15 +531,13 @@ bool IsFinalTx(const CTransaction &tx, int nBlockHeight, int64_t nBlockTime)
 }
 
 //
-// Check transaction inputs, and make sure any
-// pay-to-script-hash transactions are evaluating IsStandard scripts
+// Check transaction inputs to mitigate two
+// potential denial-of-service attacks:
 //
-// Why bother? To avoid denial-of-service attacks; an attacker
-// can submit a standard HASH... OP_EQUAL transaction,
-// which will get accepted into blocks. The redemption
-// script can be anything; an attacker could use a very
-// expensive-to-check-upon-redemption script like:
-//   DUP CHECKSIG DROP ... repeated 100 times... OP_1
+//1. scriptSigs with extra data stuffed into them,
+//    not consumed by scriptPubKey (or P2SH script)
+// 2. P2SH scripts with a crazy number of expensive
+//    CHECKSIG/CHECKMULTISIG operations
 //
 // bool CTransaction::AreInputsStandard(const MapPrevTx& mapInputs) const
 bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
@@ -564,8 +562,9 @@ bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
         // Transactions with extra stuff in their scriptSigs are
         // non-standard. Note that this EvalScript() call will
         // be quick, because if there are any operations
-        // beside "push data" in the scriptSig the
-        // IsStandard() call returns false
+        // beside "push data" in the scriptSig
+        // IsStandard() will have already returned false
+        // and this method isn't called.
         vector<vector<unsigned char> > stack;
         if (!EvalScript(stack, tx.vin[i].scriptSig, tx, i, SCRIPT_VERIFY_NONE, 0))
             return false;
@@ -577,6 +576,7 @@ bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
             CScript subscript(stack.back().begin(), stack.back().end());
             vector<vector<unsigned char> > vSolutions2;
             txnouttype whichType2;
+      /*
             if (!Solver(subscript, whichType2, vSolutions2))
                 return false;
             if (whichType2 == TX_SCRIPTHASH)
@@ -587,6 +587,21 @@ bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
             if (tmpExpected < 0)
                 return false;
             nArgsExpected += tmpExpected;
+    */
+            if (Solver(subscript, whichType2, vSolutions2))
+            {
+                int tmpExpected = ScriptSigArgsExpected(whichType2, vSolutions2);
+                if (tmpExpected < 0)
+                    return false;
+                nArgsExpected += tmpExpected;
+            }
+            else
+            {
+                // Any other Script with less than 15 sigops OK:
+                unsigned int sigops = subscript.GetSigOpCount(true);
+                // ... extra data left on the stack after execution is OK, too:
+                return (sigops <= MAX_P2SH_SIGOPS);
+            }
         }
 
         if (stack.size() != (unsigned int)nArgsExpected)
@@ -950,6 +965,20 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
         if (!tx.ConnectInputs(txdb, mapInputs, mapUnused, CDiskTxPos(1,1,1), pindexBest, false, false, STANDARD_SCRIPT_VERIFY_FLAGS))
         {
             return error("AcceptToMemoryPool : ConnectInputs failed %s", hash.ToString().c_str());
+        }
+
+        // Check again against just the consensus-critical mandatory script
+        // verification flags, in case of bugs in the standard flags that cause
+        // transactions to pass as valid when they're actually invalid. For
+        // instance the STRICTENC flag was incorrectly allowing certain
+        // CHECKSIG NOT scripts to pass, even though they were invalid.
+        //
+        // There is a similar check in CreateNewBlock() to prevent creating
+        // invalid blocks, however allowing such transactions into the mempool
+        // can be exploited as a DoS attack.
+        if (!tx.ConnectInputs(txdb, mapInputs, mapUnused, CDiskTxPos(1,1,1), pindexBest, false, false, MANDATORY_SCRIPT_VERIFY_FLAGS))
+        {
+            return error("AcceptToMemoryPool: : BUG! PLEASE REPORT THIS! ConnectInputs failed against MANDATORY but not STANDARD flags %s", hash.ToString().c_str());
         }
     }
 
@@ -1881,12 +1910,12 @@ void static InvalidChainFound(CBlockIndex* pindexNew)
 
     printf("InvalidChainFound: invalid block=%s  height=%d  trust=%s  blocktrust=%"PRI64u"  date=%s\n",
       pindexNew->GetBlockHash().ToString().c_str(), pindexNew->nHeight,
-      CBigNum(pindexNew->nChainTrust).ToString().c_str(), nBestInvalidBlockTrust.Get64(),
+      CBigNum(pindexNew->nChainTrust).ToString().c_str(), nBestInvalidBlockTrust.GetLow64(),
       DateTimeStrFormat("%x %H:%M:%S", pindexNew->GetBlockTime()).c_str());
     printf("InvalidChainFound:  current best=%s  height=%d  trust=%s  blocktrust=%"PRI64u"  date=%s\n",
       hashBestChain.ToString().c_str(), nBestHeight,
       CBigNum(pindexBest->nChainTrust).ToString().c_str(),
-      nBestBlockTrust.Get64(),
+      nBestBlockTrust.GetLow64(),
       DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()).c_str());
 }
 
@@ -2616,7 +2645,7 @@ bool CBlock::SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew)
     printf("SetBestChain: new best=%s  height=%d  trust=%s  blocktrust=%"PRI64d"  date=%s\n",
       hashBestChain.ToString().c_str(), nBestHeight,
       CBigNum(nBestChainTrust).ToString().c_str(),
-      nBestBlockTrust.Get64(),
+      nBestBlockTrust.GetLow64(),
       DateTimeStrFormat(pindexBest->GetBlockTime()).c_str());
 
     // Check the version of the last 100 blocks to see if we need to upgrade:
@@ -3060,6 +3089,15 @@ bool static ReserealizeBlockSignature(CBlock* pblock)
     return CKey::ReserealizeSignature(pblock->vchBlockSig);
 }
 
+bool static IsCanonicalBlockSignature(CBlock* pblock)
+{
+    if (pblock->IsProofOfWork()) {
+        return pblock->vchBlockSig.empty();
+    }
+
+    return IsDERSignature(pblock->vchBlockSig, false);
+}
+
 bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 {
     AssertLockHeld(cs_main);
@@ -3079,8 +3117,12 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 
     // Block signature can be malleated in such a way that it increases block size up to maximum allowed by protocol
     // For now we just strip garbage from newly received blocks
-    if (!ReserealizeBlockSignature(pblock))
-        printf("WARNING: ProcessBlock() : ReserealizeBlockSignature FAILED\n");
+    // if (!ReserealizeBlockSignature(pblock))
+        // printf("WARNING: ProcessBlock() : ReserealizeBlockSignature FAILED\n");
+    if (!IsCanonicalBlockSignature(pblock)) {
+        if (!ReserealizeBlockSignature(pblock))
+            printf("WARNING: ProcessBlock() : ReserealizeBlockSignature FAILED\n");
+    }
 
     // Preliminary checks
     // if (!pblock->CheckBlock())
