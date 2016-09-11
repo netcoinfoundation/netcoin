@@ -78,6 +78,7 @@ OBJS= \
     obj/db.o \
     obj/init.o \
     obj/keystore.o \
+    obj/core.o \
     obj/main.o \
     obj/net.o \
     obj/protocol.o \
@@ -91,6 +92,7 @@ OBJS= \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \
+    obj/hash.o \
     obj/noui.o \
     obj/chainparams.o
 

@@ -247,6 +247,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/zerocoin/ZeroTest.h \
     src/zerocoin/Zerocoin.h \
     src/serialize.h \
+    src/core.h \
     src/main.h \
     src/miner.h \
     src/net.h \
@@ -322,9 +323,11 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/version.cpp \
     src/sync.cpp \
     src/util.cpp \
+    src/hash.cpp \
     src/netbase.cpp \
     src/key.cpp \
     src/script.cpp \
+    src/core.cpp \
     src/main.cpp \
     src/miner.cpp \
     src/init.cpp \

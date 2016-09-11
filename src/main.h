@@ -7,7 +7,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
+
 #include <stdint.h>
+
+#include "core.h"
 #include "bignum.h"
 #include "sync.h"
 #include "net.h"
@@ -294,8 +297,8 @@ public:
 };
 
 
-
-/** An outpoint - a combination of a transaction hash and an index n into its vout */
+/*
+/** An outpoint - a combination of a transaction hash and an index n into its vout *
 class COutPoint
 {
 public:
@@ -325,7 +328,7 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("COutPoint(%s, %u)", hash.ToString().substr(0,10).c_str(), n);
+        return strprintf("COutPoint(%s, %u)", hash.ToString().c_str(), n);
     }
 
     void print() const
@@ -334,7 +337,7 @@ public:
     }
 };
 
-
+*/
 
 
 /** An input of a transaction.  It contains the location of the previous
@@ -756,7 +759,7 @@ public:
         std::string str;
         str += IsCoinBase()? "Coinbase" : (IsCoinStake()? "Coinstake" : "CTransaction");
         str += strprintf("(hash=%s, nTime=no, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", nLockTime=%d, strComment=%s)\n",
-            GetHash().ToString().substr(0,10).c_str(),
+            GetHash().ToString().c_str(),
             nVersion,
             vin.size(),
             vout.size(),
@@ -1230,11 +1233,11 @@ public:
     void print() const
     {
         printf("CBlock(hash=%s, PoW=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%"PRI64u", vchBlockSig=%s)\n",
-            GetHash().ToString().substr(0,20).c_str(),
-            GetPoWHash().ToString().substr(0,20).c_str(),
+            GetHash().ToString().c_str(),
+            GetPoWHash().ToString().c_str(),
             nVersion,
-            hashPrevBlock.ToString().substr(0,20).c_str(),
-            hashMerkleRoot.ToString().substr(0,10).c_str(),
+            hashPrevBlock.ToString().c_str(),
+            hashMerkleRoot.ToString().c_str(),
             nTime, nBits, nNonce,
             vtx.size(),
             HexStr(vchBlockSig.begin(), vchBlockSig.end()).c_str());
@@ -1245,7 +1248,7 @@ public:
         }
         printf("  vMerkleTree: ");
         for (unsigned int i = 0; i < vMerkleTree.size(); i++)
-            printf("%s ", vMerkleTree[i].ToString().substr(0,10).c_str());
+            printf("%s ", vMerkleTree[i].ToString().c_str());
         printf("\n");
     }
 
