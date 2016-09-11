@@ -76,11 +76,24 @@ void WalletModel::updateStatus()
 
 void WalletModel::pollBalanceChanged()
 {
-    if(nBestHeight != cachedNumBlocks)
+    // if(nBestHeight != cachedNumBlocks)
+    bool heightChanged = false;
+        {
+            LOCK(cs_main);
+            if(nBestHeight != cachedNumBlocks)
+            {
+                // Balance and number of transactions might have changed
+                cachedNumBlocks = nBestHeight;
+                heightChanged = true;
+            }
+        }
+        if(heightChanged)
     {
         // Balance and number of transactions might have changed
-        cachedNumBlocks = nBestHeight;
+        // cachedNumBlocks = nBestHeight;
         checkBalanceChanged();
+        if(transactionTableModel)
+            transactionTableModel->updateConfirmations();
     }
 }
 
@@ -456,6 +469,7 @@ bool WalletModel::getPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const
 // returns a list of COutputs from COutPoints
 void WalletModel::getOutputs(const std::vector<COutPoint>& vOutpoints, std::vector<COutput>& vOutputs)
 {
+    LOCK2(cs_main, wallet->cs_wallet);
     BOOST_FOREACH(const COutPoint& outpoint, vOutpoints)
     {
         if (!wallet->mapWallet.count(outpoint.hash)) continue;
@@ -471,6 +485,8 @@ void WalletModel::listCoins(std::map<QString, std::vector<COutput> >& mapCoins) 
 {
     std::vector<COutput> vCoins;
     wallet->AvailableCoins(vCoins);
+
+    LOCK2(cs_main, wallet->cs_wallet); // ListLockedCoins, mapWallet
     std::vector<COutPoint> vLockedCoins;
 
     // add locked coins

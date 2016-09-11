@@ -93,6 +93,11 @@ private:
     int nWalletMaxVersion;
 
 public:
+    /// Main wallet lock.
+    /// This lock protects all the fields added by CWallet
+    ///   except for:
+    ///      fFileBacked (immutable after instantiation)
+    ///      strWalletFile (immutable after instantiation)
     mutable CCriticalSection cs_wallet;
 
     bool fFileBacked;
@@ -168,7 +173,8 @@ public:
 
 
     // check whether we are allowed to upgrade (or already support) to the named feature
-    bool CanSupportFeature(enum WalletFeature wf) { return nWalletMaxVersion >= wf; }
+    // bool CanSupportFeature(enum WalletFeature wf) { return nWalletMaxVersion >= wf; }
+    bool CanSupportFeature(enum WalletFeature wf) { AssertLockHeld(cs_wallet); return nWalletMaxVersion >= wf; }
 
     void AvailableCoinsMinConf(std::vector<COutput>& vCoins, int nConf) const;
     void AvailableCoins(std::vector<COutput>& vCoins, bool fOnlyConfirmed=true, const CCoinControl *coinControl=NULL) const;
@@ -185,7 +191,8 @@ public:
     // Load metadata (used by LoadWallet)
     bool LoadKeyMetadata(const CPubKey &pubkey, const CKeyMetadata &metadata);
 
-    bool LoadMinVersion(int nVersion) { nWalletVersion = nVersion; nWalletMaxVersion = std::max(nWalletMaxVersion, nVersion); return true; }
+    // bool LoadMinVersion(int nVersion) { nWalletVersion = nVersion; nWalletMaxVersion = std::max(nWalletMaxVersion, nVersion); return true; }
+    bool LoadMinVersion(int nVersion) { AssertLockHeld(cs_wallet); nWalletVersion = nVersion; nWalletMaxVersion = std::max(nWalletMaxVersion, nVersion); return true; }
 
     // Adds an encrypted key to the store, and saves it to disk.
     bool AddCryptedKey(const CPubKey &vchPubKey, const std::vector<unsigned char> &vchCryptedSecret);
@@ -346,6 +353,7 @@ public:
 
     unsigned int GetKeyPoolSize()
     {
+        AssertLockHeld(cs_wallet); // setKeyPool
         return setKeyPool.size();
     }
 
@@ -360,7 +368,8 @@ public:
     bool SetMaxVersion(int nVersion);
 
     // get the current wallet format (the oldest client version guaranteed to understand this wallet)
-    int GetVersion() { return nWalletVersion; }
+    // int GetVersion() { return nWalletVersion; }
+    int GetVersion() { LOCK(cs_wallet); return nWalletVersion; }
 
     void FixSpentCoins(int& nMismatchSpent, int64_t& nBalanceInQuestion, bool fCheckOnly = false);
     void DisableTransaction(const CTransaction &tx);
