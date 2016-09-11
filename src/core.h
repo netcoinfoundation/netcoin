@@ -65,7 +65,7 @@ public:
 /** An input of a transaction.  It contains the location of the previous
  * transaction's output that it claims and a signature that matches the
  * output's public key.
- *
+ */
 class CTxIn
 {
 public:
@@ -122,9 +122,9 @@ public:
         str += "CTxIn(";
         str += prevout.ToString();
         if (prevout.IsNull())
-            str += strprintf(", coinbase %s", HexStr(scriptSig));
+            str += strprintf(", coinbase %s", HexStr(scriptSig).c_str());
         else
-            str += strprintf(", scriptSig=%s", scriptSig.ToString().substr(0,24));
+            str += strprintf(", scriptSig=%s", scriptSig.ToString().substr(0,24).c_str());
         if (nSequence != std::numeric_limits<unsigned int>::max())
             str += strprintf(", nSequence=%u", nSequence);
         str += ")";
@@ -137,7 +137,7 @@ public:
 
 /** An output of a transaction.  It contains the public key that the next input
  * must be able to sign with to claim it.
- *
+ */
 class CTxOut
 {
 public:
@@ -202,9 +202,8 @@ public:
     std::string ToString() const
     {
         if (IsEmpty()) return "CTxOut(empty)";
-        return strprintf("CTxOut(nValue=%s, scriptPubKey=%s)", FormatMoney(nValue), scriptPubKey.ToString());
+        return strprintf("CTxOut(nValue=%s, scriptPubKey=%s)", FormatMoney(nValue).c_str(), scriptPubKey.ToString().c_str());
     }
 };
-*/
 
 #endif

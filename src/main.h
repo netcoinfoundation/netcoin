@@ -339,11 +339,11 @@ public:
 
 */
 
-
+/*
 /** An input of a transaction.  It contains the location of the previous
  * transaction's output that it claims and a signature that matches the
  * output's public key.
- */
+ *
 class CTxIn
 {
 public:
@@ -425,7 +425,7 @@ public:
 
 /** An output of a transaction.  It contains the public key that the next input
  * must be able to sign with to claim it.
- */
+ *
 class CTxOut
 {
 public:
@@ -507,7 +507,7 @@ public:
         printf("%s\n", ToString().c_str());
     }
 };
-
+*/
 
 
 
@@ -811,7 +811,7 @@ public:
      */
     bool ConnectInputs(CTxDB& txdb, MapPrevTx inputs,
                        std::map<uint256, CTxIndex>& mapTestPool, const CDiskTxPos& posThisTx,
-                       const CBlockIndex* pindexBlock, bool fBlock, bool fMiner);
+                       const CBlockIndex* pindexBlock, bool fBlock, bool fMiner, unsigned int flags = STANDARD_SCRIPT_VERIFY_FLAGS);
     // bool ClientConnectInputs();
     bool CheckTransaction() const;
     // bool AcceptToMemoryPool(CTxDB& txdb, bool* pfMissingInputs=NULL);

@@ -130,6 +130,11 @@ void Shutdown()
     StopRPCThreads();
     bitdb.Flush(false);
     StopNode();
+    {
+        LOCK(cs_main);
+        if (pwalletMain)
+            pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+    }
  /*   {
         fShutdown = true;
         nTransactionsUpdated++;
@@ -972,6 +977,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         pwalletMain->SetDefaultKey(newDefaultKey);
         if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), ""))
             strErrors << _("Cannot write default address") << "\n";
+        pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
 
     printf("%s", strErrors.str().c_str());
