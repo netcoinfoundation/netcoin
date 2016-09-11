@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = netcoin-qt
-VERSION = 2.4.0
+VERSION = 2.5.0
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -223,12 +223,14 @@ HEADERS += src/qt/bitcoingui.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
+    src/chainparams.h \
     src/chainparamsseeds.h \
     src/checkpoints.h \
     src/compat.h \
     src/coincontrol.h \
     src/sync.h \
     src/util.h \
+    src/hash.h \
     src/uint256.h \
     src/kernel.h \
     src/scrypt.h \
@@ -245,7 +247,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/zerocoin/ZeroTest.h \
     src/zerocoin/Zerocoin.h \
     src/serialize.h \
-    src/strlcpy.h \
+    src/core.h \
     src/main.h \
     src/miner.h \
     src/net.h \
@@ -298,7 +300,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/netbase.h \
     src/clientversion.h \
     src/qt/shoppingpage.h \
-    src/qt/networkpage.h
+    src/qt/networkpage.h \
+    src/threadsafety.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -316,12 +319,15 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/calcdialog.cpp \
     src/qt/intro.cpp \
     src/alert.cpp \
+    src/chainparams.cpp \
     src/version.cpp \
     src/sync.cpp \
     src/util.cpp \
+    src/hash.cpp \
     src/netbase.cpp \
     src/key.cpp \
     src/script.cpp \
+    src/core.cpp \
     src/main.cpp \
     src/miner.cpp \
     src/init.cpp \

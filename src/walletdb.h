@@ -13,6 +13,9 @@
 class CKeyPool;
 class CAccount;
 class CAccountingEntry;
+class CWallet;
+class CWalletTx;
+
 
 /** Error statuses for the wallet database */
 enum DBErrors
@@ -61,12 +64,15 @@ public:
 class CWalletDB : public CDB
 {
 public:
-    CWalletDB(std::string strFilename, const char* pszMode="r+") : CDB(strFilename.c_str(), pszMode)
+    // CWalletDB(std::string strFilename, const char* pszMode="r+") : CDB(strFilename.c_str(), pszMode)
+    CWalletDB(const std::string& strFilename, const char* pszMode = "r+") : CDB(strFilename, pszMode)
     {
     }
+
 private:
     CWalletDB(const CWalletDB&);
     void operator=(const CWalletDB&);
+
 public:
     bool ReadName(const std::string& strAddress, std::string& strName)
     {
@@ -98,7 +104,7 @@ public:
     bool ReadKey(const CPubKey& vchPubKey, CPrivKey& vchPrivKey)
     {
         vchPrivKey.clear();
-        return Read(std::make_pair(std::string("key"), vchPubKey.Raw()), vchPrivKey);
+        return Read(std::make_pair(std::string("key"), vchPubKey), vchPrivKey);
     }
 
     bool WriteKey(const CPubKey& vchPubKey, const CPrivKey& vchPrivKey, const CKeyMetadata &keyMeta)
@@ -108,7 +114,15 @@ public:
         if(!Write(std::make_pair(std::string("keymeta"), vchPubKey), keyMeta))
             return false;
 
-        return Write(std::make_pair(std::string("key"), vchPubKey.Raw()), vchPrivKey, false);
+        // return Write(std::make_pair(std::string("key"), vchPubKey), vchPrivKey, false);
+
+        // hash pubkey/privkey to accelerate wallet load
+        std::vector<unsigned char> vchKey;
+        vchKey.reserve(vchPubKey.size() + vchPrivKey.size());
+        vchKey.insert(vchKey.end(), vchPubKey.begin(), vchPubKey.end());
+        vchKey.insert(vchKey.end(), vchPrivKey.begin(), vchPrivKey.end());
+
+        return Write(std::make_pair(std::string("key"), vchPubKey), std::make_pair(vchPrivKey, Hash(vchKey.begin(), vchKey.end())), false);
     }
 
     bool WriteCryptedKey(const CPubKey& vchPubKey, const std::vector<unsigned char>& vchCryptedSecret, const CKeyMetadata &keyMeta)
@@ -119,12 +133,12 @@ public:
         if(!Write(std::make_pair(std::string("keymeta"), vchPubKey), keyMeta))
             return false;
 
-        if (!Write(std::make_pair(std::string("ckey"), vchPubKey.Raw()), vchCryptedSecret, false))
+        if (!Write(std::make_pair(std::string("ckey"), vchPubKey), vchCryptedSecret, false))
             return false;
         if (fEraseUnencryptedKey)
         {
-            Erase(std::make_pair(std::string("key"), vchPubKey.Raw()));
-            Erase(std::make_pair(std::string("wkey"), vchPubKey.Raw()));
+            Erase(std::make_pair(std::string("key"), vchPubKey));
+            Erase(std::make_pair(std::string("wkey"), vchPubKey));
         }
         return true;
     }
@@ -174,7 +188,7 @@ public:
     bool WriteDefaultKey(const CPubKey& vchPubKey)
     {
         nWalletDBUpdated++;
-        return Write(std::string("defaultkey"), vchPubKey.Raw());
+        return Write(std::string("defaultkey"), vchPubKey);
     }
 
     bool ReadPool(int64_t nPool, CKeyPool& keypool)
@@ -256,5 +270,7 @@ public:
     static bool Recover(CDBEnv& dbenv, std::string filename, bool fOnlyKeys);
     static bool Recover(CDBEnv& dbenv, std::string filename);
 };
+
+bool BackupWallet(const CWallet& wallet, const std::string& strDest);
 
 #endif // BITCOIN_WALLETDB_H

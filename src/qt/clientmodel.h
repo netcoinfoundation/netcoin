@@ -34,7 +34,7 @@ public:
     //! Return true if core is doing initial block download
     bool inInitialBlockDownload() const;
     //! Return conservative estimate of total number of blocks, or 0 if unknown
-    int getNumBlocksOfPeers() const;
+    // int getNumBlocksOfPeers() const;
     //! Return warnings to be displayed in status bar
     QString getStatusBarWarnings() const;
 
@@ -48,7 +48,7 @@ private:
     OptionsModel *optionsModel;
 
     int cachedNumBlocks;
-    int cachedNumBlocksOfPeers;
+    // int cachedNumBlocksOfPeers;
 
     int numBlocksAtStartup;
 
@@ -58,7 +58,7 @@ private:
     void unsubscribeFromCoreSignals();
 signals:
     void numConnectionsChanged(int count);
-    void numBlocksChanged(int count, int countOfPeers);
+    void numBlocksChanged(int count);
     void alertsChanged(const QString &warnings);
 
     //! Asynchronous error notification

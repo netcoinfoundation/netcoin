@@ -9,6 +9,7 @@
 #include <deque>
 #include <boost/array.hpp>
 #include <boost/foreach.hpp>
+#include <boost/signals2/signal.hpp>
 #include <openssl/rand.h>
 
 #ifndef WIN32
@@ -19,8 +20,9 @@
 #include "netbase.h"
 #include "protocol.h"
 #include "addrman.h"
+#include "hash.h"
 
-class CRequestTracker;
+// class CRequestTracker;
 class CNode;
 class CBlockIndex;
 extern int nBestHeight;
@@ -42,12 +44,21 @@ CNode* FindNode(const CNetAddr& ip);
 CNode* FindNode(const std::string& addrName);
 CNode* FindNode(const CService& ip);
 CNode* ConnectNode(CAddress addrConnect, const char *strDest = NULL);
-void MapPort();
+void MapPort(bool fUseUPnP);
 unsigned short GetListenPort();
 bool BindListenPort(const CService &bindAddr, std::string& strError=REF(std::string()));
-void StartNode(void* parg);
+void StartNode(boost::thread_group& threadGroup);
 bool StopNode();
 void SocketSendData(CNode *pnode);
+
+// Signals for message handling
+struct CNodeSignals
+{
+    boost::signals2::signal<bool (CNode*)> ProcessMessages;
+    boost::signals2::signal<bool (CNode*, bool)> SendMessages;
+};
+
+CNodeSignals& GetNodeSignals();
 
 enum
 {
@@ -83,6 +94,7 @@ enum
     MSG_BLOCK,
 };
 
+/*
 class CRequestTracker
 {
 public:
@@ -100,11 +112,12 @@ public:
         return fn == NULL;
     }
 };
-
-
-/** Thread types */
+*/
+/*
+/** Thread types *
 enum threadId
 {
+ /*
     THREAD_SOCKETHANDLER,
     THREAD_OPENCONNECTIONS,
     THREAD_MESSAGEHANDLER,
@@ -116,17 +129,19 @@ enum threadId
     THREAD_DUMPADDRESS,
     THREAD_RPCHANDLER,
     THREAD_STAKE_MINER,
+ *
 
     THREAD_MAX
 };
+*/
 
-extern bool fClient;
+// extern bool fClient;
 extern bool fDiscover;
-extern bool fUseUPnP;
+// extern bool fUseUPnP;
 extern uint64_t nLocalServices;
 extern uint64_t nLocalHostNonce;
 // extern CAddress addrSeenByPeer;
-extern boost::array<int, THREAD_MAX> vnThreadsRunning;
+// extern boost::array<int, THREAD_MAX> vnThreadsRunning;
 extern CAddrMan addrman;
 
 extern std::vector<CNode*> vNodes;
@@ -195,6 +210,7 @@ public:
     int nMisbehavior;
     double dPingTime;
     double dPingWait;
+    std::string addrLocal;
 };
 
 
@@ -217,6 +233,7 @@ public:
     CCriticalSection cs_vSend;
     // CCriticalSection cs_vRecv;
 
+    std::deque<CInv> vRecvGetData;
     // std::vector<CNetMessage> vRecvMsg;
     std::deque<CNetMessage> vRecvMsg;
     CCriticalSection cs_vRecvMsg;
@@ -253,8 +270,8 @@ protected:
 
 public:
     // int64_t nReleaseTime;
-    std::map<uint256, CRequestTracker> mapRequests;
-    CCriticalSection cs_mapRequests;
+    // std::map<uint256, CRequestTracker> mapRequests;
+    // CCriticalSection cs_mapRequests;
     uint256 hashContinue;
     CBlockIndex* pindexLastGetBlocksBegin;
     uint256 hashLastGetBlocksEnd;
@@ -454,7 +471,9 @@ public:
 
 
 
-    void BeginMessage(const char* pszCommand)
+    // void BeginMessage(const char* pszCommand)
+    // TODO: Document the postcondition of this function.  Is cs_vSend locked?
+   void BeginMessage(const char* pszCommand) EXCLUSIVE_LOCK_FUNCTION(cs_vSend)
     {
         ENTER_CRITICAL_SECTION(cs_vSend);
  /*       if (nHeaderStart != -1)
@@ -469,7 +488,9 @@ public:
             printf("sending: %s ", pszCommand);
     }
 
-    void AbortMessage()
+    // void AbortMessage()
+   // TODO: Document the precondition of this function.  Is cs_vSend locked?
+   void AbortMessage() UNLOCK_FUNCTION(cs_vSend)
     {
       /*  if (nHeaderStart < 0)
             return;
@@ -485,7 +506,9 @@ public:
             printf("(aborted)\n");
     }
 
-    void EndMessage()
+    // void EndMessage()
+   // TODO: Document the precondition of this function.  Is cs_vSend locked?
+   void EndMessage() UNLOCK_FUNCTION(cs_vSend)
     {
         if (mapArgs.count("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0)
         {
@@ -714,7 +737,7 @@ public:
         }
     }
 
-
+ /*
     void PushRequest(const char* pszCommand,
                      void (*fn)(void*, CDataStream&), void* param1)
     {
@@ -759,7 +782,7 @@ public:
         PushMessage(pszCommand, hashReply, a1, a2);
     }
 
-
+ */
 
     // void PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd);
     bool IsSubscribed(unsigned int nChannel);

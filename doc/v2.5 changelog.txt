@@ -1,0 +1,183 @@
+complete check for low S in signatures
+fix potential network-wide dos by malleability of block signature 
+Add -enforcecanonical
+Remove IsDust
+Relay OP_RETURN TxOut as standard transaction type
+Reject non-canonically-encoded sizes 
+Only send reorged txn to mempool after checkpoint
+Fix multi-block reorg transaction resurrection 
+Avoid repeated lookups in mapOrphanTransactions
+fix crashing bug caused by orphan(s) with duplicate prevout.hash
+Do not accept orphan blocks in -loadblock mode
+--backup--
+
+CWallet: fix nTimeFirstKey init, by making constructor init common code
+remove fClient 
+Internal RNG for approximateBestSubset to prevent degenerate behavior
+move IsStandard and IsFinal out of CTransaction
+Fix off-by-one errors in use of IsFinalTx()
+Relay OP_RETURN data TxOut as standard transaction type 
+disable check for min proof after checkpoint
+add OpenSSL RAND_cleanup() on OpenSSL shutdown
+
+Break up CAddrMan's IMPLEMENT_SERIALIZE
+Remove enforcecanonical option, it's always active from now
+
+Replace 520 constant with MAX_SCRIPT_ELEMENT_SIZE
+Check redeemScript size does not exceed 520 byte limit
+Ignore too-long redeemScripts while loading wallet
+Add redeemScript to listunspent output and signrawtransaction input 
+Signrawtransaction shouldn't require redeemScript for non-p2sh txins
+get rid of strlcpy.h
+
+move GetLegacySigOpCount and GetP2SHSigOpCount out of CTransaction
+Reject transactions with excessive numbers of sigops 
+replace int with size_t in stream methods
+Make CScript::clear() release its memory 
+permit one data txout per non-data txout
+rpc: Compute number of confirmations of a block from block height 
+net: Remove MilliSleep from StopNode
+
+Shutdown cleanup prep-work
+LoopForever and ThreadTrace helpers 
+Port Thread* methods to boost::thread_group 
+Clean up shutdown process 
+Have Qt poll for shutdown requested, the QT way 
+changes to thread code (directly use boost::thread) 
+Dump addresses every 15 minutes instead of 10 seconds 
+Add ThreadGetMyExternalIP to net thread group 
+Use boost::asio::deadline_timer for walletpassphrase timeout
+askpassphrasedialog: clear pass fields on accept 
+
+[Wallet] Improve ReorderTransactions(..) 
+don't use memset() in privacy/security relevant code parts 
+make CBase58Data class use zero_after_free_allocator
+move start of miner out of net.cpp's StartNode() 
+Compact serialization for variable-length integers 
+Compact serialization for scripts 
+Make CPubKey statically allocated 
+CSecret/CKey -> CKey/CPubKey split/refactor
+
+data-driven base58 CBitcoinAddress/CBitcoinSecret tests
+Make signature cache store CPubKeys 
+Use CHashWriter also in SignatureHash(), and for message signing 
+Do not treat fFromMe transaction differently when broadcasting 
+improve wallet load time by removing duplicated calls to EC_KEY_check
+verify vchPubKey matches calculated public key unless fSkipCheck is set 
+
+Remove broken option to skip input checking for wallet
+refactor acception to mempool 
+Added threadsafety.h
+Added AnnotatedMixin which adds locking annotations to the mutex
+Simplify CMutexLock 
+Added comments to sync.h to make it easier to understand the macros
+mutex debugging routines: LocksHeld() and AssertLockHeld()
+Use mutex pointer instead of name for AssertLockHeld
+
+Document cs_wallet lock and add AssertLockHeld
+Wallet locking fixes for -DDEBUG_LOCKORDER
+Add AssertLockHeld for cs_main to ChainActive-using functions ( broke wallet)
+LoadWallet: acquire cs_wallet mutex before clearing setKeyPool 
+Solve chainActive-related locking issues (fixes broke wallet)
+wallet: add missing locks
+
+refactor mempool locks 
+qt: get required locks upfront in polling functions 
+AvailableCoins: acquire cs_main mutex
+Display tx nLockTime correctly when set to block #
+refactor locking of CTxMemPool::addUnchecked() 
+Moved SyncWithWallets out of ProcessMessage and into CTxMemPool
+Bitcoin-Qt: prevent stuck/unusable debug window on exit
+Removed net.cpp's dependency on init.h
+Using boost::signals2 to message main from net.cpp
+
+Remove IsFromMe() check in CTxMemPool::accept()
+Use boost signals for callbacks from main to wallet 
+Remove dead transaction replacement code
+Add a notfound message to getdata
+Process getdata invs separately until send buffer overflow
+net.cpp: Do not change primary process name from (default) 
+process received messages one at a time without sleeping
+Annotated lock-like functions in net.h. 
+move AreInputsStandard out of CTransaction 
+
+Get rid of db dependencies on main 
+Remove -detachdb and stop's detach argument. 
+
+Introduce a CChainParameters singleton class and regtest mode
+Generalize version bytes 
+
+Add HMAC-SHA512 to hash
+Push down cs_main locking in ProcessMessage 
+Adding new "addrlocal" field to RPC getpeerinfo
+Always print full hashes (tx, block, inv) 
+Created core.h/core.cpp, added to makefiles
+fix wrong memcmp() usage in CKey::operator== 
+BIP32 derivation implementation
+Document that CPubKey.IsValid() is consensus critical 
+Fix minor backward incompatibility 
+Remove tx from AlreadyAskedFor list once we receive it
+prefer const string& over char* in CDB and CWalletDB constructor
+
+Introduce script verification flags 
+Remove contention on signature cache during block validation 
+Add rejection of non-null CHECKMULTISIG dummy values
+Do not trigger a DoS ban if SCRIPT_VERIFY_NULLDUMMY fails
+Increase IsStandard() scriptSig length
+adapt latest linearize script from bitcoin 
+walletmodel: make getBalance() work with coin control
+More bestblock records in wallets
+Fix crash-at-shutdown if exiting before initializing wallet 
+
+don't pass wallet to CreateNewBlock() 
+Clean up mining CReserveKey to prevent crash at shutdown 
+Move pMiningKey init out of StartRPCThreads
+Exit cleanly if AppInit2 returns false 
+Bugfix CValidationResult for BIP30 + add DoS
+Try moving database/ away in case of failure
+Bugfix: if no bestblock record is present, do a -rescan 
+[QT] Don't ask for a passphrase to getnewaddress. 
+Remove fAllowReuse from GetKeyFromPool
+remove "checkorder" and "reply" P2P commands 
+
+Store orphan blocks in serialized form
+Limit the number of orphan blocks
+Make max number of orphan blocks kept in memory a startup parameter
+don't relay checkpoints to peers before version negotiation
+AddToBlockIndex() is always called with locked cs_main 
+Don't relay alerts to peers before version negotiation
+fix duplicate stake misdetection 
+
+refactor checks for canonical sigs and keys 
+don't reserealize already canonical block signatures
+Discourage NOPs reserved for soft-fork upgrades
+Relax IsStandard rules for pay-to-script-hash transactions
+improve compatibility with bip62 
+Switch addrman key from vector to uint256 
+Changed Get64(.) to GetLow64()
+Temporarily add SetNull/IsNull/GetCheapHash to base_uint
+Replace GetLow64 with GetCheapHash
+Simplify hashing code 
+Do not bias outgoing connections towards fresh addresses 
+Always use a 50% chance to choose between tried and new entries 
+Scale up addrman 
+
+Cap nAttempts penalty at 8 and switch to pow instead of a division loop.
+Correctly randomize change output position 
+Do not call ResendWalletTransactions when reindexing,
+[Qt] Call checkBalanceChanged() periodically
+Revert "locks exhaustion fix"
+Make CScriptNum() take nMaxNumSize as an argument 
+Improve addrman Select() performance when buckets are nearly empty 
+compatibility with BIP66 
+Replace NOP2 with CHECKLOCKTIMEVERIFY 
+demand canonical block sig from updated peers
+RPC client: Simplify command line string-to-JSON-value conversion code
+submitblock: add submission of stake template
+limit orphan blocks by mem usage 
+drop block signature reserealization
+check for null data transaction before issuing error to debug.log 
+rename OP_NOP2 to OP_CHECKLOCKTIMEVERIFY 
+enforce low s in block signatures
+
+Bitcoin-Qt: never display own block count > estimated block count 

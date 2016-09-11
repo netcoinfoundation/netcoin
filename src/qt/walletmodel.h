@@ -64,7 +64,7 @@ public:
     AddressTableModel *getAddressTableModel();
     TransactionTableModel *getTransactionTableModel();
 
-    qint64 getBalance() const;
+    qint64 getBalance(const CCoinControl *coinControl=NULL) const;
     qint64 getStake() const;
     qint64 getUnconfirmedBalance() const;
     qint64 getImmatureBalance() const;
@@ -142,6 +142,8 @@ public:
 
 private:
     CWallet *wallet;
+    bool fForceCheckBalanceChanged;
+
 
     // Wallet has an options model for wallet-specific options
     // (transaction fee, for example)

@@ -4,13 +4,17 @@
 // Copyright (c) 2013 NetCoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include "init.h"
+#include "main.h"
+#include "chainparams.h"
 #include "txdb.h"
 #include "db.h"
 #include "main.h"
 #include "walletdb.h"
 #include "bitcoinrpc.h"
 #include "net.h"
-#include "init.h"
+// #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
@@ -35,7 +39,7 @@ CWallet* pwalletMain;
 CClientUIInterface uiInterface;
 std::string strWalletFileName;
 bool fConfChange;
-bool fEnforceCanonical;
+// bool fEnforceCanonical;
 unsigned int nNodeLifespan;
 unsigned int nDerivationMethodIndex;
 unsigned int nMinerSleep;
@@ -46,7 +50,7 @@ enum Checkpoints::CPMode CheckpointsMode;
 //
 // Shutdown
 //
-
+/*
 void ExitTimeout(void* parg)
 {
 #ifdef WIN32
@@ -54,9 +58,37 @@ void ExitTimeout(void* parg)
     ExitProcess(0);
 #endif
 }
+*/
+//
+// Thread management and startup/shutdown:
+//
+// The network-processing threads are all part of a thread group
+// created by AppInit() or the Qt main() function.
+//
+// A clean exit happens when StartShutdown() or the SIGTERM
+// signal handler sets fRequestShutdown, which triggers
+// the DetectShutdownThread(), which interrupts the main thread group.
+// DetectShutdownThread() then exits, which causes AppInit() to
+// continue (it .joins the shutdown thread).
+// Shutdown() is then
+// called to clean up database connections, and stop other
+// threads that should only be stopped after the main network-processing
+// threads have exited.
+//
+// Note that if running -daemon the parent process returns from AppInit2
+// before adding any threads to the threadGroup, so .join_all() returns
+// immediately and the parent exits from main().
+//
+// Shutdown for Qt is very similar, only it uses a QTimer to detect
+// fRequestShutdown getting set, and then does the normal Qt
+// shutdown thing.
+//
+
+volatile bool fRequestShutdown = false;
 
 void StartShutdown()
 {
+/*
 #ifdef QT_GUI
     // ensure we leave the Qt main loop for a clean GUI exit (Shutdown() is called in bitcoin.cpp afterwards)
     uiInterface.QueueShutdown();
@@ -64,17 +96,25 @@ void StartShutdown()
     // Without UI, Shutdown() can simply be started in a new thread
     NewThread(Shutdown, NULL);
 #endif
+  */
+    fRequestShutdown = true;
 }
 
-void Shutdown(void* parg)
+bool ShutdownRequested()
+{
+    return fRequestShutdown;
+}
+
+void Shutdown()
 {
     static CCriticalSection cs_Shutdown;
-    static bool fTaken;
-
+    // static bool fTaken;
+    TRY_LOCK(cs_Shutdown, lockShutdown);
+    if (!lockShutdown) return;
     // Make this thread recognisable as the shutdown thread
     RenameThread("netcoin-shutoff");
 
-    bool fFirstThread = false;
+ /*   bool fFirstThread = false;
     {
         TRY_LOCK(cs_Shutdown, lockShutdown);
         if (lockShutdown)
@@ -85,9 +125,21 @@ void Shutdown(void* parg)
     }
     static bool fExit;
     if (fFirstThread)
+ */
+    nTransactionsUpdated++;
+    StopRPCThreads();
+    ShutdownRPCMining();
+    bitdb.Flush(false);
+    StopNode();
     {
+        LOCK(cs_main);
+        if (pwalletMain)
+            pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+    }
+ /*   {
         fShutdown = true;
         nTransactionsUpdated++;
+        StopRPCThreads();
         bitdb.Flush(false);
         StopNode();
         bitdb.Flush(true);
@@ -97,20 +149,45 @@ void Shutdown(void* parg)
         NewThread(ExitTimeout, NULL);
         MilliSleep(50);
         printf("Netcoin exited\n\n");
-        fExit = true;
+        // fExit = true;
 #ifndef QT_GUI
         // ensure non-UI client gets exited here, but let Bitcoin-Qt reach 'return 0;' in bitcoin.cpp
         exit(0);
 #endif
     }
-    else
+ /*   else
     {
         while (!fExit)
             MilliSleep(500);
         MilliSleep(100);
         ExitThread(0);
     }
+ */
+    bitdb.Flush(true);
+    boost::filesystem::remove(GetPidFile());
+    UnregisterWallet(pwalletMain);
+    delete pwalletMain;
 }
+
+//
+// Signal handlers are very limited in what they are allowed to do, so:
+void DetectShutdownThread(boost::thread_group* threadGroup)
+{
+    // bool shutdown = ShutdownRequested();
+    // while (fRequestShutdown == false)
+    // Tell the main threads to shutdown.
+    while (!fRequestShutdown)
+    //while (!shutdown)
+    {
+        MilliSleep(200);
+         if (fRequestShutdown)
+            threadGroup->interrupt_all();
+        // shutdown = ShutdownRequested();
+    }
+    // if (threadGroup)
+    //    threadGroup->interrupt_all();
+}
+
 
 void HandleSIGTERM(int)
 {
@@ -133,6 +210,9 @@ void HandleSIGHUP(int)
 #if !defined(QT_GUI)
 bool AppInit(int argc, char* argv[])
 {
+    boost::thread_group threadGroup;
+    boost::thread* detectShutdownThread = NULL;
+
     bool fRet = false;
     try
     {
@@ -144,7 +224,7 @@ bool AppInit(int argc, char* argv[])
         if (!boost::filesystem::is_directory(GetDataDir(false)))
         {
             fprintf(stderr, "Error: Specified directory does not exist\n");
-            Shutdown(NULL);
+            Shutdown();
         }
         ReadConfigFile(mapArgs, mapMultiArgs);
 
@@ -171,19 +251,63 @@ bool AppInit(int argc, char* argv[])
 
         if (fCommandLine)
         {
+            if (!SelectParamsFromCommandLine()) {
+                fprintf(stderr, "Error: invalid combination of -regtest and -testnet.\n");
+                return false;
+            }
             int ret = CommandLineRPC(argc, argv);
             exit(ret);
         }
+#if !defined(WIN32)
+        fDaemon = GetBoolArg("-daemon", false);
+        if (fDaemon)
+        {
+            // Daemonize
+            pid_t pid = fork();
+            if (pid < 0)
+            {
+                fprintf(stderr, "Error: fork() returned %d errno %d\n", pid, errno);
+                return false;
+            }
+            if (pid > 0) // Parent process, pid is child process id
+            {
+                CreatePidFile(GetPidFile(), pid);
+                return true;
+            }
+            // Child process falls through to rest of initialization
 
-        fRet = AppInit2();
+            pid_t sid = setsid();
+            if (sid < 0)
+                fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
+        }
+#endif
+
+        detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
+        fRet = AppInit2(threadGroup);
     }
     catch (std::exception& e) {
         PrintException(&e, "AppInit()");
     } catch (...) {
         PrintException(NULL, "AppInit()");
     }
-    if (!fRet)
-        Shutdown(NULL);
+    // if (!fRet)
+    if (!fRet) {
+        if (detectShutdownThread)
+            detectShutdownThread->interrupt();
+        threadGroup.interrupt_all();
+    }
+
+    if (detectShutdownThread)
+    {
+        // Shutdown(NULL);
+        // threadGroup.interrupt_all();
+        // threadGroup.join_all();
+        detectShutdownThread->join();
+        delete detectShutdownThread;
+        detectShutdownThread = NULL;
+    }
+        Shutdown();
+
     return fRet;
 }
 
@@ -200,9 +324,11 @@ int main(int argc, char* argv[])
     if (fRet && fDaemon)
         return 0;
 
-    return 1;
+    // return 1;
+    return (fRet ? 0 : 1);
 }
 #endif
+
 
 bool static InitError(const std::string &str)
 {
@@ -274,7 +400,7 @@ std::string HelpMessage()
         "  -upnp                  " + _("Use UPnP to map the listening port (default: 0)") + "\n" +
 #endif
 #endif
-        "  -detachdb              " + _("Detach block and address databases. Increases shutdown time (default: 0)") + "\n" +
+        // "  -detachdb              " + _("Detach block and address databases. Increases shutdown time (default: 0)") + "\n" +
         "  -paytxfee=<amt>        " + _("Fee per KB to add to transactions you send") + "\n" +
         "  -mininput=<amt>        " + _("When creating transactions, ignore inputs with value less than this (default: 0.0001)") + "\n" +
 #ifdef QT_GUI
@@ -289,6 +415,8 @@ std::string HelpMessage()
         "  -logtimestamps         " + _("Prepend debug output with timestamp") + "\n" +
         "  -shrinkdebugfile       " + _("Shrink debug.log file on client startup (default: 1 when no -debug)") + "\n" +
         "  -printtoconsole        " + _("Send trace/debug info to console instead of debug.log file") + "\n" +
+        "  -regtest               " + _("Enter regression test mode, which uses a special chain in which blocks can be "
+                                        "solved instantly. This is intended for regression testing tools and app development.") + "\n";
 #ifdef WIN32
         "  -printtodebugger       " + _("Send trace/debug info to debugger") + "\n" +
 #endif
@@ -297,11 +425,12 @@ std::string HelpMessage()
         "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 11311 or testnet 21311)") + "\n" +
         "  -rpcallowip=<ip>       " + _("Allow JSON-RPC connections from specified IP address") + "\n" +
         "  -rpcconnect=<ip>       " + _("Send commands to node running on <ip> (default: 127.0.0.1)") + "\n" +
+        "  -rpcthreads=<n>        " + _("Use this many threads to service RPC calls (default: 4)") + "\n" +
         "  -rpcwait               " + _("Wait for RPC server to start") + "\n";
         "  -blocknotify=<cmd>     " + _("Execute command when the best block changes (%s in cmd is replaced by block hash)") + "\n" +
         "  -walletnotify=<cmd>    " + _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)") + "\n" +
         "  -confchange            " + _("Require a confirmations for change (default: 0)") + "\n" +
-        "  -enforcecanonical      " + _("Enforce transaction scripts to use canonical PUSH operators (default: 1)") + "\n" +
+        // "  -enforcecanonical      " + _("Enforce transaction scripts to use canonical PUSH operators (default: 1)") + "\n" +
         "  -alertnotify=<cmd>     " + _("Execute command when a relevant alert is received (%s in cmd is replaced by message)") + "\n" +
         "  -upgradewallet         " + _("Upgrade wallet to latest format") + "\n" +
         "  -keypool=<n>           " + _("Set key pool size to <n> (default: 100)") + "\n" +
@@ -310,6 +439,7 @@ std::string HelpMessage()
         "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 2500, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-6, default: 1)") + "\n" +
         "  -loadblock=<file>      " + _("Imports blocks from external blk000?.dat file") + "\n" +
+        "  -maxorphanblocksmib=<n>   " + strprintf(_("Keep at most <n> MiB of unconnectable blocks in memory (default: %u)"), DEFAULT_MAX_ORPHAN_BLOCKS) + "\n";
 
        "\n" + _("Block creation options:") + "\n" +
         "  -blockminsize=<n>      "   + _("Set minimum block size in bytes (default: 0)") + "\n" +
@@ -327,7 +457,7 @@ std::string HelpMessage()
 /** Initialize netcoin.
  *  @pre Parameters should be parsed and config file should be read.
  */
-bool AppInit2()
+bool AppInit2(boost::thread_group& threadGroup)
 {
     // ********************************************************* Step 1: setup
 #ifdef _MSC_VER
@@ -351,6 +481,14 @@ bool AppInit2()
     typedef BOOL (WINAPI *PSETPROCDEPPOL)(DWORD);
     PSETPROCDEPPOL setProcDEPPol = (PSETPROCDEPPOL)GetProcAddress(GetModuleHandleA("Kernel32.dll"), "SetProcessDEPPolicy");
     if (setProcDEPPol != NULL) setProcDEPPol(PROCESS_DEP_ENABLE);
+
+    // Initialize Windows Sockets
+    WSADATA wsadata;
+    int ret = WSAStartup(MAKEWORD(2,2), &wsadata);
+    if (ret != NO_ERROR)
+    {
+        return InitError(strprintf("Error: TCP/IP socket library failed to start (WSAStartup returned error %d)", ret));
+    }
 #endif
 #ifndef WIN32
     umask(077);
@@ -370,6 +508,8 @@ bool AppInit2()
     sa_hup.sa_flags = 0;
     sigaction(SIGHUP, &sa_hup, NULL);
 #endif
+
+    // threadGroup.create_thread(boost::bind(&DetectShutdownThread, &threadGroup));
 
     // ********************************************************* Step 2: parameter interactions
 
@@ -392,7 +532,12 @@ bool AppInit2()
 
     nDerivationMethodIndex = 0; // use 0 for compatibility with original netcoin wallet keys
 
-    fTestNet = GetBoolArg("-testnet");
+    // fTestNet = GetBoolArg("-testnet");
+
+    if (!SelectParamsFromCommandLine()) {
+         return InitError("Invalid combination of -testnet and -regtest.");
+    }
+
     // NetCoin: Keep irc seeding on by default for now.
 //    if (fTestNet)
 //    {
@@ -445,14 +590,14 @@ bool AppInit2()
     else
         fDebugNet = GetBoolArg("-debugnet");
 
-    bitdb.SetDetach(GetBoolArg("-detachdb", false));
-
+   //  bitdb.SetDetach(GetBoolArg("-detachdb", false));
+ /*
 #if !defined(WIN32) && !defined(QT_GUI)
     fDaemon = GetBoolArg("-daemon");
 #else
     fDaemon = false;
 #endif
-
+*/
     if (fDaemon)
         fServer = true;
     else
@@ -489,7 +634,7 @@ bool AppInit2()
     }
 
     fConfChange = GetBoolArg("-confchange", false);
-    fEnforceCanonical = GetBoolArg("-enforcecanonical", true);
+    // fEnforceCanonical = GetBoolArg("-enforcecanonical", true);
 
     if (mapArgs.count("-mininput"))
     {
@@ -513,7 +658,7 @@ bool AppInit2()
     static boost::interprocess::file_lock lock(pathLockFile.string().c_str());
     if (!lock.try_lock())
         return InitError(strprintf(_("Cannot obtain a lock on data directory %s.  NetCoin is probably already running."), GetDataDir().string().c_str()));
-
+/*
 #if !defined(WIN32) && !defined(QT_GUI)
     if (fDaemon)
     {
@@ -535,7 +680,7 @@ bool AppInit2()
             fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
     }
 #endif
-
+*/
     if (GetBoolArg("-shrinkdebugfile", !fDebug))
         ShrinkDebugFile();
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
@@ -558,10 +703,29 @@ bool AppInit2()
 
     if (!bitdb.Open(GetDataDir()))
     {
-        string msg = strprintf(_("Error initializing database environment %s!"
+        /*  string msg = strprintf(_("Error initializing database environment %s!"
                                  " To recover, BACKUP THAT DIRECTORY, then remove"
                                  " everything from it except for wallet.dat."), strDataDir.c_str());
         return InitError(msg);
+      */
+
+        // try moving the database env out of the way
+        boost::filesystem::path pathDatabase = GetDataDir() / "database";
+        boost::filesystem::path pathDatabaseBak = GetDataDir() / strprintf("database.%d.bak", GetTime());
+        try {
+            boost::filesystem::rename(pathDatabase, pathDatabaseBak);
+            printf("Moved old %s to %s. Retrying.\n", pathDatabase.string().c_str(), pathDatabaseBak.string().c_str());
+        } catch(boost::filesystem::filesystem_error &error) {
+            // failure is ok (well, not really, but it's not worse than what we started with)
+        }
+
+        // try again
+        if (!bitdb.Open(GetDataDir())) {
+            // if it still fails, it probably means we can't even create the database env
+            string msg = strprintf(_("Error initializing wallet database environment %s!"), strDataDir.c_str());
+            return InitError(msg);
+
+        }
     }
 
     if (GetBoolArg("-salvagewallet"))
@@ -587,6 +751,8 @@ bool AppInit2()
     }
 
     // ********************************************************* Step 6: network initialization
+
+    RegisterNodeSignals(GetNodeSignals());
 
     int nSocksVersion = GetArg("-socks", 5);
 
@@ -652,9 +818,9 @@ bool AppInit2()
     fNoListen = !GetBoolArg("-listen", true);
     fDiscover = GetBoolArg("-discover", true);
     fNameLookup = GetBoolArg("-dns", true);
-#ifdef USE_UPNP
-    fUseUPnP = GetBoolArg("-upnp", USE_UPNP);
-#endif
+// #ifdef USE_UPNP
+//    fUseUPnP = GetBoolArg("-upnp", USE_UPNP);
+// #endif
 
     bool fBound = false;
     if (!fNoListen)
@@ -835,11 +1001,12 @@ bool AppInit2()
         RandAddSeedPerfmon();
 
         CPubKey newDefaultKey;
-        if (!pwalletMain->GetKeyFromPool(newDefaultKey, false))
+        if (!pwalletMain->GetKeyFromPool(newDefaultKey))
             strErrors << _("Cannot initialize keypool") << "\n";
         pwalletMain->SetDefaultKey(newDefaultKey);
         if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), ""))
             strErrors << _("Cannot write default address") << "\n";
+        pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
 
     printf("%s", strErrors.str().c_str());
@@ -856,6 +1023,8 @@ bool AppInit2()
         CBlockLocator locator;
         if (walletdb.ReadBestBlock(locator))
             pindexRescan = locator.GetBlockIndex();
+        else
+            pindexRescan = pindexGenesisBlock;
     }
     if (pindexBest != pindexRescan && pindexBest && pindexRescan && pindexBest->nHeight > pindexRescan->nHeight)
     {
@@ -864,6 +1033,8 @@ bool AppInit2()
         nStart = GetTimeMillis();
         pwalletMain->ScanForWalletTransactions(pindexRescan, true);
         printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+        pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+        nWalletDBUpdated++;
     }
 
     // ********************************************************* Step 9: import blocks
@@ -923,6 +1094,7 @@ bool AppInit2()
     nStart = GetTimeMillis();
 
     {
+        // CAddrDB::SetMessageStart(pchMessageStart);
         CAddrDB adb;
         if (!adb.Read(addrman))
             printf("Invalid or missing peers.dat; recreating\n");
@@ -936,6 +1108,9 @@ bool AppInit2()
     if (!CheckDiskSpace())
         return false;
 
+    if (!strErrors.str().empty())
+        return InitError(strErrors.str());
+
     RandAddSeedPerfmon();
 
     //// debug print
@@ -945,29 +1120,45 @@ bool AppInit2()
     printf("mapWallet.size() = %"PRIszu"\n",       pwalletMain->mapWallet.size());
     printf("mapAddressBook.size() = %"PRIszu"\n",  pwalletMain->mapAddressBook.size());
 
-    if (!NewThread(StartNode, NULL))
-        InitError(_("Error: could not start node"));
+    // if (!NewThread(StartNode, NULL))
+    // if (!NewThread(StartNode, (void*)&threadGroup))
+    //    InitError(_("Error: could not start node"));
+    StartNode(threadGroup);
+
+    // InitRPCMining is needed here so getwork/getblocktemplate in the GUI debug console works properly.
+    InitRPCMining();
 
     if (fServer)
-        NewThread(ThreadRPCServer, NULL);
+        // NewThread(ThreadRPCServer, NULL);
+        StartRPCThreads();
+
+    // Mine proof-of-stake blocks in the background
+    if (!GetBoolArg("-staking", true))
+        printf("Staking disabled\n");
+    else
+        threadGroup.create_thread(boost::bind(&ThreadStakeMiner, pwalletMain));
 
     // ********************************************************* Step 12: finished
 
     uiInterface.InitMessage(_("Done loading"));
     printf("Done loading\n");
 
-    if (!strErrors.str().empty())
-        return InitError(strErrors.str());
+    // if (!strErrors.str().empty())
+     //   return InitError(strErrors.str());
 
      // Add wallet transactions that aren't already in a block to mapTransactions
     pwalletMain->ReacceptWalletTransactions();
-
+/*
 #if !defined(QT_GUI)
     // Loop until process is exit()ed from shutdown() function,
     // called from ThreadRPCServer thread when a "stop" command is received.
     while (1)
         MilliSleep(5000);
 #endif
+*/
+    // Run a thread to flush wallet periodically
+    threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
 
-    return true;
+    // return true;
+    return !fRequestShutdown;
 }

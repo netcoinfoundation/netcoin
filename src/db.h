@@ -5,16 +5,21 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_DB_H
 #define BITCOIN_DB_H
+
 #include <stdint.h>
-#include "main.h"
+
+// #include "main.h"
+#include "sync.h"
+#include "serialize.h"
 
 #include <map>
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
 #include <db_cxx.h>
 
-class CAddress;
+// class CAddress;
 class CAddrMan;
 class CBlockLocator;
 class CDiskBlockIndex;
@@ -23,18 +28,19 @@ class CMasterKey;
 class COutPoint;
 class CTxIndex;
 class CWallet;
-class CWalletTx;
+// class CWalletTx;
 
 extern unsigned int nWalletDBUpdated;
 
-void ThreadFlushWalletDB(void* parg);
+// void ThreadFlushWalletDB(void* parg);
+void ThreadFlushWalletDB(const std::string& strWalletFile);
 bool BackupWallet(const CWallet& wallet, const std::string& strDest);
 
 
 class CDBEnv
 {
 private:
-    bool fDetachDB;
+    // bool fDetachDB;
     bool fDbEnvInit;
     bool fMockDb;
     boost::filesystem::path pathEnv;
@@ -74,9 +80,9 @@ public:
     bool Open(boost::filesystem::path pathEnv_);
     void Close();
     void Flush(bool fShutdown);
-    void CheckpointLSN(std::string strFile);
-    void SetDetach(bool fDetachDB_) { fDetachDB = fDetachDB_; }
-    bool GetDetach() { return fDetachDB; }
+    void CheckpointLSN(const std::string& strFile);
+    // void SetDetach(bool fDetachDB_) { fDetachDB = fDetachDB_; }
+    // bool GetDetach() { return fDetachDB; }
 
     void CloseDb(const std::string& strFile);
     bool RemoveDb(const std::string& strFile);
@@ -103,10 +109,12 @@ protected:
     DbTxn *activeTxn;
     bool fReadOnly;
 
-    explicit CDB(const char* pszFile, const char* pszMode="r+");
+    explicit CDB(const std::string& strFilename, const char* pszMode="r+");
     ~CDB() { Close(); }
+
 public:
     void Close();
+
 private:
     CDB(const CDB&);
     void operator=(const CDB&);
@@ -320,10 +328,13 @@ class CAddrDB
 {
 private:
     boost::filesystem::path pathAddr;
+    // static unsigned char pchMessageStart[4];
 public:
     CAddrDB();
     bool Write(const CAddrMan& addr);
     bool Read(CAddrMan& addr);
+
+    // static void SetMessageStart(unsigned char _pchMessageStart[]) { memcpy(CAddrDB::pchMessageStart, _pchMessageStart, sizeof(CAddrDB::pchMessageStart)); }
 };
 
 #endif // BITCOIN_DB_H

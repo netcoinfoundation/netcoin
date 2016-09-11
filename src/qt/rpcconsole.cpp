@@ -213,7 +213,7 @@ RPCConsole::RPCConsole(QWidget *parent) :
     ui->buildDate->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
     ui->numberOfBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
     ui->numberOfConnections->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->totalBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
+    // ui->totalBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
     ui->lastBlockTime->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
 
     startExecutor();
@@ -270,7 +270,10 @@ void RPCConsole::setClientModel(ClientModel *model)
     {
         // Subscribe to information, replies, messages, errors
         connect(model, SIGNAL(numConnectionsChanged(int)), this, SLOT(setNumConnections(int)));
-        connect(model, SIGNAL(numBlocksChanged(int,int)), this, SLOT(setNumBlocks(int,int)));
+        // connect(model, SIGNAL(numBlocksChanged(int,int)), this, SLOT(setNumBlocks(int,int)));
+
+        setNumBlocks(model->getNumBlocks());
+        connect(model, SIGNAL(numBlocksChanged(int)), this, SLOT(setNumBlocks(int)));
 
         // Provide initial values
         ui->clientVersion->setText(model->formatFullVersion());
@@ -281,7 +284,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         setNumConnections(model->getNumConnections());
         ui->isTestNet->setChecked(model->isTestNet());
 
-        setNumBlocks(model->getNumBlocks(), model->getNumBlocksOfPeers());
+        // setNumBlocks(model->getNumBlocks(), model->getNumBlocksOfPeers());
     }
 }
 
@@ -348,16 +351,18 @@ void RPCConsole::setNumConnections(int count)
     ui->numberOfConnections->setText(QString::number(count));
 }
 
-void RPCConsole::setNumBlocks(int count, int countOfPeers)
+void RPCConsole::setNumBlocks(int count)
 {
     ui->numberOfBlocks->setText(QString::number(count));
-    ui->totalBlocks->setText(QString::number(countOfPeers));
+    // ui->totalBlocks->setText(QString::number(countOfPeers));
+    // If there is no current countOfPeers available display N/A instead of 0, which can't ever be true
+    // ui->totalBlocks->setText(countOfPeers == 0 ? tr("N/A") : QString::number(countOfPeers));
     if(clientModel)
-    {
+    // {
         // If there is no current number available display N/A instead of 0, which can't ever be true
-        ui->totalBlocks->setText(clientModel->getNumBlocksOfPeers() == 0 ? tr("N/A") : QString::number(clientModel->getNumBlocksOfPeers()));
+    //    ui->totalBlocks->setText(clientModel->getNumBlocksOfPeers() == 0 ? tr("N/A") : QString::number(clientModel->getNumBlocksOfPeers()));
         ui->lastBlockTime->setText(clientModel->getLastBlockDate().toString());
-    }
+    // }
 }
 
 void RPCConsole::on_lineEdit_returnPressed()

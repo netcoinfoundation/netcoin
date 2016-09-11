@@ -18,6 +18,8 @@
 #endif
 
 #include <map>
+#include <list>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -27,8 +29,8 @@
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#include <openssl/sha.h>
-#include <openssl/ripemd.h>
+// #include <openssl/sha.h>
+// #include <openssl/ripemd.h>
 
 #include "netbase.h" // for AddTimeData
 
@@ -158,13 +160,13 @@ extern bool fDebug;
 extern bool fDebugNet;
 extern bool fPrintToConsole;
 extern bool fPrintToDebugger;
-extern bool fRequestShutdown;
-extern bool fShutdown;
+// extern bool fRequestShutdown;
+// extern bool fShutdown;
 extern bool fDaemon;
 extern bool fServer;
 extern bool fCommandLine;
 extern std::string strMiscWarning;
-extern bool fTestNet;
+// extern bool fTestNet;
 extern bool fNoListen;
 extern bool fLogTimestamps;
 extern bool fReopenDebugLog;
@@ -334,7 +336,9 @@ std::string HexStr(const T itbegin, const T itend, bool fSpaces=false)
     return rv;
 }
 
-inline std::string HexStr(const std::vector<unsigned char>& vch, bool fSpaces=false)
+// inline std::string HexStr(const std::vector<unsigned char>& vch, bool fSpaces=false)
+template<typename T>
+inline std::string HexStr(const T& vch, bool fSpaces=false)
 {
     return HexStr(vch.begin(), vch.end(), fSpaces);
 }
@@ -453,11 +457,27 @@ bool SoftSetArg(const std::string& strArg, const std::string& strValue);
 bool SoftSetBoolArg(const std::string& strArg, bool fValue);
 
 
+/**
+ * MWC RNG of George Marsaglia
+ * This is intended to be fast. It has a period of 2^59.3, though the
+ * least significant 16 bits only have a period of about 2^30.1.
+ *
+ * @return random value
+ */
+extern uint32_t insecure_rand_Rz;
+extern uint32_t insecure_rand_Rw;
+static inline uint32_t insecure_rand(void)
+{
+  insecure_rand_Rz=36969*(insecure_rand_Rz&65535)+(insecure_rand_Rz>>16);
+  insecure_rand_Rw=18000*(insecure_rand_Rw&65535)+(insecure_rand_Rw>>16);
+  return (insecure_rand_Rw<<16)+insecure_rand_Rz;
+}
 
-
-
-
-
+/**
+ * Seed insecure_rand using the random pool.
+ * @param Deterministic Use a determinstic seed
+ */
+void seed_insecure_rand(bool fDeterministic=false);
 
 
 // Randomize the stack to help protect against buffer overrun exploits
@@ -473,7 +493,7 @@ bool SoftSetBoolArg(const std::string& strArg, bool fValue);
         }                                       \
     }
 
-
+/*
 template<typename T1>
 inline uint256 Hash(const T1 pbegin, const T1 pend)
 {
@@ -575,6 +595,7 @@ inline uint160 Hash160(const std::vector<unsigned char>& vch)
     RIPEMD160((unsigned char*)&hash1, sizeof(hash1), (unsigned char*)&hash2);
     return hash2;
 }
+*/
 
 /**
  * Timing-attack-resistant comparison.
@@ -671,11 +692,12 @@ inline void SetThreadPriority(int nPriority)
     setpriority(PRIO_PROCESS, 0, nPriority);
 #endif
 }
-
+/*
 inline void ExitThread(size_t nExitCode)
 {
     pthread_exit((void*)nExitCode);
 }
+*/
 #endif
 
 void RenameThread(const char* name);
@@ -686,5 +708,60 @@ inline uint32_t ByteReverse(uint32_t value)
     return (value<<16) | (value>>16);
 }
 
-#endif
+// Standard wrapper for do-something-forever thread functions.
+// "Forever" really means until the thread is interrupted.
+// Use it like:
+//   new boost::thread(boost::bind(&LoopForever<void (*)()>, "dumpaddr", &DumpAddresses, 900000));
+// or maybe:
+//    boost::function<void()> f = boost::bind(&FunctionWithArg, argument);
+//    threadGroup.create_thread(boost::bind(&LoopForever<boost::function<void()> >, "nothing", f, milliseconds));
+template <typename Callable> void LoopForever(const char* name,  Callable func, int64_t msecs)
+{
+    std::string s = strprintf("netcoin-%s", name);
+    RenameThread(s.c_str());
+    printf("%s thread start\n", name);
+    try
+    {
+        while (1)
+        {
+            MilliSleep(msecs);
+            func();
+        }
+    }
+    catch (boost::thread_interrupted)
+    {
+        printf("%s thread stop\n", name);
+        throw;
+    }
+    catch (std::exception& e) {
+        PrintException(&e, name);
+    }
+    catch (...) {
+        PrintException(NULL, name);
+    }
+}
+// .. and a wrapper that just calls func once
+template <typename Callable> void TraceThread(const char* name,  Callable func)
+{
+    std::string s = strprintf("blackcoin-%s", name);
+    RenameThread(s.c_str());
+    try
+    {
+        printf("%s thread start\n", name);
+        func();
+        printf("%s thread exit\n", name);
+    }
+    catch (boost::thread_interrupted)
+    {
+        printf("%s thread interrupt\n", name);
+        throw;
+    }
+    catch (std::exception& e) {
+        PrintException(&e, name);
+    }
+    catch (...) {
+        PrintException(NULL, name);
+    }
+}
 
+#endif

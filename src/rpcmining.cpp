@@ -3,6 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "chainparams.h"
 #include "main.h"
 #include "db.h"
 #include "txdb.h"
@@ -12,6 +13,21 @@
 
 using namespace json_spirit;
 using namespace std;
+
+// Key used by getwork/getblocktemplate miners.
+// Allocated in InitRPCMining, free'd in ShutdownRPCMining
+static CReserveKey* pMiningKey = NULL;
+
+void InitRPCMining()
+{
+    // getwork/getblocktemplate mining rewards paid here:
+    pMiningKey = new CReserveKey(pwalletMain);
+}
+
+void ShutdownRPCMining()
+{
+    delete pMiningKey; pMiningKey = NULL;
+}
 
 Value getmininginfo(const Array& params, bool fHelp)
 {
@@ -28,7 +44,7 @@ Value getmininginfo(const Array& params, bool fHelp)
     obj.push_back(Pair("currentblocksize",(uint64_t)nLastBlockSize));
     obj.push_back(Pair("currentblocktx",(uint64_t)nLastBlockTx));
 
-    if(nBestHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW: BLOCK_HEIGHT_FINALPOW_TESTNET) )
+    if(nBestHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW: BLOCK_HEIGHT_FINALPOW_TESTNET) )
     {
         diff.push_back(Pair("proof-of-stake",  GetDifficulty(GetLastBlockIndex(pindexBest, true))));
         diff.push_back(Pair("search-interval", (int)nLastCoinStakeSearchInterval));
@@ -52,7 +68,7 @@ Value getmininginfo(const Array& params, bool fHelp)
 
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
     obj.push_back(Pair("pooledtx",      (uint64_t)mempool.size()));
-    obj.push_back(Pair("testnet",       fTestNet));
+    obj.push_back(Pair("testnet",       TestNet()));
 
     return obj;
 }
@@ -106,13 +122,13 @@ Value getworkex(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(-10, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
     static mapNewBlock_t mapNewBlock;
     static vector<CBlock*> vNewBlock;
-    static CReserveKey reservekey(pwalletMain);
+    // static CReserveKey reservekey(pwalletMain);
 
     if (params.size() == 0)
     {
@@ -137,7 +153,7 @@ Value getworkex(const Array& params, bool fHelp)
             nStart = GetTime();
 
             // Create new block
-            pblock = CreateNewBlock(pwalletMain);
+            pblock = CreateNewBlock(*pMiningKey);
             if (!pblock)
                 throw JSONRPCError(-7, "Out of memory");
             vNewBlock.push_back(pblock);
@@ -219,7 +235,7 @@ Value getworkex(const Array& params, bool fHelp)
 
         pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 
-        return CheckWork(pblock, *pwalletMain, reservekey);
+        return CheckWork(pblock, *pwalletMain, *pMiningKey);
     }
 }
 
@@ -236,19 +252,19 @@ Value getwork(const Array& params, bool fHelp)
             "  \"target\" : little endian hash target\n"
             "If [data] is specified, tries to solve the block and returns true if it was successful.");
 
-    if (!fTestNet && vNodes.empty())
+    if (!TestNet() && vNodes.empty())
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Netcoin is not connected!");
 
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
     static mapNewBlock_t mapNewBlock;    // FIXME: thread safety
     static vector<CBlock*> vNewBlock;
-    static CReserveKey reservekey(pwalletMain);
+    // static CReserveKey reservekey(pwalletMain);
 
     if (params.size() == 0)
     {
@@ -278,7 +294,7 @@ Value getwork(const Array& params, bool fHelp)
             nStart = GetTime();
 
             // Create new block
-            pblock = CreateNewBlock(pwalletMain);
+            pblock = CreateNewBlock(*pMiningKey);
             if (!pblock)
                 throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
             vNewBlock.push_back(pblock);
@@ -336,7 +352,7 @@ Value getwork(const Array& params, bool fHelp)
         pblock->vtx[0].vin[0].scriptSig = mapNewBlock[pdata->hashMerkleRoot].second;
         pblock->hashMerkleRoot = pblock->BuildMerkleTree();
 
-        return CheckWork(pblock, *pwalletMain, reservekey);
+        return CheckWork(pblock, *pwalletMain, *pMiningKey);
     }
 }
 
@@ -383,17 +399,17 @@ Value getblocktemplate(const Array& params, bool fHelp)
     if (strMode != "template")
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
-       if (!fTestNet && vNodes.empty())
+       if (!TestNet() && vNodes.empty())
             throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "NetCoin is not connected!");
 
         if (IsInitialBlockDownload())
             throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "NetCoin is downloading blocks...");
 
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
-        static CReserveKey reservekey(pwalletMain);
+        // static CReserveKey reservekey(pwalletMain);
 
         // Update block
         static unsigned int nTransactionsUpdatedLast;
@@ -417,7 +433,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
                 delete pblock;
             pblock = NULL;
         }
-        pblock = CreateNewBlock(pwalletMain);
+        pblock = CreateNewBlock(*pMiningKey);
             if (!pblock)
             throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
 
@@ -464,8 +480,8 @@ Value getblocktemplate(const Array& params, bool fHelp)
                 }
                 entry.push_back(Pair("depends", deps));
 
-                int64_t nSigOps = tx.GetLegacySigOpCount();
-                nSigOps += tx.GetP2SHSigOpCount(mapInputs);
+                int64_t nSigOps = GetLegacySigOpCount(tx);
+                nSigOps += GetP2SHSigOpCount(tx, mapInputs);
                 entry.push_back(Pair("sigops", nSigOps));
             }
 
@@ -521,6 +537,39 @@ Value submitblock(const Array& params, bool fHelp)
     }
     catch (std::exception &e) {
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
+    }
+
+    if (params.size() > 1)
+    {
+        const Object& oparam = params[1].get_obj();
+
+        const Value& coinstake_v = find_value(oparam, "coinstake");
+        if (coinstake_v.type() == str_type)
+        {
+            vector<unsigned char> txData(ParseHex(coinstake_v.get_str()));
+            CDataStream ssTx(txData, SER_NETWORK, PROTOCOL_VERSION);
+            CTransaction txCoinStake;
+            try {
+                ssTx >> txCoinStake;
+            }
+            catch (std::exception &e) {
+                throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Coinstake decode failed");
+            }
+
+            block.vtx.insert(block.vtx.begin() + 1, txCoinStake);
+            block.hashMerkleRoot = block.BuildMerkleTree();
+
+            CPubKey pubkey;
+            if (!pMiningKey->GetReservedKey(pubkey))
+                throw JSONRPCError(RPC_MISC_ERROR, "GetReservedKey failed");
+
+            CKey key;
+            if (!pwalletMain->GetKey(pubkey.GetID(), key))
+                throw JSONRPCError(RPC_MISC_ERROR, "GetKey failed");
+
+            if (!key.Sign(block.GetHash(), block.vchBlockSig))
+                throw JSONRPCError(RPC_MISC_ERROR, "Sign failed");
+        }
     }
 
     bool fAccepted = ProcessBlock(NULL, &block);

@@ -19,6 +19,7 @@
 #include "txdb.h"
 #include "util.h"
 #include "main.h"
+#include "chainparams.h"
 
 using namespace std;
 using namespace boost;
@@ -198,20 +199,20 @@ bool CTxDB::ScanBatch(const CDataStream &key, string *value, bool *deleted) cons
 
 bool CTxDB::ReadTxIndex(uint256 hash, CTxIndex& txindex)
 {
-    assert(!fClient);
+    // assert(!fClient);
     txindex.SetNull();
     return Read(make_pair(string("tx"), hash), txindex);
 }
 
 bool CTxDB::UpdateTxIndex(uint256 hash, const CTxIndex& txindex)
 {
-    assert(!fClient);
+    // assert(!fClient);
     return Write(make_pair(string("tx"), hash), txindex);
 }
 
 bool CTxDB::AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeight)
 {
-    assert(!fClient);
+    // assert(!fClient);
 
     // Add to tx index
     uint256 hash = tx.GetHash();
@@ -221,7 +222,7 @@ bool CTxDB::AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeigh
 
 bool CTxDB::EraseTxIndex(const CTransaction& tx)
 {
-    assert(!fClient);
+    // assert(!fClient);
     uint256 hash = tx.GetHash();
 
     return Erase(make_pair(string("tx"), hash));
@@ -229,13 +230,13 @@ bool CTxDB::EraseTxIndex(const CTransaction& tx)
 
 bool CTxDB::ContainsTx(uint256 hash)
 {
-    assert(!fClient);
+    // assert(!fClient);
     return Exists(make_pair(string("tx"), hash));
 }
 
 bool CTxDB::ReadDiskTx(uint256 hash, CTransaction& tx, CTxIndex& txindex)
 {
-    assert(!fClient);
+    // assert(!fClient);
     tx.SetNull();
     if (!ReadTxIndex(hash, txindex))
         return false;
@@ -342,6 +343,7 @@ bool CTxDB::LoadBlockIndex()
     // Now read each entry.
     while (iterator->Valid())
     {
+        boost::this_thread::interruption_point();
         // Unpack keys and values.
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
         ssKey.write(iterator->key().data(), iterator->key().size());
@@ -350,7 +352,7 @@ bool CTxDB::LoadBlockIndex()
         string strType;
         ssKey >> strType;
         // Did we reach the end of the data to read?
-        if (fRequestShutdown || strType != "blockindex")
+        if (strType != "blockindex")
             break;
         CDiskBlockIndex diskindex;
         ssValue >> diskindex;
@@ -378,7 +380,8 @@ bool CTxDB::LoadBlockIndex()
         pindexNew->nNonce         = diskindex.nNonce;
 
         // Watch for genesis block
-        if (pindexGenesisBlock == NULL && blockHash == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))
+        // if (pindexGenesisBlock == NULL && blockHash == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))
+        if (pindexGenesisBlock == NULL && blockHash == Params().HashGenesisBlock())
             pindexGenesisBlock = pindexNew;
 
         if (!pindexNew->CheckIndex()) {
@@ -394,8 +397,9 @@ bool CTxDB::LoadBlockIndex()
     }
     delete iterator;
 
-    if (fRequestShutdown)
-        return true;
+    // if (fRequestShutdown)
+    //    return true;
+    boost::this_thread::interruption_point();
 
     // Calculate nChainTrust
     vector<pair<int, CBlockIndex*> > vSortedByHeight;
@@ -430,7 +434,7 @@ bool CTxDB::LoadBlockIndex()
     nBestChainTrust = pindexBest->nChainTrust;
 
     printf("LoadBlockIndex(): hashBestChain=%s  height=%d  trust=%s  date=%s\n",
-      hashBestChain.ToString().substr(0,20).c_str(), nBestHeight, CBigNum(nBestChainTrust).ToString().c_str(),
+      hashBestChain.ToString().c_str(), nBestHeight, CBigNum(nBestChainTrust).ToString().c_str(),
       DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()).c_str());
 
     // NovaCoin: load hashSyncCheckpoint
@@ -455,7 +459,9 @@ bool CTxDB::LoadBlockIndex()
     map<pair<unsigned int, unsigned int>, CBlockIndex*> mapBlockPos;
     for (CBlockIndex* pindex = pindexBest; pindex && pindex->pprev; pindex = pindex->pprev)
     {
-        if (fRequestShutdown || pindex->nHeight < nBestHeight-nCheckDepth)
+        // if (fRequestShutdown || pindex->nHeight < nBestHeight-nCheckDepth)
+        boost::this_thread::interruption_point();
+        if (pindex->nHeight < nBestHeight-nCheckDepth)
             break;
         CBlock block;
         if (!block.ReadFromDisk(pindex))
@@ -558,8 +564,9 @@ bool CTxDB::LoadBlockIndex()
             }
         }
     }
-    if (pindexFork && !fRequestShutdown)
+    if (pindexFork)
     {
+        boost::this_thread::interruption_point();
         // Reorg back to the fork
         printf("LoadBlockIndex() : *** moving best chain pointer back to block %d\n", pindexFork->nHeight);
         CBlock block;
