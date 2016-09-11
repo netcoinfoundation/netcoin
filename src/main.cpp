@@ -1351,11 +1351,9 @@ int static generateMTRandom(unsigned int s, int range)
 int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, uint256 prevHash)
 {
     int64_t nSubsidy;
-    int nheight     =  nHeight < 1296001;
-    int nheighttest =  nHeight < 26;
 
     // Pre v2.4.1 reward
-    if ( !TestNet() ? nheight : nheighttest )
+    if ( nHeight < 1296010 )
     {
         // normal payout
         nSubsidy = 1024 * COIN;

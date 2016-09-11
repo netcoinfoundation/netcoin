@@ -79,7 +79,7 @@ static const int64_t PIR_THRESHOLDS[PIR_LEVELS] = {
 static const int64_t PIR_RATES[PIR_PHASES][PIR_LEVELS] = {
         {10,15,20,30,80,100},   // Year 1
         {20,25,30,35,40,45 },   // Year 2
-        {20,22,24,26,28,30 }    // Year 3+
+        {2,4,6,7,8,10 }    // Year 3+
 };
 
 
@@ -103,8 +103,8 @@ static const int fHaveUPnP = false;
 static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NOT CHANGE
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START = 438500; //DIGISHIELD FIX FORK
-static const int BLOCK_HEIGHT_FINALPOW =  1296000; // this is where the proof of work reward drops to 1 coin. Approx 2.5 years after genesis block
-static const int LOW_S_CHECK_SIGNATURES = 1300000;
+static const int BLOCK_HEIGHT_FINALPOW =  2500000; // this is where the proof of work ends.
+static const int LOW_S_CHECK_SIGNATURES = 1300000; // CHECK SIGNATURE FORK
 
 static const int BLOCK_HEIGHT_KGW_START_TESTNET = 5;
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
