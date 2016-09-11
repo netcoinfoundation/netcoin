@@ -7,6 +7,7 @@
 #include "netbase.h"
 #include "util.h"
 #include "sync.h"
+#include "hash.h"
 
 #ifndef WIN32
 #include <sys/fcntl.h>
@@ -563,7 +564,8 @@ bool ConnectSocketByName(CService &addr, SOCKET& hSocketRet, const char *pszDest
 
 void CNetAddr::Init()
 {
-    memset(ip, 0, 16);
+    // memset(ip, 0, 16);
+    memset(ip, 0, sizeof(ip));
 }
 
 void CNetAddr::SetIP(const CNetAddr& ipIn)

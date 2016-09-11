@@ -10,6 +10,7 @@
 #include <string>
 #include <boost/thread/mutex.hpp>
 #include <map>
+#include <openssl/crypto.h> // for OPENSSL_cleanse()
 
 #ifdef WIN32
 #ifdef _WIN32_WINNT
@@ -230,14 +231,23 @@ struct secure_allocator : public std::allocator<T>
     {
         if (p != NULL)
         {
-            memset(p, 0, sizeof(T) * n);
+            // memset(p, 0, sizeof(T) * n);
             // munlock(p, sizeof(T) * n);
+            OPENSSL_cleanse(p, sizeof(T) * n);
             LockedPageManager::instance.UnlockRange(p, sizeof(T) * n);
         }
         std::allocator<T>::deallocate(p, n);
     }
 };
 
+template<typename T> void LockObject(const T &t) {
+    LockedPageManager::instance.LockRange((void*)(&t), sizeof(T));
+}
+
+template<typename T> void UnlockObject(const T &t) {
+    OPENSSL_cleanse((void*)(&t), sizeof(T));
+    LockedPageManager::instance.UnlockRange((void*)(&t), sizeof(T));
+}
 
 //
 // Allocator that clears its contents before deletion.
@@ -265,7 +275,8 @@ struct zero_after_free_allocator : public std::allocator<T>
     void deallocate(T* p, std::size_t n)
     {
         if (p != NULL)
-            memset(p, 0, sizeof(T) * n);
+            // memset(p, 0, sizeof(T) * n);
+            OPENSSL_cleanse(p, sizeof(T) * n);
         std::allocator<T>::deallocate(p, n);
     }
 };

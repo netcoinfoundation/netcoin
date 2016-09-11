@@ -32,6 +32,7 @@
 #include "wallet.h"
 #include "bitcoinrpc.h"
 #include "allocators.h"
+#include "init.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -1138,6 +1139,12 @@ void BitcoinGUI::updateStakingIcon()
         else
             labelStakingIcon->setToolTip(tr("Not staking"));
     }
+}
+
+void BitcoinGUI::detectShutdown()
+{
+    if (ShutdownRequested())
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
 }
 
 void BitcoinGUI::charityClicked(QString addr)

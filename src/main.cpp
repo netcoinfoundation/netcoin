@@ -67,6 +67,7 @@ uint256 nBestInvalidTrust = 0;
 uint256 hashBestChain = 0;
 CBlockIndex* pindexBest = NULL;
 int64_t nTimeBestReceived = 0;
+bool fHaveGUI = false;
 bool fReindex = false;
 
 CMedianFilter<int> cPeerBlockCounts(5, 0); // Amount of blocks that other nodes claim to have
@@ -3061,6 +3062,9 @@ bool CBlock::CheckBlockSignature() const
     if (IsProofOfWork())
         return vchBlockSig.empty();
 
+    if (vchBlockSig.empty())
+        return false;
+
     vector<valtype> vSolutions;
     txnouttype whichType;
 
@@ -3072,12 +3076,14 @@ bool CBlock::CheckBlockSignature() const
     if (whichType == TX_PUBKEY)
     {
         valtype& vchPubKey = vSolutions[0];
-        CKey key;
+   /*     CKey key;
         if (!key.SetPubKey(vchPubKey))
             return false;
         if (vchBlockSig.empty())
             return false;
         return key.Verify(GetHash(), vchBlockSig);
+  */
+        return CPubKey(vchPubKey).Verify(GetHash(), vchBlockSig);
     }
 
     return false;
@@ -3090,7 +3096,7 @@ bool CheckDiskSpace(uint64_t nAdditionalBytes)
     // Check for nMinDiskSpace bytes (currently 50MB)
     if (nFreeBytesAvailable < nMinDiskSpace + nAdditionalBytes)
     {
-        fShutdown = true;
+        // fShutdown = true;
         string strMessage = _("Warning: Disk space is low!");
         strMiscWarning = strMessage;
         printf("*** %s\n", strMessage.c_str());
@@ -3364,8 +3370,9 @@ bool LoadExternalBlockFile(FILE* fileIn)
         try {
             CAutoFile blkdat(fileIn, SER_DISK, CLIENT_VERSION);
             unsigned int nPos = 0;
-            while (nPos != (unsigned int)-1 && blkdat.good() && !fRequestShutdown)
+            while (nPos != (unsigned int)-1 && blkdat.good())
             {
+                boost::this_thread::interruption_point();
                 unsigned char pchData[65536];
                 do {
                     fseek(blkdat, nPos, SEEK_SET);
@@ -3387,7 +3394,9 @@ bool LoadExternalBlockFile(FILE* fileIn)
                     }
                     else
                         nPos += sizeof(pchData) - sizeof(pchMessageStart) + 1;
-                } while(!fRequestShutdown);
+                // } while(!fRequestShutdown);
+                    boost::this_thread::interruption_point();
+                } while(true);
                 if (nPos == (unsigned int)-1)
                     break;
                 fseek(blkdat, nPos, SEEK_SET);
@@ -3722,8 +3731,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         int64_t nSince = nNow - 10 * 60;
         BOOST_FOREACH(CAddress& addr, vAddr)
         {
-            if (fShutdown)
-                return true;
+            // if (fShutdown)
+            //    return true;
+            boost::this_thread::interruption_point();
+
             if (addr.nTime <= 100000000 || addr.nTime > nNow + 10 * 60)
                 addr.nTime = nNow - 5 * 24 * 60 * 60;
             pfrom->AddAddressKnown(addr);
@@ -3791,8 +3802,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         {
             const CInv &inv = vInv[nInv];
 
-            if (fShutdown)
-                return true;
+            // if (fShutdown)
+            //    return true;
+            boost::this_thread::interruption_point();
             pfrom->AddInventoryKnown(inv);
 
             bool fAlreadyHave = AlreadyHave(txdb, inv);
@@ -3835,8 +3847,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
         BOOST_FOREACH(const CInv& inv, vInv)
         {
-            if (fShutdown)
-                return true;
+            // if (fShutdown)
+            //    return true;
+            boost::this_thread::interruption_point();
             if (fDebugNet || (vInv.size() == 1))
                 printf("received getdata for: %s\n", inv.ToString().c_str());
 
@@ -4408,9 +4421,10 @@ bool ProcessMessages(CNode* pfrom)
                 // fRet = ProcessMessage(pfrom, strCommand, vRecv);
                 fRet = ProcessMessage(pfrom, strCommand, vRecv, msg.nTime);
             }
-            if (fShutdown)
+            // if (fShutdown)
                 // return true;
-                break;
+            //    break;
+            boost::this_thread::interruption_point();
         }
         catch (std::ios_base::failure& e)
         {
@@ -4428,6 +4442,9 @@ bool ProcessMessages(CNode* pfrom)
             {
                 PrintExceptionContinue(&e, "ProcessMessages()");
             }
+        }
+        catch (boost::thread_interrupted) {
+           throw;
         }
         catch (std::exception& e) {
             PrintExceptionContinue(&e, "ProcessMessages()");

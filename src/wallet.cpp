@@ -47,14 +47,18 @@ CPubKey CWallet::GenerateNewKey()
     bool fCompressed = CanSupportFeature(FEATURE_COMPRPUBKEY); // default to compressed public keys if we want 0.6.0 wallets
 
     RandAddSeedPerfmon();
-    CKey key;
-    key.MakeNewKey(fCompressed);
+    // CKey key;
+    // key.MakeNewKey(fCompressed);
+
+    CKey secret;
+    secret.MakeNewKey(fCompressed);
 
     // Compressed public keys were introduced in version 0.6.0
     if (fCompressed)
         SetMinVersion(FEATURE_COMPRPUBKEY);
 
-    CPubKey pubkey = key.GetPubKey();
+    // CPubKey pubkey = key.GetPubKey();
+    CPubKey pubkey = secret.GetPubKey();
 
     // Create new metadata
     int64_t nCreationTime = GetTime();
@@ -62,21 +66,29 @@ CPubKey CWallet::GenerateNewKey()
     if (!nTimeFirstKey || nCreationTime < nTimeFirstKey)
         nTimeFirstKey = nCreationTime;
 
-    if (!AddKey(key))
+    // if (!AddKey(key))
+    if (!AddKeyPubKey(secret, pubkey))
         throw std::runtime_error("CWallet::GenerateNewKey() : AddKey failed");
-    return key.GetPubKey();
+    // return key.GetPubKey();
+    return pubkey;
 }
 
-bool CWallet::AddKey(const CKey& key)
+// bool CWallet::AddKey(const CKey& key)
+bool CWallet::AddKeyPubKey(const CKey& secret, const CPubKey &pubkey)
 {
-    CPubKey pubkey = key.GetPubKey();
+   // CPubKey pubkey = key.GetPubKey();
 
-    if (!CCryptoKeyStore::AddKey(key))
+  //   if (!CCryptoKeyStore::AddKey(key))
+
+    if (!CCryptoKeyStore::AddKeyPubKey(secret, pubkey))
         return false;
     if (!fFileBacked)
         return true;
-    if (!IsCrypted())
-        return CWalletDB(strWalletFile).WriteKey(pubkey, key.GetPrivKey(), mapKeyMetadata[pubkey.GetID()]);
+    // if (!IsCrypted())
+    //     return CWalletDB(strWalletFile).WriteKey(pubkey, key.GetPrivKey(), mapKeyMetadata[pubkey.GetID()]);
+    if (!IsCrypted()) {
+       return CWalletDB(strWalletFile).WriteKey(pubkey, secret.GetPrivKey(), mapKeyMetadata[pubkey.GetID()]);
+    }
     return true;
 }
 
@@ -144,8 +156,8 @@ bool CWallet::LoadCScript(const CScript& redeemScript)
 
 bool CWallet::Unlock(const SecureString& strWalletPassphrase)
 {
-    if (!IsLocked())
-        return false;
+    // if (!IsLocked())
+    //    return false;
 
     CCrypter crypter;
     CKeyingMaterial vMasterKey;
@@ -157,7 +169,8 @@ bool CWallet::Unlock(const SecureString& strWalletPassphrase)
             if(!crypter.SetKeyFromPassphrase(strWalletPassphrase, pMasterKey.second.vchSalt, pMasterKey.second.nDeriveIterations, pMasterKey.second.nDerivationMethod))
                 return false;
             if (!crypter.Decrypt(pMasterKey.second.vchCryptedKey, vMasterKey))
-                return false;
+                // return false;
+                continue; // try another master key
             if (CCryptoKeyStore::Unlock(vMasterKey))
                 return true;
         }
@@ -1709,8 +1722,9 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             continue; // only count coins meeting min age requirement
 
         bool fKernelFound = false;
-        for (unsigned int n=0; n<min(nSearchInterval,(int64_t)nMaxStakeSearchInterval) && !fKernelFound && !fShutdown && pindexPrev == pindexBest; n++)
+        for (unsigned int n=0; n<min(nSearchInterval,(int64_t)nMaxStakeSearchInterval) && !fKernelFound && pindexPrev == pindexBest; n++)
         {
+            boost::this_thread::interruption_point();
             // Search backward in time from the given txNew timestamp 
             // Search nSearchInterval seconds back up to nMaxStakeSearchInterval
             uint256 hashProofOfStake = 0, targetProofOfStake = 0;
@@ -1784,7 +1798,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             }
         }
 
-        if (fKernelFound || fShutdown)
+        if (fKernelFound)
             break; // if kernel is found stop searching
     }
 
@@ -2004,7 +2018,7 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
         return nLoadWalletRet;
     fFirstRunRet = !vchDefaultKey.IsValid();
 
-    NewThread(ThreadFlushWalletDB, &strWalletFile);
+    // NewThread(ThreadFlushWalletDB, &strWalletFile);
     return DB_LOAD_OK;
 }
 

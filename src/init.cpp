@@ -46,7 +46,7 @@ enum Checkpoints::CPMode CheckpointsMode;
 //
 // Shutdown
 //
-
+/*
 void ExitTimeout(void* parg)
 {
 #ifdef WIN32
@@ -54,9 +54,37 @@ void ExitTimeout(void* parg)
     ExitProcess(0);
 #endif
 }
+*/
+//
+// Thread management and startup/shutdown:
+//
+// The network-processing threads are all part of a thread group
+// created by AppInit() or the Qt main() function.
+//
+// A clean exit happens when StartShutdown() or the SIGTERM
+// signal handler sets fRequestShutdown, which triggers
+// the DetectShutdownThread(), which interrupts the main thread group.
+// DetectShutdownThread() then exits, which causes AppInit() to
+// continue (it .joins the shutdown thread).
+// Shutdown() is then
+// called to clean up database connections, and stop other
+// threads that should only be stopped after the main network-processing
+// threads have exited.
+//
+// Note that if running -daemon the parent process returns from AppInit2
+// before adding any threads to the threadGroup, so .join_all() returns
+// immediately and the parent exits from main().
+//
+// Shutdown for Qt is very similar, only it uses a QTimer to detect
+// fRequestShutdown getting set, and then does the normal Qt
+// shutdown thing.
+//
+
+volatile bool fRequestShutdown = false;
 
 void StartShutdown()
 {
+/*
 #ifdef QT_GUI
     // ensure we leave the Qt main loop for a clean GUI exit (Shutdown() is called in bitcoin.cpp afterwards)
     uiInterface.QueueShutdown();
@@ -64,17 +92,25 @@ void StartShutdown()
     // Without UI, Shutdown() can simply be started in a new thread
     NewThread(Shutdown, NULL);
 #endif
+  */
+    fRequestShutdown = true;
 }
 
-void Shutdown(void* parg)
+bool ShutdownRequested()
+{
+    return fRequestShutdown;
+}
+
+void Shutdown()
 {
     static CCriticalSection cs_Shutdown;
-    static bool fTaken;
-
+    // static bool fTaken;
+    TRY_LOCK(cs_Shutdown, lockShutdown);
+    if (!lockShutdown) return;
     // Make this thread recognisable as the shutdown thread
     RenameThread("netcoin-shutoff");
 
-    bool fFirstThread = false;
+ /*   bool fFirstThread = false;
     {
         TRY_LOCK(cs_Shutdown, lockShutdown);
         if (lockShutdown)
@@ -85,9 +121,15 @@ void Shutdown(void* parg)
     }
     static bool fExit;
     if (fFirstThread)
-    {
+ */
+    nTransactionsUpdated++;
+    StopRPCThreads();
+    bitdb.Flush(false);
+    StopNode();
+ /*   {
         fShutdown = true;
         nTransactionsUpdated++;
+        StopRPCThreads();
         bitdb.Flush(false);
         StopNode();
         bitdb.Flush(true);
@@ -97,20 +139,45 @@ void Shutdown(void* parg)
         NewThread(ExitTimeout, NULL);
         MilliSleep(50);
         printf("Netcoin exited\n\n");
-        fExit = true;
+        // fExit = true;
 #ifndef QT_GUI
         // ensure non-UI client gets exited here, but let Bitcoin-Qt reach 'return 0;' in bitcoin.cpp
         exit(0);
 #endif
     }
-    else
+ /*   else
     {
         while (!fExit)
             MilliSleep(500);
         MilliSleep(100);
         ExitThread(0);
     }
+ */
+    bitdb.Flush(true);
+    boost::filesystem::remove(GetPidFile());
+    UnregisterWallet(pwalletMain);
+    delete pwalletMain;
 }
+
+//
+// Signal handlers are very limited in what they are allowed to do, so:
+void DetectShutdownThread(boost::thread_group* threadGroup)
+{
+    // bool shutdown = ShutdownRequested();
+    // while (fRequestShutdown == false)
+    // Tell the main threads to shutdown.
+    while (!fRequestShutdown)
+    //while (!shutdown)
+    {
+        MilliSleep(200);
+         if (fRequestShutdown)
+            threadGroup->interrupt_all();
+        // shutdown = ShutdownRequested();
+    }
+    // if (threadGroup)
+    //    threadGroup->interrupt_all();
+}
+
 
 void HandleSIGTERM(int)
 {
@@ -133,6 +200,9 @@ void HandleSIGHUP(int)
 #if !defined(QT_GUI)
 bool AppInit(int argc, char* argv[])
 {
+    boost::thread_group threadGroup;
+    boost::thread* detectShutdownThread = NULL;
+
     bool fRet = false;
     try
     {
@@ -144,7 +214,7 @@ bool AppInit(int argc, char* argv[])
         if (!boost::filesystem::is_directory(GetDataDir(false)))
         {
             fprintf(stderr, "Error: Specified directory does not exist\n");
-            Shutdown(NULL);
+            Shutdown();
         }
         ReadConfigFile(mapArgs, mapMultiArgs);
 
@@ -174,16 +244,56 @@ bool AppInit(int argc, char* argv[])
             int ret = CommandLineRPC(argc, argv);
             exit(ret);
         }
+#if !defined(WIN32)
+        fDaemon = GetBoolArg("-daemon", false);
+        if (fDaemon)
+        {
+            // Daemonize
+            pid_t pid = fork();
+            if (pid < 0)
+            {
+                fprintf(stderr, "Error: fork() returned %d errno %d\n", pid, errno);
+                return false;
+            }
+            if (pid > 0) // Parent process, pid is child process id
+            {
+                CreatePidFile(GetPidFile(), pid);
+                return true;
+            }
+            // Child process falls through to rest of initialization
 
-        fRet = AppInit2();
+            pid_t sid = setsid();
+            if (sid < 0)
+                fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
+        }
+#endif
+
+        detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
+        fRet = AppInit2(threadGroup);
     }
     catch (std::exception& e) {
         PrintException(&e, "AppInit()");
     } catch (...) {
         PrintException(NULL, "AppInit()");
     }
-    if (!fRet)
-        Shutdown(NULL);
+    // if (!fRet)
+    if (!fRet) {
+        if (detectShutdownThread)
+            detectShutdownThread->interrupt();
+        threadGroup.interrupt_all();
+    }
+
+    if (detectShutdownThread)
+    {
+        // Shutdown(NULL);
+        // threadGroup.interrupt_all();
+        // threadGroup.join_all();
+        detectShutdownThread->join();
+        delete detectShutdownThread;
+        detectShutdownThread = NULL;
+    }
+        Shutdown();
+
     return fRet;
 }
 
@@ -200,9 +310,11 @@ int main(int argc, char* argv[])
     if (fRet && fDaemon)
         return 0;
 
-    return 1;
+    // return 1;
+    return (fRet ? 0 : 1);
 }
 #endif
+
 
 bool static InitError(const std::string &str)
 {
@@ -297,6 +409,7 @@ std::string HelpMessage()
         "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 11311 or testnet 21311)") + "\n" +
         "  -rpcallowip=<ip>       " + _("Allow JSON-RPC connections from specified IP address") + "\n" +
         "  -rpcconnect=<ip>       " + _("Send commands to node running on <ip> (default: 127.0.0.1)") + "\n" +
+        "  -rpcthreads=<n>        " + _("Use this many threads to service RPC calls (default: 4)") + "\n" +
         "  -rpcwait               " + _("Wait for RPC server to start") + "\n";
         "  -blocknotify=<cmd>     " + _("Execute command when the best block changes (%s in cmd is replaced by block hash)") + "\n" +
         "  -walletnotify=<cmd>    " + _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)") + "\n" +
@@ -327,7 +440,7 @@ std::string HelpMessage()
 /** Initialize netcoin.
  *  @pre Parameters should be parsed and config file should be read.
  */
-bool AppInit2()
+bool AppInit2(boost::thread_group& threadGroup)
 {
     // ********************************************************* Step 1: setup
 #ifdef _MSC_VER
@@ -370,6 +483,8 @@ bool AppInit2()
     sa_hup.sa_flags = 0;
     sigaction(SIGHUP, &sa_hup, NULL);
 #endif
+
+    // threadGroup.create_thread(boost::bind(&DetectShutdownThread, &threadGroup));
 
     // ********************************************************* Step 2: parameter interactions
 
@@ -446,13 +561,13 @@ bool AppInit2()
         fDebugNet = GetBoolArg("-debugnet");
 
     bitdb.SetDetach(GetBoolArg("-detachdb", false));
-
+ /*
 #if !defined(WIN32) && !defined(QT_GUI)
     fDaemon = GetBoolArg("-daemon");
 #else
     fDaemon = false;
 #endif
-
+*/
     if (fDaemon)
         fServer = true;
     else
@@ -513,7 +628,7 @@ bool AppInit2()
     static boost::interprocess::file_lock lock(pathLockFile.string().c_str());
     if (!lock.try_lock())
         return InitError(strprintf(_("Cannot obtain a lock on data directory %s.  NetCoin is probably already running."), GetDataDir().string().c_str()));
-
+/*
 #if !defined(WIN32) && !defined(QT_GUI)
     if (fDaemon)
     {
@@ -535,7 +650,7 @@ bool AppInit2()
             fprintf(stderr, "Error: setsid() returned %d errno %d\n", sid, errno);
     }
 #endif
-
+*/
     if (GetBoolArg("-shrinkdebugfile", !fDebug))
         ShrinkDebugFile();
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
@@ -652,9 +767,9 @@ bool AppInit2()
     fNoListen = !GetBoolArg("-listen", true);
     fDiscover = GetBoolArg("-discover", true);
     fNameLookup = GetBoolArg("-dns", true);
-#ifdef USE_UPNP
-    fUseUPnP = GetBoolArg("-upnp", USE_UPNP);
-#endif
+// #ifdef USE_UPNP
+//    fUseUPnP = GetBoolArg("-upnp", USE_UPNP);
+// #endif
 
     bool fBound = false;
     if (!fNoListen)
@@ -945,11 +1060,20 @@ bool AppInit2()
     printf("mapWallet.size() = %"PRIszu"\n",       pwalletMain->mapWallet.size());
     printf("mapAddressBook.size() = %"PRIszu"\n",  pwalletMain->mapAddressBook.size());
 
-    if (!NewThread(StartNode, NULL))
-        InitError(_("Error: could not start node"));
+    // if (!NewThread(StartNode, NULL))
+    // if (!NewThread(StartNode, (void*)&threadGroup))
+    //    InitError(_("Error: could not start node"));
+    StartNode(threadGroup);
 
     if (fServer)
-        NewThread(ThreadRPCServer, NULL);
+        // NewThread(ThreadRPCServer, NULL);
+        StartRPCThreads();
+
+    // Mine proof-of-stake blocks in the background
+    if (!GetBoolArg("-staking", true))
+        printf("Staking disabled\n");
+    else
+        threadGroup.create_thread(boost::bind(&ThreadStakeMiner, pwalletMain));
 
     // ********************************************************* Step 12: finished
 
@@ -961,13 +1085,17 @@ bool AppInit2()
 
      // Add wallet transactions that aren't already in a block to mapTransactions
     pwalletMain->ReacceptWalletTransactions();
-
+/*
 #if !defined(QT_GUI)
     // Loop until process is exit()ed from shutdown() function,
     // called from ThreadRPCServer thread when a "stop" command is received.
     while (1)
         MilliSleep(5000);
 #endif
+*/
+    // Run a thread to flush wallet periodically
+    threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
 
-    return true;
+    // return true;
+    return !fRequestShutdown;
 }

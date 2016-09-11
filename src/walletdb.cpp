@@ -152,9 +152,15 @@ CWalletDB::ReorderTransactions(CWallet* pwallet)
             nOrderPos = nOrderPosNext++;
             nOrderPosOffsets.push_back(nOrderPos);
 
-            if (pacentry)
+            //if (pacentry)
                 // Have to write accounting regardless, since we don't keep it in memory
-                if (!WriteAccountingEntry(pacentry->nEntryNo, *pacentry))
+            if (pwtx)
+            {
+                if (!WriteTx(pwtx->GetHash(), *pwtx))
+                    return DB_LOAD_FAIL;
+            }
+            else
+            if (!WriteAccountingEntry(pacentry->nEntryNo, *pacentry))
                     return DB_LOAD_FAIL;
         }
         else
@@ -182,6 +188,7 @@ CWalletDB::ReorderTransactions(CWallet* pwallet)
                     return DB_LOAD_FAIL;
         }
     }
+    WriteOrderPosNext(nOrderPosNext);
 
     return DB_LOAD_OK;
 }
@@ -285,15 +292,22 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             }
             else if (strType == "key" || strType == "wkey")
             {
-                vector<unsigned char> vchPubKey;
+                // vector<unsigned char> vchPubKey;
+                CPubKey vchPubKey;
                 ssKey >> vchPubKey;
+                if (!vchPubKey.IsValid())
+                {
+                    strErr = "Error reading wallet database: CPubKey corrupt";
+                    return false;
+                }
                 CKey key;
+                CPrivKey pkey;
                 if (strType == "key")
                 {
                 wss.nKeys++;
-                    CPrivKey pkey;
+                    // CPrivKey pkey;
                     ssValue >> pkey;
-                    key.SetPubKey(vchPubKey);
+        /*            key.SetPubKey(vchPubKey);
                 if (!key.SetPrivKey(pkey))
                 {
                     strErr = "Error reading wallet database: CPrivKey corrupt";
@@ -312,9 +326,11 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 }
                 else
                 {
+        */
+                } else {
                     CWalletKey wkey;
                     ssValue >> wkey;
-                    key.SetPubKey(vchPubKey);
+          /*          key.SetPubKey(vchPubKey);
                 if (!key.SetPrivKey(wkey.vchPrivKey))
                 {
                     strErr = "Error reading wallet database: CPrivKey corrupt";
@@ -330,8 +346,21 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                     strErr = "Error reading wallet database: invalid CWalletKey";
                     return false;
                     }
+          */
+                    pkey = wkey.vchPrivKey;
                 }
-                if (!pwallet->LoadKey(key))
+                if (!key.SetPrivKey(pkey, vchPubKey.IsCompressed()))
+                {
+                    strErr = "Error reading wallet database: CPrivKey corrupt";
+                    return false;
+                }
+                if (key.GetPubKey() != vchPubKey)
+                {
+                    strErr = "Error reading wallet database: CPrivKey pubkey inconsistency";
+                    return false;
+                }
+                // if (!pwallet->LoadKey(key))
+                if (!pwallet->LoadKey(key, vchPubKey))
                 {
                 strErr = "Error reading wallet database: LoadKey failed";
                 return false;
@@ -527,8 +556,10 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
         }
         pcursor->close();
     }
-    catch (...)
-    {
+    catch (boost::thread_interrupted) {
+        throw;
+    }
+    catch (...) {
         result = DB_CORRUPT;
     }
 
@@ -566,12 +597,12 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
     return result;
 }
 
-void ThreadFlushWalletDB(void* parg)
+void ThreadFlushWalletDB(const string& strFile)
 {
     // Make this thread recognisable as the wallet flushing thread
-    RenameThread("Netcoin-wallet");
+    RenameThread("netcoin-wallet");
 
-    const string& strFile = ((const string*)parg)[0];
+    // const string& strFile = ((const string*)parg)[0];
     static bool fOneThread;
     if (fOneThread)
         return;
@@ -582,7 +613,7 @@ void ThreadFlushWalletDB(void* parg)
     unsigned int nLastSeen = nWalletDBUpdated;
     unsigned int nLastFlushed = nWalletDBUpdated;
     int64_t nLastWalletUpdate = GetTime();
-    while (!fShutdown)
+    while (true)
     {
         MilliSleep(500);
 
@@ -606,8 +637,9 @@ void ThreadFlushWalletDB(void* parg)
                     mi++;
                 }
 
-                if (nRefCount == 0 && !fShutdown)
+                if (nRefCount == 0)
                 {
+                    boost::this_thread::interruption_point();
                     map<string, int>::iterator mi = bitdb.mapFileUseCount.find(strFile);
                     if (mi != bitdb.mapFileUseCount.end())
                     {
@@ -632,7 +664,7 @@ bool BackupWallet(const CWallet& wallet, const string& strDest)
 {
     if (!wallet.fFileBacked)
         return false;
-    while (!fShutdown)
+    while (true)
     {
         {
             LOCK(bitdb.cs_db);

@@ -217,7 +217,12 @@ private slots:
 
     void updateWeight();
     void updateStakingIcon();
-void charityClicked(QString addr = "");
+
+    /** called by a timer to check if fRequestShutdown has been set **/
+    void detectShutdown();
+
+    void charityClicked(QString addr = "");
+
     /** Load external QSS stylesheet */
     void changeTheme(QString theme);
     void loadTheme(QString theme);

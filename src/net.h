@@ -19,6 +19,7 @@
 #include "netbase.h"
 #include "protocol.h"
 #include "addrman.h"
+#include "hash.h"
 
 class CRequestTracker;
 class CNode;
@@ -42,10 +43,10 @@ CNode* FindNode(const CNetAddr& ip);
 CNode* FindNode(const std::string& addrName);
 CNode* FindNode(const CService& ip);
 CNode* ConnectNode(CAddress addrConnect, const char *strDest = NULL);
-void MapPort();
+void MapPort(bool fUseUPnP);
 unsigned short GetListenPort();
 bool BindListenPort(const CService &bindAddr, std::string& strError=REF(std::string()));
-void StartNode(void* parg);
+void StartNode(boost::thread_group& threadGroup);
 bool StopNode();
 void SocketSendData(CNode *pnode);
 
@@ -101,10 +102,11 @@ public:
     }
 };
 
-
-/** Thread types */
+/*
+/** Thread types *
 enum threadId
 {
+ /*
     THREAD_SOCKETHANDLER,
     THREAD_OPENCONNECTIONS,
     THREAD_MESSAGEHANDLER,
@@ -116,17 +118,19 @@ enum threadId
     THREAD_DUMPADDRESS,
     THREAD_RPCHANDLER,
     THREAD_STAKE_MINER,
+ *
 
     THREAD_MAX
 };
+*/
 
 // extern bool fClient;
 extern bool fDiscover;
-extern bool fUseUPnP;
+// extern bool fUseUPnP;
 extern uint64_t nLocalServices;
 extern uint64_t nLocalHostNonce;
 // extern CAddress addrSeenByPeer;
-extern boost::array<int, THREAD_MAX> vnThreadsRunning;
+// extern boost::array<int, THREAD_MAX> vnThreadsRunning;
 extern CAddrMan addrman;
 
 extern std::vector<CNode*> vNodes;

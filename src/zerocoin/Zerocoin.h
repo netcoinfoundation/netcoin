@@ -15,6 +15,8 @@
 
 #include <stdexcept>
 
+#include "hash.h"
+
 #define ZEROCOIN_DEFAULT_SECURITYLEVEL      80
 #define ZEROCOIN_MIN_SECURITY_LEVEL         80
 #define ZEROCOIN_MAX_SECURITY_LEVEL         80

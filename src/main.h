@@ -141,6 +141,7 @@ extern CCriticalSection cs_setpwalletRegistered;
 extern std::set<CWallet*> setpwalletRegistered;
 extern unsigned char pchMessageStart[4];
 extern std::map<uint256, CBlock*> mapOrphanBlocks;
+extern bool fHaveGUI;
 
 // Settings
 extern int64_t nTransactionFee;
@@ -193,7 +194,8 @@ std::string GetWarnings(std::string strFor);
 bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock);
 uint256 WantedByOrphan(const CBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
-void StakeMiner(CWallet *pwallet);
+// void StakeMiner(CWallet *pwallet);
+void ThreadStakeMiner(CWallet *pwallet);
 void ResendWalletTransactions(bool fForce = false);
 
 
@@ -795,6 +797,21 @@ public:
 
 // protected:
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
+};
+
+/** wrapper for CTxOut that provides a more compact serialization */
+class CTxOutCompressor
+{
+private:
+    CTxOut &txout;
+public:
+    CTxOutCompressor(CTxOut &txoutIn) : txout(txoutIn) { }
+
+    IMPLEMENT_SERIALIZE(
+        READWRITE(VARINT(txout.nValue));
+        CScriptCompressor cscript(REF(txout.scriptPubKey));
+        READWRITE(cscript);
+    )
 };
 
 /** Count ECDSA signature operations the old-fashioned (pre-0.6) way
