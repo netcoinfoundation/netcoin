@@ -158,6 +158,12 @@ public:
     bool VerifyCompact(uint256 hash, const std::vector<unsigned char>& vchSig);
 
     bool IsValid();
+
+    // Check whether an element of a signature (r or s) is valid.
+    static bool CheckSignatureElement(const unsigned char *vch, int len, bool half);
+
+    // Ensure that signature is DER-encoded
+    static bool ReserealizeSignature(std::vector<unsigned char>& vchSig);
 };
 
 #endif

@@ -93,12 +93,13 @@ static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NO
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START = 438500; //DIGISHIELD FIX FORK
 static const int BLOCK_HEIGHT_FINALPOW =  1296000; // this is where the proof of work reward drops to 1 coin. Approx 2.5 years after genesis block
-
+static const int LOW_S_CHECK_SIGNATURES = 1300000;
 
 static const int BLOCK_HEIGHT_KGW_START_TESTNET = 5;
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
 static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  5000;
+static const int LOW_S_CHECK_SIGNATURES_TESTET = 30;
 
 static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
 
@@ -450,7 +451,7 @@ public:
         return SerializeHash(*this);
     }
 
-    bool IsDust() const;
+    // bool IsDust() const;
 
     friend bool operator==(const CTxOut& a, const CTxOut& b)
     {

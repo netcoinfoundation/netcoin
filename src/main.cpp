@@ -241,16 +241,27 @@ bool AddOrphanTx(const CTransaction& tx)
 
 void static EraseOrphanTx(uint256 hash)
 {
-    if (!mapOrphanTransactions.count(hash))
+    // if (!mapOrphanTransactions.count(hash))
+    map<uint256, CTransaction>::iterator it = mapOrphanTransactions.find(hash);
+    if (it == mapOrphanTransactions.end())
         return;
-    const CTransaction& tx = mapOrphanTransactions[hash];
-    BOOST_FOREACH(const CTxIn& txin, tx.vin)
+    // const CTransaction& tx = mapOrphanTransactions[hash];
+    // BOOST_FOREACH(const CTxIn& txin, tx.vin)
+    BOOST_FOREACH(const CTxIn& txin, it->second.vin)
     {
-        mapOrphanTransactionsByPrev[txin.prevout.hash].erase(hash);
-        if (mapOrphanTransactionsByPrev[txin.prevout.hash].empty())
-            mapOrphanTransactionsByPrev.erase(txin.prevout.hash);
+        // mapOrphanTransactionsByPrev[txin.prevout.hash].erase(hash);
+        // if (mapOrphanTransactionsByPrev[txin.prevout.hash].empty())
+        //     mapOrphanTransactionsByPrev.erase(txin.prevout.hash);
+
+        map<uint256, set<uint256> >::iterator itPrev = mapOrphanTransactionsByPrev.find(txin.prevout.hash);
+        if (itPrev == mapOrphanTransactionsByPrev.end())
+            continue;
+        itPrev->second.erase(hash);
+        if (itPrev->second.empty())
+             mapOrphanTransactionsByPrev.erase(itPrev);
     }
-    mapOrphanTransactions.erase(hash);
+    // mapOrphanTransactions.erase(hash);
+    mapOrphanTransactions.erase(it);
 }
 
 unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans)
@@ -308,12 +319,14 @@ bool CTransaction::ReadFromDisk(COutPoint prevout)
     return ReadFromDisk(txdb, prevout, txindex);
 }
 
+/*
 bool CTxOut::IsDust() const
 {
     // Netcoin: IsDust() detection disabled, allows any valid dust to be relayed.
     // The fees imposed on each dust txo is considered sufficient spam deterrant.
     return false;
 }
+*/
 
 bool CTransaction::IsStandard(string& strReason) const
 {
@@ -331,9 +344,9 @@ bool CTransaction::IsStandard(string& strReason) const
         return false;
     }
 
-	// Disallow large transaction comments
-	if (strTxComment.length() > MAX_TX_COMMENT_LEN)
-		return false;
+    // Disallow large transaction comments
+    if (strTxComment.length() > MAX_TX_COMMENT_LEN)
+        return false;
 
     BOOST_FOREACH(const CTxIn& txin, vin)
     {
@@ -348,18 +361,39 @@ bool CTransaction::IsStandard(string& strReason) const
             strReason = "scriptsig-not-pushonly";
             return false;
         }
+        if (fEnforceCanonical && !txin.scriptSig.HasCanonicalPushes()) {
+            strReason = "scriptsig-non-canonical-push";
+            return false;
+        }
     }
+
+    unsigned int nDataOut = 0;
+    txnouttype whichType;
     BOOST_FOREACH(const CTxOut& txout, vout) {
-        if (!::IsStandard(txout.scriptPubKey)) {
+        // if (!::IsStandard(txout.scriptPubKey)) {
+        if (!::IsStandard(txout.scriptPubKey, whichType)){
             strReason = "scriptpubkey";
             return false;
         }
-        if (txout.IsDust()) {
+        if (whichType == TX_NULL_DATA)
+            nDataOut++;
+        // if (txout.IsDust()) {
+        if (txout.nValue == 0) {
             strReason = "dust";
             return false;
         }
+        if (fEnforceCanonical && !txout.scriptPubKey.HasCanonicalPushes()) {
+            strReason = "scriptpubkey-non-canonical-push";
+            return false;
+        }
     }
-    return true;
+
+    // only one OP_RETURN txout is permitted
+    if (nDataOut > 1) {
+        return false;
+    }
+
+return true;
 }
 
 //
@@ -1038,47 +1072,60 @@ int static generateMTRandom(unsigned int s, int range)
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, uint256 prevHash)
 {
-	// normal payout
-    int64_t nSubsidy = 1024 * COIN;
+    int64_t nSubsidy;
+    int nheight     =  nHeight < 1296001;
+    int nheighttest =  nHeight < 26;
 
-	std::string cseed_str = prevHash.ToString().substr(5,7);
-	const char* cseed = cseed_str.c_str();
-	long seed = hex2long(cseed);
-	int rand = generateMTRandom(seed, 6000);
-
-	if(rand > 2000 && rand < 2101)	
-	{
-		nSubsidy *= 8;
-	}
-
-	// 1st week bonus
-	if(nHeight < 2881)		// 1st 2 days
-	{
-		nSubsidy *= 5;
-	}
-	else if(nHeight < 5761)	// next 2 days
-	{
-		nSubsidy *= 3;
-	}
-	else if(nHeight < 10081)	// next 3 days
-	{
-		nSubsidy *= 2;
-	}
-
-	// Subsidy is cut in half every 129,600 blocks, which will occur approximately every 3 months
-    nSubsidy >>= (nHeight / 129600);
-
-   if (nHeight >= BLOCK_HEIGHT_DIGISHIELD_FIX_START)
+    // Pre v2.4.1 reward
+    if ( !fTestNet ? nheight : nheighttest )
     {
-        nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
+        // normal payout
+        nSubsidy = 1024 * COIN;
+
+        std::string cseed_str = prevHash.ToString().substr(5,7);
+        const char* cseed = cseed_str.c_str();
+        long seed = hex2long(cseed);
+        int rand = generateMTRandom(seed, 6000);
+
+        if(rand > 2000 && rand < 2101)
+        {
+            nSubsidy *= 8;
+        }
+
+        // 1st week bonus
+        if(nHeight < 2881)		// 1st 2 days
+        {
+            nSubsidy *= 5;
+        }
+        else if(nHeight < 5761)	// next 2 days
+        {
+            nSubsidy *= 3;
+        }
+        else if(nHeight < 10081)	// next 3 days
+        {
+            nSubsidy *= 2;
+        }
+
+        // Subsidy is cut in half every 129,600 blocks, which will occur approximately every 3 months
+        nSubsidy >>= (nHeight / 129600);
+
+        if (nHeight >= BLOCK_HEIGHT_DIGISHIELD_FIX_START)
+        {
+            nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
+        }
+        if (nHeight >= BLOCK_HEIGHT_POS_AND_DIGISHIELD_START)
+        {
+            nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
+            nSubsidy *= 2;             //adjust for POW blocks target changing from 1 to 2 minutes when POW/POS goes live
+        }
+
     }
-   if (nHeight >= BLOCK_HEIGHT_POS_AND_DIGISHIELD_START)
+    else
     {
-        nSubsidy += nSubsidy / 4;  //25% boost to all POW miners to encourage new wallet adoption
-        nSubsidy *= 2;             //adjust for POW blocks target changing from 1 to 2 minutes when POW/POS goes live
+        nSubsidy = 15 * COIN; // 15 NET static reward and no more superblocks after block 1296000
     }
 
-	return nSubsidy + nFees;
+    return nSubsidy + nFees;
 }
 
 // Netcoin: PERSONALISED INTEREST RATE CALCULATION
@@ -2110,7 +2157,8 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
     printf("REORGANIZE: Connect %"PRIszu" blocks; %s..%s\n", vConnect.size(), pfork->GetBlockHash().ToString().substr(0,20).c_str(), pindexNew->GetBlockHash().ToString().substr(0,20).c_str());
 
     // Disconnect shorter branch
-    vector<CTransaction> vResurrect;
+    // vector<CTransaction> vResurrect;
+    list<CTransaction> vResurrect;
     BOOST_FOREACH(CBlockIndex* pindex, vDisconnect)
     {
         CBlock block;
@@ -2119,10 +2167,15 @@ bool static Reorganize(CTxDB& txdb, CBlockIndex* pindexNew)
         if (!block.DisconnectBlock(txdb, pindex))
             return error("Reorganize() : DisconnectBlock %s failed", pindex->GetBlockHash().ToString().substr(0,20).c_str());
 
-        // Queue memory transactions to resurrect
-        BOOST_FOREACH(const CTransaction& tx, block.vtx)
-            if (!(tx.IsCoinBase() || tx.IsCoinStake()))
-                vResurrect.push_back(tx);
+        // Queue memory transactions to resurrect.
+        // We only do this for blocks after the last checkpoint (reorganisation before that
+        // point should only happen with -reindex/-loadblock, or a misbehaving peer.
+        // BOOST_FOREACH(const CTransaction& tx, block.vtx)
+        BOOST_REVERSE_FOREACH(const CTransaction& tx, block.vtx)
+            // if (!(tx.IsCoinBase() || tx.IsCoinStake()))
+                if (!(tx.IsCoinBase() || tx.IsCoinStake()) && pindex->nHeight > Checkpoints::GetTotalBlocksEstimate())
+                // vResurrect.push_back(tx);
+                vResurrect.push_front(tx);
     }
 
     // Connect longer branch
@@ -2552,9 +2605,13 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
                 return DoS(100, error("CheckBlock() : more than one coinstake"));
 
         // NovaCoin: check proof-of-stake block signature
-        if (fCheckSig && !CheckBlockSignature())
-            return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
+        // if (fCheckSig && !CheckBlockSignature())
+        //    return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
     }
+
+    // NovaCoin: check proof-of-stake block signature
+    if (fCheckSig && !CheckBlockSignature())
+        return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
 
     // Check transactions
     BOOST_FOREACH(const CTransaction& tx, vtx)
@@ -2711,6 +2768,16 @@ void PushGetBlocks(CNode* pnode, CBlockIndex* pindexBegin, uint256 hashEnd)
     pnode->PushMessage("getblocks", CBlockLocator(pindexBegin), hashEnd);
 }
 
+bool static ReserealizeBlockSignature(CBlock* pblock)
+{
+    if (pblock->IsProofOfWork()) {
+        pblock->vchBlockSig.clear();
+        return true;
+    }
+
+    return CKey::ReserealizeSignature(pblock->vchBlockSig);
+}
+
 bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 {
     // Check for duplicate
@@ -2725,6 +2792,11 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // Duplicate stake allowed only when there is orphan child block
     if (pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
         return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
+
+    // Block signature can be malleated in such a way that it increases block size up to maximum allowed by protocol
+    // For now we just strip garbage from newly received blocks
+    if (!ReserealizeBlockSignature(pblock))
+        printf("WARNING: ProcessBlock() : ReserealizeBlockSignature FAILED\n");
 
     // Preliminary checks
     if (!pblock->CheckBlock())
@@ -2762,14 +2834,14 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (!IsInitialBlockDownload())
         Checkpoints::AskForPendingSyncCheckpoint(pfrom);
 
-    // If don't already have its previous block, shunt it off to holding area until we get it
+    // If we don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
         printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", pblock->hashPrevBlock.ToString().substr(0,20).c_str());
         // CBlock* pblock2 = new CBlock(*pblock);
         // ppcoin: check proof-of-stake
         // if (pblock2->IsProofOfStake())
-        if (pblock->IsProofOfStake())
+   /*     if (pblock->IsProofOfStake())
         {
             // Limited duplicity on stake: prevents block flood attack
             // Duplicate stake allowed only when there is orphan child block
@@ -2788,6 +2860,25 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         // Ask this guy to fill in what we're missing
         if (pfrom)
         {
+  */
+
+        // Accept orphans as long as there is a node to request its parents from
+        if (pfrom) {
+            // ppcoin: check proof-of-stake
+            if (pblock->IsProofOfStake())
+            {
+                // Limited duplicity on stake: prevents block flood attack
+                // Duplicate stake allowed only when there is orphan child block
+                if (setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
+                    return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
+                else
+                    setStakeSeenOrphan.insert(pblock->GetProofOfStake());
+            }
+            CBlock* pblock2 = new CBlock(*pblock);
+            mapOrphanBlocks.insert(make_pair(hash, pblock2));
+            mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrevBlock, pblock2));
+
+                    // Ask this guy to fill in what we're missing
             // pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(pblock2));
             PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(pblock2));
             // ppcoin: getblocks may not obtain the ancestor block rejected
@@ -3806,7 +3897,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     {
         vector<uint256> vWorkQueue;
         vector<uint256> vEraseQueue;
-        CDataStream vMsg(vRecv);
+        // CDataStream vMsg(vRecv);
         CTxDB txdb("r");
         CTransaction tx;
         vRecv >> tx;
@@ -3826,9 +3917,15 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             // Recursively process any orphan transactions that depended on this one
             for (unsigned int i = 0; i < vWorkQueue.size(); i++)
             {
-                uint256 hashPrev = vWorkQueue[i];
-                for (set<uint256>::iterator mi = mapOrphanTransactionsByPrev[hashPrev].begin();
-                     mi != mapOrphanTransactionsByPrev[hashPrev].end();
+                // uint256 hashPrev = vWorkQueue[i];
+                // for (set<uint256>::iterator mi = mapOrphanTransactionsByPrev[hashPrev].begin();
+                //      mi != mapOrphanTransactionsByPrev[hashPrev].end();
+
+                map<uint256, set<uint256> >::iterator itByPrev = mapOrphanTransactionsByPrev.find(vWorkQueue[i]);
+                if (itByPrev == mapOrphanTransactionsByPrev.end())
+                    continue;
+                for (set<uint256>::iterator mi = itByPrev->second.begin();
+                     mi != itByPrev->second.end();
                      ++mi)
                 {
                     const uint256& orphanTxHash = *mi;
