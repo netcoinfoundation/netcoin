@@ -298,7 +298,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/netbase.h \
     src/clientversion.h \
     src/qt/shoppingpage.h \
-    src/qt/networkpage.h
+    src/qt/networkpage.h \
+    src/threadsafety.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \

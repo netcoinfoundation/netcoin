@@ -148,7 +148,7 @@ void static EraseFromWallets(uint256 hash)
 
 // make sure all wallets know about the given transaction, in the given block
 void SyncWithWallets(const CTransaction& tx, const CBlock* pblock, bool fUpdate, bool fConnect)
-{
+{    
     if (!fConnect)
     {
         // ppcoin: wallets need to refund inputs when disconnecting coinstake
@@ -200,10 +200,22 @@ void ResendWalletTransactions(bool fForce)
         pwallet->ResendWalletTransactions(fForce);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+// Registration of network node signals.
+//
 
+void RegisterNodeSignals(CNodeSignals& nodeSignals)
+{
+    nodeSignals.ProcessMessages.connect(&ProcessMessages);
+    nodeSignals.SendMessages.connect(&SendMessages);
+}
 
-
-
+void UnregisterNodeSignals(CNodeSignals& nodeSignals)
+{
+    nodeSignals.ProcessMessages.disconnect(&ProcessMessages);
+    nodeSignals.SendMessages.disconnect(&SendMessages);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -867,7 +879,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx,
     // Store transaction in memory
     {
         // LOCK(cs);
-        LOCK(pool.cs);
+        // LOCK(pool.cs);
         if (ptxOld)
         {
             printf("AcceptToMemoryPool : replacing tx %s with new version\n", ptxOld->GetHash().ToString().c_str());
@@ -880,6 +892,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx,
     // If updated, erase old tx from wallet
     if (ptxOld)
         EraseFromWallets(ptxOld->GetHash());
+    SyncWithWallets(tx, NULL, true);
 
     printf("AcceptToMemoryPool : accepted %s (poolsz %"PRIszu")\n",
            hash.ToString().substr(0,10).c_str(),
@@ -896,8 +909,10 @@ bool CTransaction::AcceptToMemoryPool(CTxDB& txdb, bool* pfMissingInputs)
 
 bool CTxMemPool::addUnchecked(const uint256& hash, CTransaction &tx)
 {
-    // Add to memory pool without checking anything.  Don't call this directly,
-    // call AcceptToMemoryPool to properly check the transaction first.
+    // Add to memory pool without checking anything.
+    // Used by main.cpp AcceptToMemoryPool(), which DOES do
+    // all the appropriate checks.
+    LOCK(cs);
     {
         mapTx[hash] = tx;
         for (unsigned int i = 0; i < tx.vin.size(); i++)
@@ -1043,7 +1058,7 @@ bool CWalletTx::AcceptWalletTransaction(CTxDB& txdb)
 {
 
     {
-        LOCK(mempool.cs);
+        // LOCK(mempool.cs);
         // Add previous supporting transactions first
         BOOST_FOREACH(CMerkleTx& tx, vtxPrev)
         {
@@ -1087,10 +1102,11 @@ bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock)
     {
         LOCK(cs_main);
         {
-            LOCK(mempool.cs);
-            if (mempool.exists(hash))
+            // LOCK(mempool.cs);
+            // if (mempool.exists(hash))
+            if (mempool.lookup(hash, tx))
             {
-                tx = mempool.lookup(hash);
+                // tx = mempool.lookup(hash);
                 return true;
             }
         }
@@ -1835,12 +1851,15 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
         if (!fFound || txindex.pos == CDiskTxPos(1,1,1))
         {
             // Get prev tx from single transactions in memory
-            {
+     /*       {
                 LOCK(mempool.cs);
                 if (!mempool.exists(prevout.hash))
                     return error("FetchInputs() : %s mempool Tx prev not found %s", GetHash().ToString().substr(0,10).c_str(),  prevout.hash.ToString().substr(0,10).c_str());
                 txPrev = mempool.lookup(prevout.hash);
             }
+     */
+            if (!mempool.lookup(prevout.hash, txPrev))
+            return error("FetchInputs() : %s mempool Tx prev not found %s", GetHash().ToString().substr(0,10).c_str(),  prevout.hash.ToString().substr(0,10).c_str());
             if (!fFound)
                 txindex.vSpent.resize(txPrev.vout.size());
         }
@@ -3543,10 +3562,12 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
     case MSG_TX:
         {
         bool txInMap = false;
-            {
+         /*   {
             LOCK(mempool.cs);
             txInMap = (mempool.exists(inv.hash));
             }
+         */
+        txInMap = mempool.exists(inv.hash);
         return txInMap ||
                mapOrphanTransactions.count(inv.hash) ||
                txdb.ContainsTx(inv.hash);
@@ -3931,9 +3952,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                     }
                 }
                 if (!pushed && inv.type == MSG_TX) {
-                    LOCK(mempool.cs);
-                    if (mempool.exists(inv.hash)) {
-                        CTransaction tx = mempool.lookup(inv.hash);
+                    // LOCK(mempool.cs);
+                    // if (mempool.exists(inv.hash)) {
+                    //    CTransaction tx = mempool.lookup(inv.hash);
+
+                    CTransaction tx;
+                    if (mempool.lookup(inv.hash, tx)) {
                         CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
                         ss.reserve(1000);
                         ss << tx;
@@ -4051,7 +4075,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         // if (tx.AcceptToMemoryPool(txdb, &fMissingInputs))
         if (AcceptToMemoryPool(mempool, tx, &fMissingInputs))
         {
-            SyncWithWallets(tx, NULL, true);
+            // SyncWithWallets(tx, NULL, true);
             RelayTransaction(tx, inv.hash);
             mapAlreadyAskedFor.erase(inv);
             vWorkQueue.push_back(inv.hash);
@@ -4079,7 +4103,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                     if (AcceptToMemoryPool(mempool, orphanTx, &fMissingInputs2))
                     {
                         printf("   accepted orphan tx %s\n", orphanTxHash.ToString().substr(0,10).c_str());
-                        SyncWithWallets(tx, NULL, true);
+                        // SyncWithWallets(tx, NULL, true);
                         RelayTransaction(orphanTx, orphanTxHash);
                         mapAlreadyAskedFor.erase(CInv(MSG_TX, orphanTxHash));
                         vWorkQueue.push_back(orphanTxHash);

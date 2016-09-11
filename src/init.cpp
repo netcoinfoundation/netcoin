@@ -4,13 +4,16 @@
 // Copyright (c) 2013 NetCoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+#include "init.h"
+#include "main.h"
 #include "txdb.h"
 #include "db.h"
 #include "main.h"
 #include "walletdb.h"
 #include "bitcoinrpc.h"
 #include "net.h"
-#include "init.h"
+// #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
@@ -702,6 +705,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     }
 
     // ********************************************************* Step 6: network initialization
+
+    RegisterNodeSignals(GetNodeSignals());
 
     int nSocksVersion = GetArg("-socks", 5);
 

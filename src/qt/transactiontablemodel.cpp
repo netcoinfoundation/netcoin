@@ -14,7 +14,7 @@
 #include <QLocale>
 #include <QList>
 #include <QColor>
-#include <QTimer>
+// #include <QTimer>
 #include <QIcon>
 #include <QDateTime>
 #include <QtAlgorithms>
@@ -180,6 +180,10 @@ public:
         {
             TransactionRecord *rec = &cachedWallet[idx];
 
+            // Get required locks upfront. This avoids the GUI from getting
+            // stuck if the core is holding the locks for a longer time - for
+            // example, during a wallet rescan.
+            //
             // If a status update is needed (blocks came in since last check),
             //  update the status of this transaction from the wallet. Otherwise,
             // simply re-use the cached status.

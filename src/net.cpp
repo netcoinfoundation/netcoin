@@ -8,7 +8,8 @@
 // #include "irc.h"
 #include "db.h"
 #include "net.h"
-#include "init.h"
+// #include "init.h"
+#include "main.h"
 // #include "strlcpy.h"
 #include "addrman.h"
 #include "ui_interface.h"
@@ -88,6 +89,10 @@ vector<std::string> vAddedNodes;
 CCriticalSection cs_vAddedNodes;
 
 static CSemaphore *semOutbound = NULL;
+
+// Signals for message handling
+static CNodeSignals g_signals;
+CNodeSignals& GetNodeSignals() { return g_signals; }
 
 void AddOneShot(string strDest)
 {
@@ -2052,7 +2057,7 @@ void ThreadMessageHandler()
                 TRY_LOCK(pnode->cs_vRecvMsg, lockRecv);
                 if (lockRecv)
                     // ProcessMessages(pnode);
-                    if (!ProcessMessages(pnode))
+                    if (!g_signals.ProcessMessages(pnode))
                         pnode->CloseSocketDisconnect();
             }
             // if (fShutdown)
@@ -2064,7 +2069,7 @@ void ThreadMessageHandler()
             {
                 TRY_LOCK(pnode->cs_vSend, lockSend);
                 if (lockSend)
-                    SendMessages(pnode, pnode == pnodeTrickle);
+                    g_signals.SendMessages(pnode, pnode == pnodeTrickle);
             }
             // if (fShutdown)
             //    return;
