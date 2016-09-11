@@ -22,7 +22,7 @@
 #include "addrman.h"
 #include "hash.h"
 
-class CRequestTracker;
+// class CRequestTracker;
 class CNode;
 class CBlockIndex;
 extern int nBestHeight;
@@ -94,6 +94,7 @@ enum
     MSG_BLOCK,
 };
 
+/*
 class CRequestTracker
 {
 public:
@@ -111,7 +112,7 @@ public:
         return fn == NULL;
     }
 };
-
+*/
 /*
 /** Thread types *
 enum threadId
@@ -269,8 +270,8 @@ protected:
 
 public:
     // int64_t nReleaseTime;
-    std::map<uint256, CRequestTracker> mapRequests;
-    CCriticalSection cs_mapRequests;
+    // std::map<uint256, CRequestTracker> mapRequests;
+    // CCriticalSection cs_mapRequests;
     uint256 hashContinue;
     CBlockIndex* pindexLastGetBlocksBegin;
     uint256 hashLastGetBlocksEnd;
@@ -736,7 +737,7 @@ public:
         }
     }
 
-
+ /*
     void PushRequest(const char* pszCommand,
                      void (*fn)(void*, CDataStream&), void* param1)
     {
@@ -781,7 +782,7 @@ public:
         PushMessage(pszCommand, hashReply, a1, a2);
     }
 
-
+ */
 
     // void PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd);
     bool IsSubscribed(unsigned int nChannel);

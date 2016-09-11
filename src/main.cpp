@@ -2245,7 +2245,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         if (txdb.ReadTxIndex(hashTx, txindexOld)) {
             BOOST_FOREACH(CDiskTxPos &pos, txindexOld.vSpent)
                 if (pos.IsNull())
-                    return false;
+                    return DoS(100, error("ConnectBlock() : tried to overwrite transaction"));;
         }
 
         nSigOps += GetLegacySigOpCount(tx);
@@ -3808,7 +3808,7 @@ bool IsValidPeerVersion(int nVersion, string strSubVer)
 // bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, int64_t nTimeReceived)
 {
-    static map<CService, CPubKey> mapReuseKey;
+    // static map<CService, CPubKey> mapReuseKey;
     RandAddSeedPerfmon();
     if (fDebug)
         printf("received: %s (%"PRIszu" bytes)\n", strCommand.c_str(), vRecv.size());
@@ -4437,7 +4437,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             pfrom->PushMessage("inv", vInv);
     }
 
-
+/*
     else if (strCommand == "checkorder")
     {
         uint256 hashReply;
@@ -4456,7 +4456,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
         // Keep giving the same key to the same ip until they use it
         if (!mapReuseKey.count(pfrom->addr))
-            pwalletMain->GetKeyFromPool(mapReuseKey[pfrom->addr], true);
+            pwalletMain->GetKeyFromPool(mapReuseKey[pfrom->addr]);
 
         // Send back approval of order and pubkey to use
         CScript scriptPubKey;
@@ -4483,7 +4483,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         if (!tracker.IsNull())
             tracker.fn(tracker.param1, vRecv);
     }
-
+*/
 
     else if (strCommand == "ping")
     {

@@ -128,6 +128,7 @@ void Shutdown()
  */
     nTransactionsUpdated++;
     StopRPCThreads();
+    ShutdownRPCMining();
     bitdb.Flush(false);
     StopNode();
     {
@@ -693,10 +694,29 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     if (!bitdb.Open(GetDataDir()))
     {
-        string msg = strprintf(_("Error initializing database environment %s!"
+        /*  string msg = strprintf(_("Error initializing database environment %s!"
                                  " To recover, BACKUP THAT DIRECTORY, then remove"
                                  " everything from it except for wallet.dat."), strDataDir.c_str());
         return InitError(msg);
+      */
+
+        // try moving the database env out of the way
+        boost::filesystem::path pathDatabase = GetDataDir() / "database";
+        boost::filesystem::path pathDatabaseBak = GetDataDir() / strprintf("database.%d.bak", GetTime());
+        try {
+            boost::filesystem::rename(pathDatabase, pathDatabaseBak);
+            printf("Moved old %s to %s. Retrying.\n", pathDatabase.string().c_str(), pathDatabaseBak.string().c_str());
+        } catch(boost::filesystem::filesystem_error &error) {
+            // failure is ok (well, not really, but it's not worse than what we started with)
+        }
+
+        // try again
+        if (!bitdb.Open(GetDataDir())) {
+            // if it still fails, it probably means we can't even create the database env
+            string msg = strprintf(_("Error initializing wallet database environment %s!"), strDataDir.c_str());
+            return InitError(msg);
+
+        }
     }
 
     if (GetBoolArg("-salvagewallet"))
@@ -972,7 +992,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         RandAddSeedPerfmon();
 
         CPubKey newDefaultKey;
-        if (!pwalletMain->GetKeyFromPool(newDefaultKey, false))
+        if (!pwalletMain->GetKeyFromPool(newDefaultKey))
             strErrors << _("Cannot initialize keypool") << "\n";
         pwalletMain->SetDefaultKey(newDefaultKey);
         if (!pwalletMain->SetAddressBookName(pwalletMain->vchDefaultKey.GetID(), ""))
@@ -994,6 +1014,8 @@ bool AppInit2(boost::thread_group& threadGroup)
         CBlockLocator locator;
         if (walletdb.ReadBestBlock(locator))
             pindexRescan = locator.GetBlockIndex();
+        else
+            pindexRescan = pindexGenesisBlock;
     }
     if (pindexBest != pindexRescan && pindexBest && pindexRescan && pindexBest->nHeight > pindexRescan->nHeight)
     {
@@ -1002,6 +1024,8 @@ bool AppInit2(boost::thread_group& threadGroup)
         nStart = GetTimeMillis();
         pwalletMain->ScanForWalletTransactions(pindexRescan, true);
         printf(" rescan      %15"PRI64d"ms\n", GetTimeMillis() - nStart);
+        pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+        nWalletDBUpdated++;
     }
 
     // ********************************************************* Step 9: import blocks
@@ -1075,6 +1099,9 @@ bool AppInit2(boost::thread_group& threadGroup)
     if (!CheckDiskSpace())
         return false;
 
+    if (!strErrors.str().empty())
+        return InitError(strErrors.str());
+
     RandAddSeedPerfmon();
 
     //// debug print
@@ -1088,6 +1115,9 @@ bool AppInit2(boost::thread_group& threadGroup)
     // if (!NewThread(StartNode, (void*)&threadGroup))
     //    InitError(_("Error: could not start node"));
     StartNode(threadGroup);
+
+    // InitRPCMining is needed here so getwork/getblocktemplate in the GUI debug console works properly.
+    InitRPCMining();
 
     if (fServer)
         // NewThread(ThreadRPCServer, NULL);
@@ -1104,8 +1134,8 @@ bool AppInit2(boost::thread_group& threadGroup)
     uiInterface.InitMessage(_("Done loading"));
     printf("Done loading\n");
 
-    if (!strErrors.str().empty())
-        return InitError(strErrors.str());
+    // if (!strErrors.str().empty())
+     //   return InitError(strErrors.str());
 
      // Add wallet transactions that aren't already in a block to mapTransactions
     pwalletMain->ReacceptWalletTransactions();
