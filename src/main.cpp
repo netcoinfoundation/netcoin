@@ -128,6 +128,7 @@ bool static IsFromMe(CTransaction& tx)
     return false;
 }
 
+/*
 // get the wallet transaction with the given hash (if it exists)
 bool static GetTransaction(const uint256& hashTx, CWalletTx& wtx)
 {
@@ -136,6 +137,7 @@ bool static GetTransaction(const uint256& hashTx, CWalletTx& wtx)
             return true;
     return false;
 }
+*/
 
 // erases transaction with the given hash from all wallets
 void static EraseFromWallets(uint256 hash)
@@ -4616,7 +4618,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                     hashRand = Hash(BEGIN(hashRand), END(hashRand));
                     bool fTrickleWait = ((hashRand & 3) != 0);
 
-                    // always trickle our own transactions
+       /*             // always trickle our own transactions
                     if (!fTrickleWait)
                     {
                         CWalletTx wtx;
@@ -4624,7 +4626,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                             if (wtx.fFromMe)
                                 fTrickleWait = true;
                     }
-
+      */
                     if (fTrickleWait)
                     {
                         vInvWait.push_back(inv);

@@ -19,8 +19,8 @@ using namespace boost;
 #include "sync.h"
 #include "util.h"
 
-bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CScript scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType);
-
+// bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CScript scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType);
+bool CheckSig(vector<unsigned char> vchSig, const vector<unsigned char> &vchPubKey, const CScript &scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType);
 
 
 typedef vector<unsigned char> valtype;
@@ -1199,10 +1199,12 @@ uint256 SignatureHash(CScript scriptCode, const CTransaction& txTo, unsigned int
     }
 
     // Serialize and hash
-    CDataStream ss(SER_GETHASH, 0);
-    ss.reserve(10000);
+    // CDataStream ss(SER_GETHASH, 0);
+    // ss.reserve(10000);
+    CHashWriter ss(SER_GETHASH, 0);
     ss << txTmp << nHashType;
-    return Hash(ss.begin(), ss.end());
+    // return Hash(ss.begin(), ss.end());
+    return ss.GetHash();
 }
 
 
@@ -1214,13 +1216,15 @@ class CSignatureCache
 {
 private:
      // sigdata_type is (signature hash, signature, public key):
-    typedef boost::tuple<uint256, std::vector<unsigned char>, std::vector<unsigned char> > sigdata_type;
+    // typedef boost::tuple<uint256, std::vector<unsigned char>, std::vector<unsigned char> > sigdata_type;
+    typedef boost::tuple<uint256, std::vector<unsigned char>, CPubKey> sigdata_type;
     std::set< sigdata_type> setValid;
     CCriticalSection cs_sigcache;
 
 public:
     bool
-    Get(uint256 hash, const std::vector<unsigned char>& vchSig, const std::vector<unsigned char>& pubKey)
+    // Get(uint256 hash, const std::vector<unsigned char>& vchSig, const std::vector<unsigned char>& pubKey)
+    Get(const uint256 &hash, const std::vector<unsigned char>& vchSig, const CPubKey& pubKey)
     {
         LOCK(cs_sigcache);
 
@@ -1231,7 +1235,8 @@ public:
         return false;
     }
 
-    void Set(uint256 hash, const std::vector<unsigned char>& vchSig, const std::vector<unsigned char>& pubKey)
+    // void Set(uint256 hash, const std::vector<unsigned char>& vchSig, const std::vector<unsigned char>& pubKey)
+    void Set(const uint256 &hash, const std::vector<unsigned char>& vchSig, const CPubKey& pubKey)
     {
         // DoS prevention: limit cache size to less than 10MB
         // (~200 bytes per cache entry times 50,000 entries)
@@ -1262,10 +1267,15 @@ public:
     }
 };
 
-bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CScript scriptCode,
+// bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CScript scriptCode,
+bool CheckSig(vector<unsigned char> vchSig, const vector<unsigned char> &vchPubKey, const CScript &scriptCode,
               const CTransaction& txTo, unsigned int nIn, int nHashType)
 {
     static CSignatureCache signatureCache;
+
+    CPubKey pubkey(vchPubKey);
+    if (!pubkey.IsValid())
+        return false;
 
     // Hash type is one byte tacked on to the end of the signature
     if (vchSig.empty())
@@ -1278,7 +1288,8 @@ bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CSc
 
     uint256 sighash = SignatureHash(scriptCode, txTo, nIn, nHashType);
 
-    if (signatureCache.Get(sighash, vchSig, vchPubKey))
+    // if (signatureCache.Get(sighash, vchSig, vchPubKey))
+    if (signatureCache.Get(sighash, vchSig, pubkey))
         return true;
 
  /*   CKey key;
@@ -1287,10 +1298,13 @@ bool CheckSig(vector<unsigned char> vchSig, vector<unsigned char> vchPubKey, CSc
 
     if (!key.Verify(sighash, vchSig))
  */
-    if (!CPubKey(vchPubKey).Verify(sighash, vchSig))
+    // if (!CPubKey(vchPubKey).Verify(sighash, vchSig))
+    if (!pubkey.Verify(sighash, vchSig))
         return false;
 
-    signatureCache.Set(sighash, vchSig, vchPubKey);
+    // signatureCache.Set(sighash, vchSig, vchPubKey);
+    signatureCache.Set(sighash, vchSig, pubkey);
+
     return true;
 }
 

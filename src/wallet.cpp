@@ -2061,7 +2061,7 @@ void CWallet::PrintWallet(const CBlock& block)
     }
     printf("\n");
 }
-
+/*
 bool CWallet::GetTransaction(const uint256 &hashTx, CWalletTx& wtx)
 {
     {
@@ -2075,7 +2075,7 @@ bool CWallet::GetTransaction(const uint256 &hashTx, CWalletTx& wtx)
     }
     return false;
 }
-
+*/
 bool CWallet::SetDefaultKey(const CPubKey &vchPubKey)
 {
     if (fFileBacked)

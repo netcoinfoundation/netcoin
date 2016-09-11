@@ -149,6 +149,7 @@ public:
 
     // friend bool operator==(const CPubKey &a, const CPubKey &b) { return memcmp(a.vch, b.vch, a.size()) == 0; }
     // friend bool operator!=(const CPubKey &a, const CPubKey &b) { return memcmp(a.vch, b.vch, a.size()) != 0; }
+
     // Simply read-only vector-like interface to the pubkey data.
     unsigned int size() const { return GetLen(vch[0]); }
     const unsigned char *begin() const { return vch; }
@@ -175,12 +176,14 @@ public:
     }
     template<typename Stream> void Serialize(Stream &s, int nType, int nVersion) const {
         unsigned int len = size();
-        ::Serialize(s, VARINT(len), nType, nVersion);
+        // ::Serialize(s, VARINT(len), nType, nVersion);
+        ::WriteCompactSize(s, len);
         s.write((char*)vch, len);
     }
     template<typename Stream> void Unserialize(Stream &s, int nType, int nVersion) {
-        unsigned int len;
-        ::Unserialize(s, VARINT(len), nType, nVersion);
+        // unsigned int len;
+        // ::Unserialize(s, VARINT(len), nType, nVersion);
+        unsigned int len = ::ReadCompactSize(s);
         if (len <= 65) {
             s.read((char*)vch, len);
         } else {
@@ -380,6 +383,9 @@ public:
     //                  0x1D = second key with even y, 0x1E = second key with odd y,
     //                  add 0x04 for compressed keys.
     bool SignCompact(const uint256 &hash, std::vector<unsigned char>& vchSig) const;
+
+    // Load private key and check that public key matches.
+    bool Load(CPrivKey &privkey, CPubKey &vchPubKey, bool fSkipCheck);
 
     // Check whether an element of a signature (r or s) is valid.
     static bool CheckSignatureElement(const unsigned char *vch, int len, bool half);
