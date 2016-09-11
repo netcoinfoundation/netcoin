@@ -21,6 +21,8 @@ typedef std::vector<unsigned char> valtype;
 
 class CTransaction;
 
+static const unsigned int MAX_OP_RETURN_RELAY = 40;      // bytes
+
 /** Signature hash types/flags */
 enum
 {
@@ -196,6 +198,7 @@ enum opcodetype
 
 
     // template matching params
+    OP_SMALLDATA = 0xf9,
     OP_SMALLINTEGER = 0xfa,
     OP_PUBKEYS = 0xfb,
     OP_PUBKEYHASH = 0xfd,
@@ -526,7 +529,7 @@ public:
 
     bool IsPayToScriptHash() const;
 
-    // Called by CTransaction::IsStandard and P2SH VerifyScript (which makes it consensus-critical).
+    // Called by IsStandardTx and P2SH VerifyScript (which makes it consensus-critical).
     bool IsPushOnly() const
     {
         const_iterator pc = begin();
@@ -541,7 +544,7 @@ public:
         return true;
     }
 
-    // Called by CTransaction::IsStandard.
+    // Called by IsStandardTx.
     bool HasCanonicalPushes() const;
 
     void SetDestination(const CTxDestination& address);

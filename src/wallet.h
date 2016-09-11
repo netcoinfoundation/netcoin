@@ -118,22 +118,34 @@ public:
 
     CWallet()
     {
+        /*      nWalletVersion = FEATURE_BASE;
+        nWalletMaxVersion = FEATURE_BASE;
+        fFileBacked = false;
+        nMasterKeyMaxID = 0;
+        pwalletdbEncryption = NULL;
+        nOrderPosNext = 0;
+ */
+        SetNull();
+    }
+    CWallet(std::string strWalletFileIn)
+    {
+        // nWalletVersion = FEATURE_BASE;
+        // nWalletMaxVersion = FEATURE_BASE;
+
+        SetNull();
+
+        strWalletFile = strWalletFileIn;
+        fFileBacked = true;
+    }
+    void SetNull()
+    {
         nWalletVersion = FEATURE_BASE;
         nWalletMaxVersion = FEATURE_BASE;
         fFileBacked = false;
         nMasterKeyMaxID = 0;
         pwalletdbEncryption = NULL;
         nOrderPosNext = 0;
-    }
-    CWallet(std::string strWalletFileIn)
-    {
-        nWalletVersion = FEATURE_BASE;
-        nWalletMaxVersion = FEATURE_BASE;
-        strWalletFile = strWalletFileIn;
-        fFileBacked = true;
-        nMasterKeyMaxID = 0;
-        pwalletdbEncryption = NULL;
-        nOrderPosNext = 0;
+        nTimeFirstKey = 0;
         fWalletUnlockStakingOnly = false;
         fStakeForCharity = false;
         nStakeForCharityPercent = 0;
@@ -684,7 +696,8 @@ public:
     bool IsTrusted() const
     {
         // Quick answer in most cases
-        if (!IsFinal())
+        // if (!IsFinal())
+        if (!IsFinalTx(*this))
             return false;
         int nDepth = GetDepthInMainChain();
         if (nDepth >= 1)
@@ -704,7 +717,8 @@ public:
         {
             const CMerkleTx* ptx = vWorkQueue[i];
 
-            if (!ptx->IsFinal())
+            // if (!ptx->IsFinal())
+            if (!IsFinalTx(*ptx))
                 return false;
             int nPDepth = ptx->GetDepthInMainChain();
             if (nPDepth >= 1)
