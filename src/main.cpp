@@ -387,7 +387,7 @@ bool IsStandardTx(const CTransaction& tx, string& strReason)
             strReason = "scriptsig-not-pushonly";
             return false;
         }
-        if (fEnforceCanonical && !txin.scriptSig.HasCanonicalPushes()) {
+        if (!txin.scriptSig.HasCanonicalPushes()) {
             strReason = "scriptsig-non-canonical-push";
             return false;
         }
@@ -408,7 +408,7 @@ bool IsStandardTx(const CTransaction& tx, string& strReason)
             strReason = "dust";
             return false;
         }
-        if (fEnforceCanonical && !txout.scriptPubKey.HasCanonicalPushes()) {
+        if (!txout.scriptPubKey.HasCanonicalPushes()) {
             strReason = "scriptpubkey-non-canonical-push";
             return false;
         }
