@@ -2046,6 +2046,9 @@ void ThreadMessageHandler()
         CNode* pnodeTrickle = NULL;
         if (!vNodesCopy.empty())
             pnodeTrickle = vNodesCopy[GetRand(vNodesCopy.size())];
+
+        bool fSleep = true;
+
         BOOST_FOREACH(CNode* pnode, vNodesCopy)
         {
             if (pnode->fDisconnect)
@@ -2056,9 +2059,19 @@ void ThreadMessageHandler()
                 // TRY_LOCK(pnode->cs_vRecv, lockRecv);
                 TRY_LOCK(pnode->cs_vRecvMsg, lockRecv);
                 if (lockRecv)
+                {
                     // ProcessMessages(pnode);
                     if (!g_signals.ProcessMessages(pnode))
                         pnode->CloseSocketDisconnect();
+
+                    if (pnode->nSendSize < SendBufferSize())
+                    {
+                        if (!pnode->vRecvGetData.empty() || (!pnode->vRecvMsg.empty() && pnode->vRecvMsg[0].complete()))
+                        {
+                            fSleep = false;
+                        }
+                    }
+                }
             }
             // if (fShutdown)
             //    return;
@@ -2086,7 +2099,11 @@ void ThreadMessageHandler()
         // Reduce vnThreadsRunning so StopNode has permission to exit while
         // we're sleeping, but we must always check fShutdown after doing this.
         // vnThreadsRunning[THREAD_MESSAGEHANDLER]--;
-        MilliSleep(100);
+        // MilliSleep(100);
+
+        if (fSleep)
+            MilliSleep(100);
+
         // if (fRequestShutdown)
         //    StartShutdown();
         //vnThreadsRunning[THREAD_MESSAGEHANDLER]++;
@@ -2273,7 +2290,7 @@ void StartNode(boost::thread_group& threadGroup)
     // boost::thread_group* threadGroup = (boost::thread_group*)parg;
 
     // Make this thread recognisable as the startup thread
-    RenameThread("netcoin-start");
+    // RenameThread("netcoin-start");
 
     if (semOutbound == NULL) {
         // initialize semaphore

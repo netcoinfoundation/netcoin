@@ -602,10 +602,10 @@ Value sendrawtransaction(const Array& params, bool fHelp)
         // push to local node
         // CTxDB txdb("r");
         // if (!tx.AcceptToMemoryPool(txdb))
-        if (!AcceptToMemoryPool(mempool, tx, NULL))
+        if (!AcceptToMemoryPool(mempool, tx, false, NULL))
             throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX rejected");
 
-        SyncWithWallets(tx, NULL, true);
+        // SyncWithWallets(tx, NULL, true);
     }
     RelayTransaction(tx, hashTx);
 

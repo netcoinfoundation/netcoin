@@ -231,6 +231,7 @@ public:
     CCriticalSection cs_vSend;
     // CCriticalSection cs_vRecv;
 
+    std::deque<CInv> vRecvGetData;
     // std::vector<CNetMessage> vRecvMsg;
     std::deque<CNetMessage> vRecvMsg;
     CCriticalSection cs_vRecvMsg;
@@ -468,7 +469,9 @@ public:
 
 
 
-    void BeginMessage(const char* pszCommand)
+    // void BeginMessage(const char* pszCommand)
+    // TODO: Document the postcondition of this function.  Is cs_vSend locked?
+   void BeginMessage(const char* pszCommand) EXCLUSIVE_LOCK_FUNCTION(cs_vSend)
     {
         ENTER_CRITICAL_SECTION(cs_vSend);
  /*       if (nHeaderStart != -1)
@@ -483,7 +486,9 @@ public:
             printf("sending: %s ", pszCommand);
     }
 
-    void AbortMessage()
+    // void AbortMessage()
+   // TODO: Document the precondition of this function.  Is cs_vSend locked?
+   void AbortMessage() UNLOCK_FUNCTION(cs_vSend)
     {
       /*  if (nHeaderStart < 0)
             return;
@@ -499,7 +504,9 @@ public:
             printf("(aborted)\n");
     }
 
-    void EndMessage()
+    // void EndMessage()
+   // TODO: Document the precondition of this function.  Is cs_vSend locked?
+   void EndMessage() UNLOCK_FUNCTION(cs_vSend)
     {
         if (mapArgs.count("-dropmessagestest") && GetRand(atoi(mapArgs["-dropmessagestest"])) == 0)
         {
