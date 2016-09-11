@@ -557,7 +557,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         if (fTryToSync)
         {
             fTryToSync = false;
-            if ((!fTestNet && vNodes.size() < 3) || nBestHeight < GetNumBlocksOfPeers())
+            if ((!TestNet() && vNodes.size() < 3) || nBestHeight < GetNumBlocksOfPeers())
             {
                 MilliSleep(60000);
                 continue;
@@ -565,7 +565,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         }
 
         //netcoin - Wait until POS activation block height is reached
-        if (nBestHeight < (!fTestNet ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET))
+        if (nBestHeight < (!TestNet() ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET))
         {
             MilliSleep(60000);
             continue;

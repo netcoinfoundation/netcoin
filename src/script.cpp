@@ -320,7 +320,7 @@ static bool IsCanonicalSignature(const valtype &vchSig) {
     // complement modulo the order could have been used instead, which is
     // one byte shorter when encoded correctly.
     // Unfortunately Netcoin blockchain contains S-high signatures so those need to be skipped
-    if (pindexBest->nHeight >= (fTestNet ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
+    if (pindexBest->nHeight >= (TestNet() ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
     {
         if (!CKey::CheckSignatureElement(S, nLenS, true))
             return error("Non-canonical signature: S value is unnecessarily high");

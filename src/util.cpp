@@ -6,11 +6,13 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "chainparams.h"
 #include "util.h"
 #include "sync.h"
 //#include "strlcpy.h"
 #include "version.h"
 #include "ui_interface.h"
+
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/case_conv.hpp> // for to_lower()
 #include <boost/algorithm/string/predicate.hpp> // for startswith() and endswith()
@@ -74,7 +76,7 @@ bool fDaemon = false;
 bool fServer = false;
 bool fCommandLine = false;
 string strMiscWarning;
-bool fTestNet = false;
+// bool fTestNet = false;
 bool fNoListen = false;
 bool fLogTimestamps = false;
 CMedianFilter<int64_t> vTimeOffsets(200,0);
@@ -1062,8 +1064,11 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
     } else {
         path = GetDefaultDataDir();
     }
-    if (fNetSpecific && GetBoolArg("-testnet", false))
-        path /= "testnet";
+    // if (fNetSpecific && GetBoolArg("-testnet", false))
+    //    path /= "testnet";
+
+    if (fNetSpecific)
+        path /= Params().DataDir();
 
     fs::create_directory(path);
 

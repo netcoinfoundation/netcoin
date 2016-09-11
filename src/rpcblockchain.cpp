@@ -45,7 +45,7 @@ double GetDifficulty(const CBlockIndex* blockindex)
 
 double GetPoWMHashPS()
 {
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         return 0;
 
     int nPoWInterval = 72;
@@ -181,7 +181,7 @@ Value getdifficulty(const Array& params, bool fHelp)
             "getdifficulty\n"
             "Returns the difficulty as a multiple of the minimum difficulty.");
 
-    if(nBestHeight < (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if(nBestHeight < (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
     {
         return GetDifficulty();
     }

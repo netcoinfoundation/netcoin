@@ -3,6 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "chainparams.h"
 #include "main.h"
 #include "db.h"
 #include "txdb.h"
@@ -28,7 +29,7 @@ Value getmininginfo(const Array& params, bool fHelp)
     obj.push_back(Pair("currentblocksize",(uint64_t)nLastBlockSize));
     obj.push_back(Pair("currentblocktx",(uint64_t)nLastBlockTx));
 
-    if(nBestHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW: BLOCK_HEIGHT_FINALPOW_TESTNET) )
+    if(nBestHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW: BLOCK_HEIGHT_FINALPOW_TESTNET) )
     {
         diff.push_back(Pair("proof-of-stake",  GetDifficulty(GetLastBlockIndex(pindexBest, true))));
         diff.push_back(Pair("search-interval", (int)nLastCoinStakeSearchInterval));
@@ -52,7 +53,7 @@ Value getmininginfo(const Array& params, bool fHelp)
 
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
     obj.push_back(Pair("pooledtx",      (uint64_t)mempool.size()));
-    obj.push_back(Pair("testnet",       fTestNet));
+    obj.push_back(Pair("testnet",       TestNet()));
 
     return obj;
 }
@@ -106,7 +107,7 @@ Value getworkex(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(-10, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -236,13 +237,13 @@ Value getwork(const Array& params, bool fHelp)
             "  \"target\" : little endian hash target\n"
             "If [data] is specified, tries to solve the block and returns true if it was successful.");
 
-    if (!fTestNet && vNodes.empty())
+    if (!TestNet() && vNodes.empty())
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Netcoin is not connected!");
 
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -383,14 +384,14 @@ Value getblocktemplate(const Array& params, bool fHelp)
     if (strMode != "template")
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
-       if (!fTestNet && vNodes.empty())
+       if (!TestNet() && vNodes.empty())
             throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "NetCoin is not connected!");
 
         if (IsInitialBlockDownload())
             throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "NetCoin is downloading blocks...");
 
 
-    if (pindexBest->nHeight >= (!fTestNet ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
         static CReserveKey reservekey(pwalletMain);

@@ -4,15 +4,19 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "chainparams.h"
 #include "db.h"
 #include "net.h"
 #include "util.h"
-#include "main.h"
-#include "ui_interface.h"
+// #include "main.h"
+// #include "ui_interface.h"
+#include "hash.h"
+#include "addrman.h"
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <openssl/rand.h>
 
 #ifndef WIN32
 #include "sys/stat.h"
@@ -298,6 +302,7 @@ CDB::CDB(const char *pszFile, const char* pszMode) :
     }
 }
 
+/*
 static bool IsChainFile(std::string strFile)
 {
     if (strFile == "blkindex.dat")
@@ -305,6 +310,7 @@ static bool IsChainFile(std::string strFile)
 
     return false;
 }
+*/
 
 void CDB::Close()
 {
@@ -319,12 +325,12 @@ void CDB::Close()
     unsigned int nMinutes = 0;
     if (fReadOnly)
         nMinutes = 1;
-
+/*
     if (IsChainFile(strFile))
         nMinutes = 2;
     if (IsChainFile(strFile) && IsInitialBlockDownload())
         nMinutes = 5;
-
+*/
     bitdb.dbenv.txn_checkpoint(nMinutes ? GetArg("-dblogsize", 100)*1024 : 0, nMinutes, 0);
 
     {
@@ -473,11 +479,15 @@ void CDBEnv::Flush(bool fShutdown)
                 CloseDb(strFile);
                 printf("%s checkpoint\n", strFile.c_str());
                 dbenv.txn_checkpoint(0, 0, 0);
-                if (!IsChainFile(strFile) || fDetachDB) {
+    /*            if (!IsChainFile(strFile) || fDetachDB) {
                     printf("%s detach\n", strFile.c_str());
                 if (!fMockDb)
                     dbenv.lsn_reset(strFile.c_str(), 0);
                 }
+     */
+                printf("%s detach\n", strFile.c_str());
+                if (!fMockDb)
+                    dbenv.lsn_reset(strFile.c_str(), 0);
                 printf("%s closed\n", strFile.c_str());
                 mapFileUseCount.erase(mi++);
             }
@@ -502,6 +512,7 @@ void CDBEnv::Flush(bool fShutdown)
 // CAddrDB
 //
 
+// unsigned char CAddrDB::pchMessageStart[4] = { 0x00, 0x00, 0x00, 0x00 };
 
 CAddrDB::CAddrDB()
 {
@@ -517,7 +528,9 @@ bool CAddrDB::Write(const CAddrMan& addr)
 
     // serialize addresses, checksum data up to that point, then append csum
     CDataStream ssPeers(SER_DISK, CLIENT_VERSION);
-    ssPeers << FLATDATA(pchMessageStart);
+    // ssPeers << FLATDATA(pchMessageStart);
+    // ssPeers << FLATDATA(CAddrDB::pchMessageStart);
+    ssPeers << FLATDATA(Params().MessageStart());
     ssPeers << addr;
     uint256 hash = Hash(ssPeers.begin(), ssPeers.end());
     ssPeers << hash;
@@ -592,7 +605,8 @@ bool CAddrDB::Read(CAddrMan& addr)
     }
 
     // finally, verify the network matches ours
-    if (memcmp(pchMsgTmp, pchMessageStart, sizeof(pchMsgTmp)))
+    // if (memcmp(pchMsgTmp, CAddrDB::pchMessageStart, sizeof(pchMsgTmp)))
+    if (memcmp(pchMsgTmp, Params().MessageStart(), sizeof(pchMsgTmp)))
         return error("CAddrman::Read() : invalid network magic number");
 
     return true;

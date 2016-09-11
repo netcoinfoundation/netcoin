@@ -4,6 +4,7 @@
 #include "addresstablemodel.h"
 #include "transactiontablemodel.h"
 
+#include "chainparams.h"
 #include "alert.h"
 #include "main.h"
 #include "ui_interface.h"
@@ -107,7 +108,7 @@ void ClientModel::updateAlert(const QString &hash, int status)
 
 bool ClientModel::isTestNet() const
 {
-    return fTestNet;
+    return TestNet();
 }
 
 bool ClientModel::inInitialBlockDownload() const

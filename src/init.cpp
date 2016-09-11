@@ -7,6 +7,7 @@
 
 #include "init.h"
 #include "main.h"
+#include "chainparams.h"
 #include "txdb.h"
 #include "db.h"
 #include "main.h"
@@ -244,6 +245,10 @@ bool AppInit(int argc, char* argv[])
 
         if (fCommandLine)
         {
+            if (!SelectParamsFromCommandLine()) {
+                fprintf(stderr, "Error: invalid combination of -regtest and -testnet.\n");
+                return false;
+            }
             int ret = CommandLineRPC(argc, argv);
             exit(ret);
         }
@@ -389,7 +394,7 @@ std::string HelpMessage()
         "  -upnp                  " + _("Use UPnP to map the listening port (default: 0)") + "\n" +
 #endif
 #endif
-        "  -detachdb              " + _("Detach block and address databases. Increases shutdown time (default: 0)") + "\n" +
+        // "  -detachdb              " + _("Detach block and address databases. Increases shutdown time (default: 0)") + "\n" +
         "  -paytxfee=<amt>        " + _("Fee per KB to add to transactions you send") + "\n" +
         "  -mininput=<amt>        " + _("When creating transactions, ignore inputs with value less than this (default: 0.0001)") + "\n" +
 #ifdef QT_GUI
@@ -404,6 +409,8 @@ std::string HelpMessage()
         "  -logtimestamps         " + _("Prepend debug output with timestamp") + "\n" +
         "  -shrinkdebugfile       " + _("Shrink debug.log file on client startup (default: 1 when no -debug)") + "\n" +
         "  -printtoconsole        " + _("Send trace/debug info to console instead of debug.log file") + "\n" +
+        "  -regtest               " + _("Enter regression test mode, which uses a special chain in which blocks can be "
+                                        "solved instantly. This is intended for regression testing tools and app development.") + "\n";
 #ifdef WIN32
         "  -printtodebugger       " + _("Send trace/debug info to debugger") + "\n" +
 #endif
@@ -510,7 +517,12 @@ bool AppInit2(boost::thread_group& threadGroup)
 
     nDerivationMethodIndex = 0; // use 0 for compatibility with original netcoin wallet keys
 
-    fTestNet = GetBoolArg("-testnet");
+    // fTestNet = GetBoolArg("-testnet");
+
+    if (!SelectParamsFromCommandLine()) {
+         return InitError("Invalid combination of -testnet and -regtest.");
+    }
+
     // NetCoin: Keep irc seeding on by default for now.
 //    if (fTestNet)
 //    {
@@ -563,7 +575,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     else
         fDebugNet = GetBoolArg("-debugnet");
 
-    bitdb.SetDetach(GetBoolArg("-detachdb", false));
+   //  bitdb.SetDetach(GetBoolArg("-detachdb", false));
  /*
 #if !defined(WIN32) && !defined(QT_GUI)
     fDaemon = GetBoolArg("-daemon");
@@ -1043,6 +1055,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     nStart = GetTimeMillis();
 
     {
+        // CAddrDB::SetMessageStart(pchMessageStart);
         CAddrDB adb;
         if (!adb.Read(addrman))
             printf("Invalid or missing peers.dat; recreating\n");

@@ -91,7 +91,7 @@ static const int fHaveUPnP = false;
 #endif
 
 
-static const uint256 hashGenesisBlock("0x38624e3834cfdc4410a5acbc32f750171aadad9620e6ba6d5c73201c16f7c8d1");
+// static const uint256 hashGenesisBlock("0x38624e3834cfdc4410a5acbc32f750171aadad9620e6ba6d5c73201c16f7c8d1");
 
 static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NOT CHANGE
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
@@ -105,7 +105,7 @@ static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
 static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  5000;
 static const int LOW_S_CHECK_SIGNATURES_TESTET = 30;
 
-static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
+// static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
 
 inline int64_t PastDrift(int64_t nTime)   { return nTime - 10 * 60; } // up to 10 minutes from the past
 inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; } // up to 10 minutes from the future
@@ -141,7 +141,7 @@ extern int64_t nTimeBestReceived;
 extern bool fReindex;
 // extern CCriticalSection cs_setpwalletRegistered;
 // extern std::set<CWallet*> setpwalletRegistered;
-extern unsigned char pchMessageStart[4];
+// extern unsigned char pchMessageStart[4];
 extern std::map<uint256, CBlock*> mapOrphanBlocks;
 extern bool fHaveGUI;
 
@@ -1181,7 +1181,8 @@ public:
 
         // Write index header
         unsigned int nSize = fileout.GetSerializeSize(*this);
-        fileout << FLATDATA(pchMessageStart) << nSize;
+        // fileout << FLATDATA(pchMessageStart) << nSize;
+        fileout << FLATDATA(Params().MessageStart()) << nSize;
 
         // Write block
         long fileOutPos = ftell(fileout);
@@ -1690,7 +1691,8 @@ public:
             if (vHave.size() > 10)
                 nStep *= 2;
         }
-        vHave.push_back((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
+       // vHave.push_back((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
+        vHave.push_back(Params().HashGenesisBlock());
     }
 
     int GetDistanceBack()
@@ -1743,7 +1745,8 @@ public:
                     return hash;
             }
         }
-        return (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet);
+        // return (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet);
+        return Params().HashGenesisBlock();
     }
 
     int GetHeight()

@@ -5,6 +5,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "chainparams.h"
 // #include "irc.h"
 #include "db.h"
 #include "net.h"
@@ -102,7 +103,8 @@ void AddOneShot(string strDest)
 
 unsigned short GetListenPort()
 {
-    return (unsigned short)(GetArg("-port", GetDefaultPort()));
+    // return (unsigned short)(GetArg("-port", GetDefaultPort()));
+    return (unsigned short)(GetArg("-port", Params().GetDefaultPort()));
 }
 /*
 void CNode::PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd)
@@ -542,7 +544,7 @@ CNode* ConnectNode(CAddress addrConnect, const char *pszDest)
 
     // Connect
     SOCKET hSocket;
-    if (pszDest ? ConnectSocketByName(addrConnect, hSocket, pszDest, GetDefaultPort()) : ConnectSocket(addrConnect, hSocket))
+    if (pszDest ? ConnectSocketByName(addrConnect, hSocket, pszDest, Params().GetDefaultPort()) : ConnectSocket(addrConnect, hSocket))
     {
         addrman.Attempt(addrConnect);
 
@@ -1222,14 +1224,14 @@ void ThreadSocketHandler()
                 else if (nTime - pnode->nLastSend > TIMEOUT_INTERVAL)
                 {
                     // printf("socket not sending\n");
-                    printf("socket sending timeout: %"PRId64"s\n", nTime - pnode->nLastSend);
+                    printf("socket sending timeout: %"PRI64d"s\n", nTime - pnode->nLastSend);
                     pnode->fDisconnect = true;
                 }
                 // else if (GetTime() - pnode->nLastRecv > 90*60)
                 else if (nTime - pnode->nLastRecv > (pnode->nVersion > BIP0031_VERSION ? TIMEOUT_INTERVAL : 90*60))
                 {
                     // printf("socket inactivity timeout\n");
-                    printf("socket receive timeout: %"PRId64"s\n", nTime - pnode->nLastRecv);
+                    printf("socket receive timeout: %"PRI64d"s\n", nTime - pnode->nLastRecv);
                         pnode->fDisconnect = true;
                     }
                     else if (pnode->nPingNonceSent && pnode->nPingUsecStart + TIMEOUT_INTERVAL * 1000000 < GetTimeMicros())
@@ -1452,9 +1454,9 @@ void MapPort(bool)
 // Each pair gives a source name and a seed name.
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
-static const char *strDNSSeed[][2] = {
-     {"presstab.pw", "netseed.presstab.pw"}
-};
+// static const char *strDNSSeed[][2] = {
+//     {"presstab.pw", "netseed.presstab.pw"}
+// };
 
 void ThreadDNSAddressSeed()
 {
@@ -1496,30 +1498,38 @@ void ThreadDNSAddressSeed2(void* parg)
         }
     }
 
+    const vector<CDNSSeedData> &vSeeds = Params().DNSSeeds();
     int found = 0;
 
-    if (!fTestNet)
+    if (!TestNet())
     {
         printf("Loading addresses from DNS seeds (could take a while)\n");
 
-        for (unsigned int seed_idx = 0; seed_idx < ARRAYLEN(strDNSSeed); seed_idx++) {
+        // for (unsigned int seed_idx = 0; seed_idx < ARRAYLEN(strDNSSeed); seed_idx++) {
+        BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) {
             if (HaveNameProxy()) {
-                AddOneShot(strDNSSeed[seed_idx][1]);
+                // AddOneShot(strDNSSeed[seed_idx][1]);
+                AddOneShot(seed.host);
             } else {
-                vector<CNetAddr> vaddr;
+                // vector<CNetAddr> vaddr;
+                vector<CNetAddr> vIPs;
                 vector<CAddress> vAdd;
-                if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
+                // if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
+                if (LookupHost(seed.host.c_str(), vIPs))
                 {
-                    BOOST_FOREACH(CNetAddr& ip, vaddr)
+                    // BOOST_FOREACH(CNetAddr& ip, vaddr)
+                    BOOST_FOREACH(CNetAddr& ip, vIPs)
                     {
                         int nOneDay = 24*3600;
-                        CAddress addr = CAddress(CService(ip, GetDefaultPort()));
+                        // CAddress addr = CAddress(CService(ip, GetDefaultPort()));
+                        CAddress addr = CAddress(CService(ip, Params().GetDefaultPort()));
                         addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
                         vAdd.push_back(addr);
                         found++;
                     }
                 }
-                addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
+                // addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
+                addrman.Add(vAdd, CNetAddr(seed.name, true));
             }
         }
     }
@@ -1534,7 +1544,7 @@ unsigned int pnSeed[] =
 {
 };
 */
-
+/*
 struct SeedSpec6 {
     uint8_t addr[16];
     uint16_t port;
@@ -1559,6 +1569,7 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
         vSeedsOut.push_back(addr);
     }
 }
+*/
 
 void DumpAddresses()
 {
@@ -1713,9 +1724,9 @@ void ThreadOpenConnections()
         boost::this_thread::interruption_point();
 
         // Add seed nodes if IRC isn't working
-        if (addrman.size()==0 && (GetTime() - nStart > 60) && !fTestNet)
-        {
-            std::vector<CAddress> vAdd;
+        // if (addrman.size()==0 && (GetTime() - nStart > 60) && !TestNet())
+        // {
+        //    std::vector<CAddress> vAdd;
    /*         for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
             {
                 // It'll only connect to one or two seed nodes because once it connects,
@@ -1729,10 +1740,19 @@ void ThreadOpenConnections()
                 addr.nTime = GetTime()-GetRand(nOneWeek)-nOneWeek;
                 vAdd.push_back(addr);
             }
-    */
+    *
             convertSeed6(vAdd, pnSeed6_main, ARRAYLEN(pnSeed6_main));
             addrman.Add(vAdd, CNetAddr("127.0.0.1"));
-        }
+       */
+            // Add seed nodes if DNS seeds are all down (an infrastructure attack?).
+            if (addrman.size() == 0 && (GetTime() - nStart > 60)) {
+                static bool done = false;
+                if (!done) {
+                    printf("Adding fixed seed nodes as DNS doesn't seem to be available.\n");
+                    addrman.Add(Params().FixedSeeds(), CNetAddr("127.0.0.1"));
+                    done = true;
+                }
+            }
 
         //
         // Choose an address to connect to based on most recently seen
@@ -1777,7 +1797,8 @@ void ThreadOpenConnections()
                 continue;
 
             // do not allow non-default ports, unless after 50 invalid addresses selected already
-            if (addr.GetPort() != GetDefaultPort() && nTries < 50)
+            // if (addr.GetPort() != GetDefaultPort() && nTries < 50)
+            if (addr.GetPort() != Params().GetDefaultPort() && nTries < 50)
                 continue;
 
             addrConnect = addr;
@@ -1866,7 +1887,8 @@ void ThreadOpenAddedConnections2(void* parg)
         BOOST_FOREACH(string& strAddNode, lAddresses)
         {
             vector<CService> vservNode(0);
-            if(Lookup(strAddNode.c_str(), vservNode, GetDefaultPort(), fNameLookup, 0))
+            // if(Lookup(strAddNode.c_str(), vservNode, GetDefaultPort(), fNameLookup, 0))
+            if(Lookup(strAddNode.c_str(), vservNode, Params().GetDefaultPort(), fNameLookup, 0))
             {
                 // LOCK(cs_setservAddNodeAddresses);
                 // BOOST_FOREACH(CService& serv, vservNode)

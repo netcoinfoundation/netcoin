@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "chainparams.h"
 #include "bignum.h"
 #include "key.h"
 #include "script.h"
@@ -179,8 +180,9 @@ inline bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>
 class CBase58Data
 {
 protected:
-    // the version byte
-    unsigned char nVersion;
+    // the version byte(s)
+    // unsigned char nVersion;
+    std::vector<unsigned char> vchVersion;
 
     // the actually encoded data
     // std::vector<unsigned char> vchData;
@@ -189,7 +191,8 @@ protected:
 
     CBase58Data()
     {
-        nVersion = 0;
+        // nVersion = 0;
+        vchVersion.clear();
         vchData.clear();
     }
  /*
@@ -202,35 +205,43 @@ protected:
     }
  */
 
-    void SetData(int nVersionIn, const void* pdata, size_t nSize)
+    // void SetData(int nVersionIn, const void* pdata, size_t nSize)
+    void SetData(const std::vector<unsigned char> &vchVersionIn, const void* pdata, size_t nSize)
     {
-        nVersion = nVersionIn;
+        // nVersion = nVersionIn;
+        vchVersion = vchVersionIn;
         vchData.resize(nSize);
         if (!vchData.empty())
             memcpy(&vchData[0], pdata, nSize);
     }
 
-    void SetData(int nVersionIn, const unsigned char *pbegin, const unsigned char *pend)
+    // void SetData(int nVersionIn, const unsigned char *pbegin, const unsigned char *pend)
+    void SetData(const std::vector<unsigned char> &vchVersionIn, const unsigned char *pbegin, const unsigned char *pend)
     {
-        SetData(nVersionIn, (void*)pbegin, pend - pbegin);
+        SetData(vchVersionIn, (void*)pbegin, pend - pbegin);
     }
 
 public:
-    bool SetString(const char* psz)
+    bool SetString(const char* psz, unsigned int nVersionBytes = 1)
     {
         std::vector<unsigned char> vchTemp;
         DecodeBase58Check(psz, vchTemp);
-        if (vchTemp.empty())
+        // if (vchTemp.empty())
+        if (vchTemp.size() < nVersionBytes)
         {
             vchData.clear();
-            nVersion = 0;
+            // nVersion = 0;
+            vchVersion.clear();
             return false;
         }
-        nVersion = vchTemp[0];
-        vchData.resize(vchTemp.size() - 1);
+        // nVersion = vchTemp[0];
+        // vchData.resize(vchTemp.size() - 1);
+        vchVersion.assign(vchTemp.begin(), vchTemp.begin() + nVersionBytes);
+        vchData.resize(vchTemp.size() - nVersionBytes);
         if (!vchData.empty())
-            memcpy(&vchData[0], &vchTemp[1], vchData.size());
+            // memcpy(&vchData[0], &vchTemp[1], vchData.size());
         // memset(&vchTemp[0], 0, vchTemp.size());
+        memcpy(&vchData[0], &vchTemp[nVersionBytes], vchData.size());
         OPENSSL_cleanse(&vchTemp[0], vchData.size());
         return true;
     }
@@ -242,15 +253,17 @@ public:
 
     std::string ToString() const
     {
-        std::vector<unsigned char> vch(1, nVersion);
+        std::vector<unsigned char> vch = vchVersion;
         vch.insert(vch.end(), vchData.begin(), vchData.end());
         return EncodeBase58Check(vch);
     }
 
     int CompareTo(const CBase58Data& b58) const
     {
-        if (nVersion < b58.nVersion) return -1;
-        if (nVersion > b58.nVersion) return  1;
+        // if (nVersion < b58.nVersion) return -1;
+        // if (nVersion > b58.nVersion) return  1;
+        if (vchVersion < b58.vchVersion) return -1;
+        if (vchVersion > b58.vchVersion) return  1;
         if (vchData < b58.vchData)   return -1;
         if (vchData > b58.vchData)   return  1;
         return 0;
@@ -284,21 +297,23 @@ public:
 class CBitcoinAddress : public CBase58Data
 {
 public:
-    enum
+ /*   enum
     {
         PUBKEY_ADDRESS = 112, // NetCoin addresses start with n
         SCRIPT_ADDRESS = 5,
         PUBKEY_ADDRESS_TEST = 111,
         SCRIPT_ADDRESS_TEST = 196,
     };
-
+ */
     bool Set(const CKeyID &id) {
-        SetData(fTestNet ? PUBKEY_ADDRESS_TEST : PUBKEY_ADDRESS, &id, 20);
+        // SetData(fTestNet ? PUBKEY_ADDRESS_TEST : PUBKEY_ADDRESS, &id, 20);
+        SetData(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS), &id, 20);
         return true;
     }
 
     bool Set(const CScriptID &id) {
-        SetData(fTestNet ? SCRIPT_ADDRESS_TEST : SCRIPT_ADDRESS, &id, 20);
+        // SetData(fTestNet ? SCRIPT_ADDRESS_TEST : SCRIPT_ADDRESS, &id, 20);
+        SetData(Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS), &id, 20);
         return true;
     }
 
@@ -309,7 +324,7 @@ public:
 
     bool IsValid() const
     {
-        unsigned int nExpectedSize = 20;
+   /*     unsigned int nExpectedSize = 20;
         bool fExpectTestNet = false;
         switch(nVersion)
         {
@@ -335,6 +350,11 @@ public:
                 return false;
         }
         return fExpectTestNet == fTestNet && vchData.size() == nExpectedSize;
+     */
+        bool fCorrectSize = vchData.size() == 20;
+        bool fKnownVersion = vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS) ||
+                             vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS);
+        return fCorrectSize && fKnownVersion;
     }
 
     CBitcoinAddress()
@@ -355,7 +375,7 @@ public:
     {
         SetString(pszAddress);
     }
-
+ /*
     CTxDestination Get() const {
         if (!IsValid())
             return CNoDestination();
@@ -364,18 +384,31 @@ public:
         case PUBKEY_ADDRESS_TEST: {
             uint160 id;
             memcpy(&id, &vchData[0], 20);
-            return CKeyID(id);
         }
         case SCRIPT_ADDRESS:
         case SCRIPT_ADDRESS_TEST: {
             uint160 id;
             memcpy(&id, &vchData[0], 20);
-            return CScriptID(id);
         }
         }
         return CNoDestination();
+        else
+        return CNoDestination();
     }
-
+*/
+    CTxDestination Get() const {
+        if (!IsValid())
+            return CNoDestination();
+        uint160 id;
+        memcpy(&id, &vchData[0], 20);
+        if (vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
+            return CKeyID(id);
+        else if (vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS))
+            return CScriptID(id);
+        else
+            return CNoDestination();
+    }
+ /*
     bool GetKeyID(CKeyID &keyID) const {
         if (!IsValid())
             return false;
@@ -390,7 +423,16 @@ public:
         default: return false;
         }
     }
-
+  */
+    bool GetKeyID(CKeyID &keyID) const {
+        if (!IsValid() || vchVersion != Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
+            return false;
+        uint160 id;
+        memcpy(&id, &vchData[0], 20);
+        keyID = CKeyID(id);
+        return true;
+    }
+ /*
     bool IsScript() const {
         if (!IsValid())
             return false;
@@ -401,6 +443,10 @@ public:
         }
         default: return false;
         }
+    }
+ */
+    bool IsScript() const {
+        return IsValid() && vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS);
     }
 };
 
@@ -425,7 +471,8 @@ public:
         // SetData(fTestNet ? PRIVKEY_ADDRESS_TEST : PRIVKEY_ADDRESS, &vchSecret[0], vchSecret.size());
         // if (fCompressed)
         assert(vchSecret.IsValid());
-        SetData(128 + (fTestNet ? CBitcoinAddress::PUBKEY_ADDRESS_TEST : CBitcoinAddress::PUBKEY_ADDRESS), vchSecret.begin(), vchSecret.size());
+        // SetData(128 + (fTestNet ? CBitcoinAddress::PUBKEY_ADDRESS_TEST : CBitcoinAddress::PUBKEY_ADDRESS), vchSecret.begin(), vchSecret.size());
+        SetData(Params().Base58Prefix(CChainParams::SECRET_KEY), vchSecret.begin(), vchSecret.size());
         if (vchSecret.IsCompressed())
             vchData.push_back(1);
     }
@@ -443,7 +490,7 @@ public:
         ret.Set(&vchData[0], &vchData[32], vchData.size() > 32 && vchData[32] == 1);
         return ret;
     }
-
+ /*
     bool IsValid() const
     {
         bool fExpectTestNet = false;
@@ -460,6 +507,13 @@ public:
                 return false;
         }
         return fExpectTestNet == fTestNet && (vchData.size() == 32 || (vchData.size() == 33 && vchData[32] == 1));
+    }
+ */
+    bool IsValid() const
+    {
+        bool fExpectedFormat = vchData.size() == 32 || (vchData.size() == 33 && vchData[32] == 1);
+        bool fCorrectVersion = vchVersion == Params().Base58Prefix(CChainParams::SECRET_KEY);
+        return fExpectedFormat && fCorrectVersion;
     }
 
     bool SetString(const char* pszSecret)

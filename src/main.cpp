@@ -16,6 +16,7 @@
 #include "init.h"
 #include "ui_interface.h"
 #include "kernel.h"
+#include "chainparams.h"
 #include "zerocoin/Zerocoin.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
@@ -42,10 +43,10 @@ map<uint256, CBlockIndex*> mapBlockIndex;
 set<pair<COutPoint, unsigned int> > setStakeSeen;
 libzerocoin::Params* ZCParams;
 
-static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // NetCoin: starting difficulty is 1 / 2^12
+// static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // NetCoin: starting difficulty is 1 / 2^12
 
 CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
-CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
+// CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 
 // initial netcoin difficulty params - preKGW then digishield
 static const int64_t nTargetTimespan = 60 * 60;	// NetCoin: every 60 minutes
@@ -806,7 +807,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
     // Rather not work on nonstandard transactions (unless -testnet)
     string strNonStd;
     // if (!fTestNet && !tx.IsStandard(strNonStd))
-    if (!fTestNet && !IsStandardTx(tx, strNonStd))
+    if (!TestNet() && !IsStandardTx(tx, strNonStd))
         return error("AcceptToMemoryPool : nonstandard transaction type");
 
     // Is already in the memory pool?
@@ -878,7 +879,8 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
         }
 
         // Check for non-standard pay-to-script-hash in inputs
-        if (!AreInputsStandard(tx, mapInputs) && !fTestNet)
+        // if (!AreInputsStandard(tx, mapInputs) && !fTestNet)
+        if (!TestNet() && !AreInputsStandard(tx, mapInputs))
             return error("AcceptToMemoryPool : nonstandard transaction input");
 
 
@@ -1268,7 +1270,7 @@ int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, uint256 prevHash)
     int nheighttest =  nHeight < 26;
 
     // Pre v2.4.1 reward
-    if ( !fTestNet ? nheight : nheighttest )
+    if ( !TestNet() ? nheight : nheighttest )
     {
         // normal payout
         nSubsidy = 1024 * COIN;
@@ -1325,7 +1327,7 @@ int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, uint256 prevHash)
 // returns an integer between 0 and PIR_PHASES-1 representing which PIR phase the supplied block height falls into
 int GetPIRRewardPhase(int64_t nHeight)
 {
-   int64_t Phase0StartHeight = (!fTestNet ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET);
+   int64_t Phase0StartHeight = (!TestNet() ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET);
    int phase = (int)( (nHeight-Phase0StartHeight) / PIR_PHASEBLOCKS);
    return min(PIR_PHASES-1, max(0,phase) );
 }
@@ -1393,7 +1395,7 @@ unsigned int ComputeMaxBits(CBigNum bnTargetLimit, unsigned int nBase, int64_t n
 {
     // Testnet has min-difficulty blocks
     // after nTargetSpacing*2 time between blocks:
-    if (fTestNet && nTime > nTargetSpacing*2)
+    if (TestNet() && nTime > nTargetSpacing*2)
         return bnTargetLimit.GetCompact();
 
     CBigNum bnResult;
@@ -1416,7 +1418,8 @@ unsigned int ComputeMaxBits(CBigNum bnTargetLimit, unsigned int nBase, int64_t n
 //
 unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime)
 {
-    return ComputeMaxBits(bnProofOfWorkLimit, nBase, nTime);
+    // return ComputeMaxBits(bnProofOfWorkLimit, nBase, nTime);
+    return ComputeMaxBits(Params().ProofOfWorkLimit(), nBase, nTime);
 }
 
 //
@@ -1441,7 +1444,8 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 
 unsigned int static GetNextWorkRequired_V1(const CBlockIndex* pindexLast, const CBlock* pblock)
 {
-    unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
+    // unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
+    unsigned int nProofOfWorkLimit = Params().ProofOfWorkLimit().GetCompact();
 
     // Genesis block
     if (pindexLast == NULL)
@@ -1451,7 +1455,7 @@ unsigned int static GetNextWorkRequired_V1(const CBlockIndex* pindexLast, const 
     if ((pindexLast->nHeight+1) % nInterval != 0)
     {
         // Special difficulty rule for testnet:
-        if (fTestNet)
+        if (TestNet())
       {
             // If the new block's timestamp is more than 2*nTargetSpacing minutes
             // then allow mining of a min-difficulty block.
@@ -1498,8 +1502,8 @@ unsigned int static GetNextWorkRequired_V1(const CBlockIndex* pindexLast, const 
     bnNew *= nActualTimespan;
     bnNew /= nTargetTimespan;
 
-    if (bnNew > bnProofOfWorkLimit)
-        bnNew = bnProofOfWorkLimit;
+    if (bnNew >  Params().ProofOfWorkLimit())
+        bnNew =  Params().ProofOfWorkLimit();
 
     /// debug print
     /*
@@ -1527,7 +1531,7 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, uint64_t Ta
     double				EventHorizonDeviationFast;
     double				EventHorizonDeviationSlow;
 
-    if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || (uint64_t)BlockLastSolved->nHeight < PastBlocksMin) { return bnProofOfWorkLimit.GetCompact(); }
+    if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || (uint64_t)BlockLastSolved->nHeight < PastBlocksMin) { return Params().ProofOfWorkLimit().GetCompact(); }
 
     for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
         if (PastBlocksMax > 0 && i > PastBlocksMax) { break; }
@@ -1559,7 +1563,7 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, uint64_t Ta
         bnNew *= PastRateActualSeconds;
         bnNew /= PastRateTargetSeconds;
     }
-    if (bnNew > bnProofOfWorkLimit) { bnNew = bnProofOfWorkLimit; }
+    if (bnNew > Params().ProofOfWorkLimit()) { bnNew = Params().ProofOfWorkLimit(); }
 
     /// debug print
     /*printf("Difficulty Retarget - Kimoto Gravity Well\n");
@@ -1600,7 +1604,7 @@ unsigned int GetNextTrust_DigiShield(const CBlockIndex* pindexLast, bool fProofO
     int64_t retargetTimespan = nTargetSpacing * 2;
 
     // Genesis block,  or first POS block not yet mined
-    if (pindexPrev == NULL) return bnProofOfWorkLimit.getuint();
+    if (pindexPrev == NULL) return Params().ProofOfWorkLimit().getuint();
 
     // is there another block of the correct type prior to pindexPrev?
     const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
@@ -1623,8 +1627,8 @@ unsigned int GetNextTrust_DigiShield(const CBlockIndex* pindexLast, bool fProofO
     bnNew *= nActualTimespan;
     bnNew /= retargetTimespan;
 
-    if (bnNew > bnProofOfWorkLimit)
-        bnNew = bnProofOfWorkLimit;
+    if (bnNew > Params().ProofOfWorkLimit())
+        bnNew = Params().ProofOfWorkLimit();
 
     // debug print
     if (fDebug && GetBoolArg("-printdigishield")) {
@@ -1660,7 +1664,7 @@ static unsigned int GetNextWorkRequiredV2(const CBlockIndex* pindexLast, bool fP
     int64_t retargetTimespan = nTargetSpacing;
 
     // Genesis block,  or first POS block not yet mined
-    if (pindexPrev == NULL) return bnProofOfWorkLimit.getuint();
+    if (pindexPrev == NULL) return Params().ProofOfWorkLimit().getuint();
 
     // is there another block of the correct type prior to pindexPrev?
     const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
@@ -1682,8 +1686,8 @@ static unsigned int GetNextWorkRequiredV2(const CBlockIndex* pindexLast, bool fP
     bnNew *= nActualTimespan;
     bnNew /= retargetTimespan;
 
-    if (bnNew > bnProofOfWorkLimit)
-        bnNew = bnProofOfWorkLimit;
+    if (bnNew > Params().ProofOfWorkLimit())
+        bnNew = Params().ProofOfWorkLimit();
 
     // debug print
     if (fDebug && GetBoolArg("-printdigishield")) {
@@ -1703,14 +1707,14 @@ unsigned int GetNextProofOfWork(const CBlockIndex* pindexLast, const CBlock* pbl
     const CBlockIndex* pindexLastPOW = GetLastBlockIndex(pindexLast, false);
 
     // most recent (highest block height DIGISHIELD FIX)
-    if (pindexLastPOW->nHeight+1 >= (fTestNet ? BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET : BLOCK_HEIGHT_DIGISHIELD_FIX_START))
+    if (pindexLastPOW->nHeight+1 >= (TestNet() ? BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET : BLOCK_HEIGHT_DIGISHIELD_FIX_START))
         return GetNextWorkRequiredV2(pindexLastPOW, false);
 
     // most recent (highest block height)
-    if (pindexLastPOW->nHeight+1 >= (fTestNet ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START))
+    if (pindexLastPOW->nHeight+1 >= (TestNet() ? BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET : BLOCK_HEIGHT_POS_AND_DIGISHIELD_START))
         return GetNextTrust_DigiShield(pindexLastPOW, false);
 
-    if (pindexLastPOW->nHeight+1 >= (fTestNet ? BLOCK_HEIGHT_KGW_START_TESTNET : BLOCK_HEIGHT_KGW_START))
+    if (pindexLastPOW->nHeight+1 >= (TestNet() ? BLOCK_HEIGHT_KGW_START_TESTNET : BLOCK_HEIGHT_KGW_START))
         return GetNextWorkRequired_KGW(pindexLastPOW);
 
     // first netcoin difficulty algorithm
@@ -1720,7 +1724,7 @@ unsigned int GetNextProofOfWork(const CBlockIndex* pindexLast, const CBlock* pbl
 // select stake target limit according to hard-coded conditions
 CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 {
-    if(fTestNet) // separate proof of stake target limit for testnet
+    if(TestNet()) // separate proof of stake target limit for testnet
         return bnProofOfStakeLimit;
     else
         return bnProofOfStakeLimit;
@@ -1729,7 +1733,8 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = !fProofOfStake ? bnProofOfWorkLimit : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
+    // CBigNum bnTargetLimit = !fProofOfStake ? bnProofOfWorkLimit : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
+    CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
 
     if (pindexLast == NULL)
         return bnTargetLimit.GetCompact(); // genesis block
@@ -1779,7 +1784,8 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
     bnTarget.SetCompact(nBits);
 
     // Check range
-    if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
+    // if (bnTarget <= 0 || bnTarget > bnProofOfWorkLimit)
+    if (bnTarget <= 0 || bnTarget > Params().ProofOfWorkLimit())
         return error("CheckProofOfWork() : nBits below minimum work");
 
     // Check proof of work matches claimed amount
@@ -1840,7 +1846,7 @@ void CBlock::UpdateTime(const CBlockIndex* pindexPrev)
     nTime = max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
 
     // Updating time can change work required on testnet:
-    if (fTestNet)
+    if (TestNet())
         nBits = GetNextWorkRequired(pindexPrev, this, IsProofOfStake());
 }
 
@@ -2459,7 +2465,8 @@ bool CBlock::SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew)
     if (!txdb.TxnBegin())
         return error("SetBestChain() : TxnBegin failed");
 
-    if (pindexGenesisBlock == NULL && hash == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))
+    // if (pindexGenesisBlock == NULL && hash == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))
+    if (pindexGenesisBlock == NULL && hash == Params().HashGenesisBlock())
     {
         txdb.WriteHashBestChain(hash);
         if (!txdb.TxnCommit())
@@ -3284,7 +3291,7 @@ bool LoadBlockIndex(bool fAllowNew)
 {
     LOCK(cs_main);
 
-    if (fTestNet)
+ /*   if (TestNet())
     {
         pchMessageStart[0] = 0xfd;
         pchMessageStart[1] = 0xc0;
@@ -3293,6 +3300,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
 
     }
+*/
 
     //
     // Load block index
@@ -3309,7 +3317,7 @@ bool LoadBlockIndex(bool fAllowNew)
         if (!fAllowNew)
             return false;
 
-        // Genesis block
+   /*     // Genesis block
         const char* pszTimestamp = "Aug 31, 2013: US STOCKS-Wall Street falls, ends worst month since May 2012.";
         CTransaction txNew;
         txNew.vin.resize(1);
@@ -3375,24 +3383,29 @@ bool LoadBlockIndex(bool fAllowNew)
 	block.print();
         assert(block.hashMerkleRoot == uint256("0xe5981b72a47998b021ee8995726282d1a575477897d9d5a319167601fffebb21"));
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
+ */
 
+        CBlock &block = const_cast<CBlock&>(Params().GenesisBlock());
 
         // Start new block file
         unsigned int nFile;
         unsigned int nBlockPos;
         if (!block.WriteToDisk(nFile, nBlockPos))
             return error("LoadBlockIndex() : writing genesis block to disk failed");
-        if (!block.AddToBlockIndex(nFile, nBlockPos, hashGenesisBlock))
+        // if (!block.AddToBlockIndex(nFile, nBlockPos, hashGenesisBlock))
+        if (!block.AddToBlockIndex(nFile, nBlockPos, Params().HashGenesisBlock()))
             return error("LoadBlockIndex() : genesis block not accepted");
 
         // ppcoin: initialize synchronized checkpoint
-        if (!Checkpoints::WriteSyncCheckpoint((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet)))
+        // if (!Checkpoints::WriteSyncCheckpoint((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet)))
+        if (!Checkpoints::WriteSyncCheckpoint(Params().HashGenesisBlock()))
             return error("LoadBlockIndex() : failed to init sync checkpoint");
     }
 
     string strPubKey = "";
 
-    if ((Checkpoints::hashSyncCheckpoint == 0) && (!Checkpoints::WriteSyncCheckpoint((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))))
+    // if ((Checkpoints::hashSyncCheckpoint == 0) && (!Checkpoints::WriteSyncCheckpoint((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet))))
+    if ((Checkpoints::hashSyncCheckpoint == 0) && (!Checkpoints::WriteSyncCheckpoint(Params().HashGenesisBlock())))
             return error("LoadBlockIndex() : failed to init sync checkpoint");
 
     // if checkpoint master key changed must reset sync-checkpoint
@@ -3404,7 +3417,8 @@ bool LoadBlockIndex(bool fAllowNew)
             return error("LoadBlockIndex() : failed to write new checkpoint master key to db");
         if (!txdb.TxnCommit())
             return error("LoadBlockIndex() : failed to commit new checkpoint master key to db");
-        if ((!fTestNet) && !Checkpoints::ResetSyncCheckpoint())
+        // if ((!fTestNet) && !Checkpoints::ResetSyncCheckpoint())
+        if ((Params().NetworkID() == CChainParams::MAIN) && !Checkpoints::ResetSyncCheckpoint())
             return error("LoadBlockIndex() : failed to reset sync-checkpoint");
     }
     txdb.Close();
@@ -3512,18 +3526,22 @@ bool LoadExternalBlockFile(FILE* fileIn)
                         nPos = (unsigned int)-1;
                         break;
                     }
-                    void* nFind = memchr(pchData, pchMessageStart[0], nRead+1-sizeof(pchMessageStart));
+                    // void* nFind = memchr(pchData, pchMessageStart[0], nRead+1-sizeof(pchMessageStart));
+                    void* nFind = memchr(pchData, Params().MessageStart()[0], nRead+1-MESSAGE_START_SIZE);
                     if (nFind)
                     {
-                        if (memcmp(nFind, pchMessageStart, sizeof(pchMessageStart))==0)
+                        // if (memcmp(nFind, pchMessageStart, sizeof(pchMessageStart))==0)
+                        if (memcmp(nFind, Params().MessageStart(), MESSAGE_START_SIZE)==0)
                         {
-                            nPos += ((unsigned char*)nFind - pchData) + sizeof(pchMessageStart);
+                            // nPos += ((unsigned char*)nFind - pchData) + sizeof(pchMessageStart);
+                            nPos += ((unsigned char*)nFind - pchData) + MESSAGE_START_SIZE;
                             break;
                         }
                         nPos += ((unsigned char*)nFind - pchData) + 1;
                     }
                     else
-                        nPos += sizeof(pchData) - sizeof(pchMessageStart) + 1;
+                        // nPos += sizeof(pchData) - sizeof(pchMessageStart) + 1;
+                        nPos += sizeof(pchData) - MESSAGE_START_SIZE + 1;
                 // } while(!fRequestShutdown);
                     boost::this_thread::interruption_point();
                 } while(true);
@@ -3656,7 +3674,7 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
 // The message start string is designed to be unlikely to occur in normal data.
 // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
 // a large 4-byte int at any alignment.
-unsigned char pchMessageStart[4] = { 0xfd, 0xb6, 0xa5, 0xdb }; 
+// unsigned char pchMessageStart[4] = { 0xfd, 0xb6, 0xa5, 0xdb };
 
 void static ProcessGetData(CNode* pfrom)
 {
@@ -4614,7 +4632,8 @@ bool ProcessMessages(CNode* pfrom)
         it++;
 
         // Scan for message start
-        if (memcmp(msg.hdr.pchMessageStart, pchMessageStart, sizeof(pchMessageStart)) != 0) {
+        // if (memcmp(msg.hdr.pchMessageStart, pchMessageStart, sizeof(pchMessageStart)) != 0) {
+        if (memcmp(msg.hdr.pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE) != 0) {
             printf("\n\nPROCESSMESSAGE: INVALID MESSAGESTART\n\n");
             // return false;
             fOk = false;

@@ -7,6 +7,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 
+#include "chainparams.h"
 #include "init.h"
 #include "util.h"
 #include "sync.h"
@@ -53,12 +54,12 @@ static asio::io_service* rpc_io_service = NULL;
 static map<string, boost::shared_ptr<deadline_timer> > deadlineTimers;
 static ssl::context* rpc_ssl_context = NULL;
 static boost::thread_group* rpc_worker_group = NULL;
-
+/*
 static inline unsigned short GetDefaultRPCPort()
 {
     return GetBoolArg("-testnet", false) ? 11211 : 22444;
 }
-
+*/
 Object JSONRPCError(int code, const string& message)
 {
     Object error;
@@ -228,14 +229,14 @@ Value help(const Array& params, bool fHelp)
 
 Value stop(const Array& params, bool fHelp)
 {
+    // Accept the deprecated and ignored 'detach´ boolean argument
     if (fHelp || params.size() > 1)
         throw runtime_error(
-            "stop <detach>\n"
-            "<detach> is true or false to detach the database or not for this stop only\n"
-            "Stop Netcoin server (and possibly override the detachdb config value).");
+                "stop\n"
+                "Stop NetCoin server.");
     // Shutdown will take long enough that the response should get back
-    if (params.size() > 0)
-        bitdb.SetDetach(params[0].get_bool());
+    // if (params.size() > 0)
+    //    bitdb.SetDetach(params[0].get_bool());
     StartShutdown();
     return "Netcoin server stopping";
 }
@@ -835,8 +836,10 @@ void StartRPCThreads()
     // printf("ThreadRPCServer started\n");
 
     strRPCUserColonPass = mapArgs["-rpcuser"] + ":" + mapArgs["-rpcpassword"];
-    if ((mapArgs["-rpcpassword"] == "") ||
-        (mapArgs["-rpcuser"] == mapArgs["-rpcpassword"]))
+    // if ((mapArgs["-rpcpassword"] == "") ||
+    //    (mapArgs["-rpcuser"] == mapArgs["-rpcpassword"]))
+    if (((mapArgs["-rpcpassword"] == "") ||
+        (mapArgs["-rpcuser"] == mapArgs["-rpcpassword"])) && Params().RequireRPCPassword())
     {
         unsigned char rand_pwd[32];
         RAND_bytes(rand_pwd, 32);
@@ -898,7 +901,8 @@ void StartRPCThreads()
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
-    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", GetDefaultRPCPort()));
+   // ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", GetDefaultRPCPort()));
+    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", Params().RPCPort()));
     boost::system::error_code v6_only_error;
     // boost::shared_ptr<ip::tcp::acceptor> acceptor(new ip::tcp::acceptor(io_service));
 
@@ -1265,7 +1269,8 @@ Object CallRPC(const string& strMethod, const Array& params)
 
     bool fWait = GetBoolArg("-rpcwait", false); // -rpcwait means try until server has started
     do {
-        bool fConnected = d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", itostr(GetDefaultRPCPort())));
+        // bool fConnected = d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", itostr(GetDefaultRPCPort())));
+        bool fConnected = d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", itostr(Params().RPCPort())));
         if (fConnected) break;
         if (fWait)
             MilliSleep(1000);

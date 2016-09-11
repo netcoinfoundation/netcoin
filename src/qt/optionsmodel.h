@@ -29,7 +29,7 @@ public:
         ReserveBalance,    // qint64
         DisplayUnit,       // BitcoinUnits::Unit
         DisplayAddresses,  // bool
-        DetachDatabases,   // bool
+        // DetachDatabases,   // bool
         Language,          // QString
         CoinControlFeatures, // bool
         OptionIDRowCount,
