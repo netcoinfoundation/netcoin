@@ -39,6 +39,8 @@ static const unsigned int DEFAULT_BLOCK_MAX_SIZE = 500000;
 static const unsigned int DEFAULT_BLOCK_PRIORITY_SIZE = 17000;
 static const unsigned int MAX_STANDARD_TX_SIZE = 100000;
 static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
+/** The maximum number of sigops we're willing to relay/mine in a single tx */
+static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 static const unsigned int MAX_INV_SZ = 50000;
 static const int64_t MIN_TX_FEE = 1000000;
@@ -632,7 +634,7 @@ public:
         @return number of sigops this transaction's outputs will produce when spent
         @see CTransaction::FetchInputs
     */
-    unsigned int GetLegacySigOpCount() const;
+ //   unsigned int GetLegacySigOpCount() const;
 
     /** Count ECDSA signature operations in pay-to-script-hash inputs.
 
@@ -640,7 +642,7 @@ public:
         @return maximum number of sigops required to validate this transaction's inputs
         @see CTransaction::FetchInputs
      */
-    unsigned int GetP2SHSigOpCount(const MapPrevTx& mapInputs) const;
+  //  unsigned int GetP2SHSigOpCount(const MapPrevTx& mapInputs) const;
 
     /** Amount of bitcoins spent by this transaction.
         @return sum of all outputs (note: does not include fees)
@@ -791,9 +793,23 @@ public:
     bool AcceptToMemoryPool(CTxDB& txdb, bool fCheckInputs=true, bool* pfMissingInputs=NULL);
     bool GetCoinAge(CTxDB& txdb, unsigned int nTxTime, uint64_t& nCoinAge, int64_t& nCoinValue) const;  // ppcoin: get transaction coin age
 
-protected:
+// protected:
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
 };
+
+/** Count ECDSA signature operations the old-fashioned (pre-0.6) way
+    @return number of sigops this transaction's outputs will produce when spent
+    @see CTransaction::FetchInputs
+*/
+unsigned int GetLegacySigOpCount(const CTransaction& tx);
+
+/** Count ECDSA signature operations in pay-to-script-hash inputs.
+
+    @param[in] mapInputs	Map of previous transactions that have outputs we're spending
+    @return maximum number of sigops required to validate this transaction's inputs
+    @see CTransaction::FetchInputs
+ */
+unsigned int GetP2SHSigOpCount(const CTransaction& tx, const MapPrevTx& mapInputs);
 
 /** Check for standard transaction types
     @return True if all outputs (scriptPubKeys) use only standard transaction forms

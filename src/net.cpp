@@ -2298,7 +2298,6 @@ bool StopNode()
     if (vnThreadsRunning[THREAD_STAKE_MINER] > 0) printf("ThreadStakeMiner still running\n");
     while (vnThreadsRunning[THREAD_MESSAGEHANDLER] > 0 || vnThreadsRunning[THREAD_RPCHANDLER] > 0)
         MilliSleep(20);
-    MilliSleep(50);
     DumpAddresses();
     return true;
 }

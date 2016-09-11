@@ -414,8 +414,9 @@ bool IsStandardTx(const CTransaction& tx, string& strReason)
         }
     }
 
-    // only one OP_RETURN txout is permitted
-    if (nDataOut > 1) {
+    // not more than one data txout per non-data txout is permitted
+    // only one data txout is permitted too
+    if (nDataOut > 1 && nDataOut > tx.vout.size()/2) {
         return false;
     }
 
@@ -505,21 +506,36 @@ bool CTransaction::AreInputsStandard(const MapPrevTx& mapInputs) const
     return true;
 }
 
-unsigned int
-CTransaction::GetLegacySigOpCount() const
+// unsigned int
+// CTransaction::GetLegacySigOpCount() const
+unsigned int GetLegacySigOpCount(const CTransaction& tx)
 {
     unsigned int nSigOps = 0;
-    BOOST_FOREACH(const CTxIn& txin, vin)
+    BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
         nSigOps += txin.scriptSig.GetSigOpCount(false);
     }
-    BOOST_FOREACH(const CTxOut& txout, vout)
+    BOOST_FOREACH(const CTxOut& txout, tx.vout)
     {
         nSigOps += txout.scriptPubKey.GetSigOpCount(false);
     }
     return nSigOps;
 }
 
+unsigned int GetP2SHSigOpCount(const CTransaction& tx, const MapPrevTx& inputs)
+{
+    if (tx.IsCoinBase())
+        return 0;
+
+    unsigned int nSigOps = 0;
+    for (unsigned int i = 0; i < tx.vin.size(); i++)
+    {
+        const CTxOut& prevout = tx.GetOutputFor(tx.vin[i], inputs);
+        if (prevout.scriptPubKey.IsPayToScriptHash())
+            nSigOps += prevout.scriptPubKey.GetSigOpCount(tx.vin[i].scriptSig);
+    }
+    return nSigOps;
+}
 
 int CMerkleTx::SetMerkleBranch(const CBlock* pblock)
 {
@@ -770,9 +786,18 @@ bool CTxMemPool::accept(CTxDB& txdb, CTransaction &tx, bool fCheckInputs,
         if (!tx.AreInputsStandard(mapInputs) && !fTestNet)
             return error("CTxMemPool::accept() : nonstandard transaction input");
 
-        // Note: if you modify this code to accept non-standard transactions, then
-        // you should add code here to check that the transaction does a
-        // reasonable number of ECDSA signature verifications.
+
+        // Check that the transaction doesn't have an excessive number of
+        // sigops, making it impossible to mine. Since the coinbase transaction
+        // itself can contain sigops MAX_TX_SIGOPS is less than
+        // MAX_BLOCK_SIGOPS; we still consider this an invalid rather than
+        // merely non-standard transaction.
+        unsigned int nSigOps = GetLegacySigOpCount(tx);
+        nSigOps += GetP2SHSigOpCount(tx, mapInputs);
+        if (nSigOps > MAX_TX_SIGOPS)
+            return tx.DoS(0,
+                          error("AcceptToMemoryPool : too many sigops %s, %d > %d",
+                                hash.ToString().c_str(), nSigOps, MAX_TX_SIGOPS));
 
         int64_t nFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
         unsigned int nSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
@@ -1844,6 +1869,7 @@ int64_t CTransaction::GetValueIn(const MapPrevTx& inputs) const
 
 }
 
+/*
 unsigned int CTransaction::GetP2SHSigOpCount(const MapPrevTx& inputs) const
 {
     if (IsCoinBase())
@@ -1858,6 +1884,7 @@ unsigned int CTransaction::GetP2SHSigOpCount(const MapPrevTx& inputs) const
     }
     return nSigOps;
 }
+*/
 
 bool CTransaction::ConnectInputs(CTxDB& txdb, MapPrevTx inputs, map<uint256, CTxIndex>& mapTestPool, const CDiskTxPos& posThisTx,
     const CBlockIndex* pindexBlock, bool fBlock, bool fMiner)
@@ -2074,7 +2101,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
                     return false;
         }
 
-        nSigOps += tx.GetLegacySigOpCount();
+        nSigOps += GetLegacySigOpCount(tx);
         if (nSigOps > MAX_BLOCK_SIGOPS)
             return DoS(100, error("ConnectBlock() : too many sigops"));
 
@@ -2094,7 +2121,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
             // Add in sigops done by pay-to-script-hash inputs;
             // this is to prevent a "rogue miner" from creating
             // an incredibly-expensive-to-validate block.
-            nSigOps += tx.GetP2SHSigOpCount(mapInputs);
+            nSigOps += GetP2SHSigOpCount(tx, mapInputs);
             if (nSigOps > MAX_BLOCK_SIGOPS)
                 return DoS(100, error("ConnectBlock() : too many sigops"));
 
@@ -2685,7 +2712,7 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
     unsigned int nSigOps = 0;
     BOOST_FOREACH(const CTransaction& tx, vtx)
     {
-        nSigOps += tx.GetLegacySigOpCount();
+        nSigOps += GetLegacySigOpCount(tx);
     }
     if (nSigOps > MAX_BLOCK_SIGOPS)
         return DoS(100, error("CheckBlock() : out-of-bounds SigOpCount"));
