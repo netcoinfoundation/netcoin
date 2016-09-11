@@ -14,7 +14,7 @@
 #include <QLocale>
 #include <QList>
 #include <QColor>
-// #include <QTimer>
+#include <QTimer>
 #include <QIcon>
 #include <QDateTime>
 #include <QtAlgorithms>

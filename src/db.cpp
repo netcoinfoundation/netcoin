@@ -93,8 +93,8 @@ bool CDBEnv::Open(boost::filesystem::path pathEnv_)
     dbenv.set_lg_max(10485760);
 
     // Bugfix: Bump lk_max_locks default to 537000, to safely handle reorgs with up to 5 blocks reversed
-    // dbenv.set_lk_max_locks(10000);
-    dbenv.set_lk_max_locks(537000);
+    dbenv.set_lk_max_locks(10000); // revert
+    // dbenv.set_lk_max_locks(537000);
 
     dbenv.set_lk_max_objects(10000);
     dbenv.set_errfile(fopen(pathErrorFile.string().c_str(), "a")); /// debug

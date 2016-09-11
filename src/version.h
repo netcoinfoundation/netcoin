@@ -64,5 +64,8 @@ static const int NOBLKS_VERSION_END = 32400;
 // BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 60000;
 
+// reject blocks with non-canonical signatures starting from this version
+static const int CANONICAL_BLOCK_SIG_VERSION = 60016;
+static const int CANONICAL_BLOCK_SIG_LOW_S_VERSION = 60018;
 
 #endif

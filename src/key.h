@@ -404,7 +404,7 @@ public:
     static bool CheckSignatureElement(const unsigned char *vch, int len, bool half);
 
     // Ensure that signature is DER-encoded
-    static bool ReserealizeSignature(std::vector<unsigned char>& vchSig);
+    // static bool ReserealizeSignature(std::vector<unsigned char>& vchSig);
 };
 
 struct CExtPubKey {
@@ -442,5 +442,7 @@ struct CExtKey {
     CExtPubKey Neuter() const;
     void SetMaster(const unsigned char *seed, unsigned int nSeedLen);
 };
+
+bool EnsureLowS(std::vector<unsigned char>& vchSig);
 
 #endif

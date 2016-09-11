@@ -2150,7 +2150,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
 {
     strError = "";
     int nOne = 1;
-
+/*
 #ifdef WIN32
     // Initialize Windows Sockets
     WSADATA wsadata;
@@ -2162,6 +2162,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
         return false;
     }
 #endif
+*/
 
     // Create socket for listening for incoming connections
 // #ifdef USE_IPV6

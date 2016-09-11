@@ -90,6 +90,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     trayIcon(0),
     notificator(0),
     rpcConsole(0),
+    prevBlocks(0),
     nWeight(0)
 {
 
@@ -497,8 +498,11 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         setNumConnections(clientModel->getNumConnections());
         connect(clientModel, SIGNAL(numConnectionsChanged(int)), this, SLOT(setNumConnections(int)));
 
-        setNumBlocks(clientModel->getNumBlocks(), clientModel->getNumBlocksOfPeers());
-        connect(clientModel, SIGNAL(numBlocksChanged(int,int)), this, SLOT(setNumBlocks(int,int)));
+        // setNumBlocks(clientModel->getNumBlocks(), clientModel->getNumBlocksOfPeers());
+        // connect(clientModel, SIGNAL(numBlocksChanged(int,int)), this, SLOT(setNumBlocks(int,int)));
+
+        setNumBlocks(clientModel->getNumBlocks());
+        connect(clientModel, SIGNAL(numBlocksChanged(int)), this, SLOT(setNumBlocks(int)));
 
         // Report errors from network/worker thread
         connect(clientModel, SIGNAL(error(QString,QString,bool)), this, SLOT(error(QString,QString,bool)));
@@ -623,7 +627,7 @@ void BitcoinGUI::setNumConnections(int count)
     labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Netcoin network", "", count));
 }
 
-void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
+void BitcoinGUI::setNumBlocks(int count)
 {
     // don't show / hide progress bar and its label if we have no connection to the network
     if (!clientModel || clientModel->getNumConnections() == 0)
@@ -635,9 +639,10 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
     }
 
     // QString strStatusBarWarnings = clientModel->getStatusBarWarnings();
+    // bool fShowStatusBar = false;
     QString tooltip;
 
-    if(count < nTotalBlocks)
+ /*   if(count < nTotalBlocks)
     {
         int nRemainingBlocks = nTotalBlocks - count;
         float nPercentageDone = count / (nTotalBlocks * 0.01f);
@@ -652,7 +657,7 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
             progressBar->setValue(count);
             progressBar->setVisible(true);
         }
-    */
+    *
         progressBarLabel->setText(tr("Synchronizing with network..."));
         progressBarLabel->setVisible(true);
         progressBar->setFormat(tr("~%n block(s) remaining", "", nRemainingBlocks));
@@ -672,7 +677,7 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
         progressBar->setVisible(false);
         tooltip = tr("Downloaded %1 blocks of transaction history.").arg(count);
     }
-
+ */
  /*   // Override progressBarLabel text and hide progress bar, when we have warnings to display
     if (!strStatusBarWarnings.isEmpty())
     {
@@ -683,9 +688,12 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
   */
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
-    int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
-    QString text;
-
+    // int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
+    // QString text;
+    QDateTime currentDate = QDateTime::currentDateTime();
+    int totalSecs = GetTime() - 1393221600;
+    int secs = lastBlockDate.secsTo(currentDate);
+ /*
     // Represent time from last generated block in human readable text
     if(secs <= 0)
     {
@@ -700,37 +708,87 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
         text = tr("%n minute(s) ago","",secs/60);
     }
     else if(secs < 24*60*60)
+ */
+  /*  if(count < nTotalBlocks)
     {
-        text = tr("%n hour(s) ago","",secs/(60*60));
+        // text = tr("%n hour(s) ago","",secs/(60*60));
+        tooltip = tr("Processed %1 of %2 (estimated) blocks of transaction history.").arg(count).arg(nTotalBlocks);
     }
     else
     {
-        text = tr("%n day(s) ago","",secs/(60*60*24));
+        // text = tr("%n day(s) ago","",secs/(60*60*24));
+        tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
     }
+ */
+    tooltip = tr("Processed %1 blocks of transaction history.").arg(count);
 
     // Set icon state: spinning if catching up, tick otherwise
-    if(secs < 90*60 && count >= nTotalBlocks)
+    if(secs < 90*60)
     {
         tooltip = tr("Up to date") + QString(".<br>") + tooltip;
         labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
 
         overviewPage->showOutOfSyncWarning(false);
+
+        progressBarLabel->setVisible(false);
+        progressBar->setVisible(false);
     }
     else
     {
+        // Represent time from last generated block in human readable text
+        QString timeBehindText;
+        // if(secs < 48*60*60)
+        const int HOUR_IN_SECONDS = 60*60;
+        const int DAY_IN_SECONDS = 24*60*60;
+        const int WEEK_IN_SECONDS = 7*24*60*60;
+        const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
+        if(secs < 2*DAY_IN_SECONDS)
+        {
+            timeBehindText = tr("%n hour(s)","",secs/HOUR_IN_SECONDS);
+        }
+        else if(secs < 2*WEEK_IN_SECONDS)
+        {
+            // timeBehindText = tr("%n day(s)","",secs/(24*60*60));
+            timeBehindText = tr("%n day(s)","",secs/DAY_IN_SECONDS);
+        }
+        else if(secs < YEAR_IN_SECONDS)
+        {
+            timeBehindText = tr("%n week(s)","",secs/WEEK_IN_SECONDS);
+        }
+        else
+        {
+            // timeBehindText = tr("%n week(s)","",secs/(7*24*60*60));
+            int years = secs / YEAR_IN_SECONDS;
+            int remainder = secs % YEAR_IN_SECONDS;
+            timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
+        }
+
+        progressBarLabel->setText(tr("Synchronizing with network..."));
+        progressBarLabel->setVisible(true);
+        progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
+        progressBar->setMaximum(totalSecs);
+        progressBar->setValue(totalSecs - secs);
+        progressBar->setVisible(true);
+        // fShowStatusBar = true;
 
         tooltip = tr("Catching up...") + QString("<br>") + tooltip;
-
         labelBlocksIcon->setMovie(syncIconMovie);
-        syncIconMovie->start();
+        // syncIconMovie->start();
+        if(count != prevBlocks)
+            syncIconMovie->start();
+            // syncIconMovie->jumpToNextFrame();
+        prevBlocks = count;
 
         overviewPage->showOutOfSyncWarning(true);
-    }
+    // }
 
-    if(!text.isEmpty())
-    {
+    // if(!text.isEmpty())
+    // {
         tooltip += QString("<br>");
-        tooltip += tr("Last received block was generated %1.").arg(text);
+        // tooltip += tr("Last received block was generated %1.").arg(text);
+        tooltip += tr("Last received block was generated %1 ago.").arg(timeBehindText);
+        tooltip += QString("<br>");
+        tooltip += tr("Transactions after this will not yet be visible.");
     }
 
     // Don't word-wrap this (fixed-width) tooltip
