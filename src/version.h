@@ -42,7 +42,7 @@ static const int DATABASE_VERSION = 70501;
 // network protocol versioning
 //
 
-static const int PROTOCOL_VERSION = 70001;
+static const int PROTOCOL_VERSION = 70002;
 
 // earlier versions not supported as of Feb 2012, and are disconnected
 // static const int MIN_PROTO_VERSION = 209;
