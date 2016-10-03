@@ -3979,9 +3979,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
         // if (pfrom->nVersion < MIN_PROTO_VERSION)
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+        if (nTime > 1475755200 && pfrom->nVersion < MIN_PEER_PROTO_VERSION) //  Thu, 06 Oct 2016 12:00:00 GMT
         {
-            // Since February 20, 2012, the protocol is initiated at version 209,
+            // Since October 06, 2016, the protocol is initiated at version 70001,
             // and earlier versions are no longer supported
             // disconnect from peers older than this proto version
             printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
