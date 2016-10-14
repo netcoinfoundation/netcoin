@@ -5,6 +5,7 @@
 // Copyright (c) 2013 Florincoin Developers
 // Copyright (c) 2013 PandaCoin Developers
 // Copyright (c) 2014 NetCoin Developers
+// Copyright (c) 2015 BlackCoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1816,30 +1817,33 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    // CBigNum bnTargetLimit = !fProofOfStake ? bnProofOfWorkLimit : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
     CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
 
     if (pindexLast == NULL)
         return bnTargetLimit.GetCompact(); // genesis block
-        const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
 
+    const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
     if (pindexPrev->pprev == NULL)        
         return bnTargetLimit.GetCompact(); // first block
-        const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
-
+    const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
     if (pindexPrevPrev->pprev == NULL)
         return bnTargetLimit.GetCompact(); // second block
 
     int64 nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
+    if (ProtocolRetargetingFixed(pindexLast->nHeight)) {
+        if (nActualSpacing < 0)
+            nActualSpacing = nTargetSpacing;
+    }
 
-    // Netcoin: target change every block
-    // Netcoin: retarget with exponential moving toward target spacing
+    // ppcoin: target change every block
+    // ppcoin: retarget with exponential moving toward target spacing
     CBigNum bnNew;
     bnNew.SetCompact(pindexPrev->nBits);
     int64 nInterval = nTargetTimespan / nStakeTargetSpacing;
     bnNew *= ((nInterval - 1) * nStakeTargetSpacing + nActualSpacing + nActualSpacing);
     bnNew /= ((nInterval + 1) * nStakeTargetSpacing);
-    if (bnNew > bnTargetLimit)
+
+    if (bnNew <= 0 || bnNew > bnTargetLimit)
         bnNew = bnTargetLimit;
 
     return bnNew.GetCompact();
