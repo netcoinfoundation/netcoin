@@ -114,7 +114,7 @@ static const int LOW_S_CHECK_SIGNATURES_TESTET = 30;
 
 // static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
 
-inline bool ProtocolRetargetingFixed(int nHeight) { return TestNet() || nHeight > 1344600; }
+inline bool ProtocolRetargetingFixed(int nHeight) { return TestNet() || nHeight > 1345000; }
 
 inline int64_t PastDrift(int64_t nTime)   { return nTime - 10 * 60; } // up to 10 minutes from the past
 inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; } // up to 10 minutes from the future
