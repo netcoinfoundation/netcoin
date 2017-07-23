@@ -446,13 +446,13 @@ void ShoppingPage::setModel(ClientModel *model)
 //Exchange Links
 void ShoppingPage::on_pushButton_36_clicked()
 {
-    QString link="https://bittrex.com/Market/Index?MarketName=BTC-NET";
+    QString link="https://novaexchange.com/market/BTC_NET/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
 void ShoppingPage::on_pushButton_37_clicked()
 {
-    QString link="https://www.cryptopia.co.nz/Exchange";
+    QString link="https://www.cryptopia.co.nz/Exchange/?market=NET_BTC";
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -461,16 +461,7 @@ void ShoppingPage::on_pushButton_37_clicked()
 
 void ShoppingPage::on_pushButton_4_clicked()
 {
-    QString link="https://www.payservices.com/index.php#";
-    QDesktopServices::openUrl(QUrl(link));
-}
-
-//Gambling Links
-
-//Charity Links
-void ShoppingPage::on_pushButton_57_clicked()
-{
-    QString link="http://www.songsoflove.org/netcoin/";
+    QString link="https://cointopay.com/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -478,12 +469,6 @@ void ShoppingPage::on_pushButton_57_clicked()
 void ShoppingPage::on_pushButton_8_clicked()
 {
     QString link="http://forum.netcoin.io//";
-    QDesktopServices::openUrl(QUrl(link));
-}
-
-void ShoppingPage::on_pushButton_7_clicked()
-{
-    QString link="http://netexplorer.coin-server.com/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -509,7 +494,7 @@ void ShoppingPage::on_pushButton_clicked()
 //Pools
 void ShoppingPage::on_pushButton_2_clicked()
 {
-    QString link="http://coin-server.com/";
+    QString link="https://www.mining-dutch.nl/pools/netcoin.php";
     QDesktopServices::openUrl(QUrl(link));
 }
 
