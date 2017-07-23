@@ -45,6 +45,7 @@ static MapCheckpoints mapCheckpoints =
         (522000, uint256("0x889b767099c273d009102c9943b82600a8d052ee791090918b17d400ae1b93de"))
         (530002, uint256("0x7e5982788dae8607994904a59728eff2d69966fa5438e8788ddb1ff931bb4b0a"))
         (1291000, uint256("0x182aa72911c7910b32d1708be94d115d66bb70b4d1f091c7b31f172be8d02802"))
+        (1832000, uint256("0x17f2e2c1890578a3d882aeb7d422aa1f154bb1c3a11a7f2ee6ea735004e77d10"))
         ;
 
     // TestNet has no checkpoints
