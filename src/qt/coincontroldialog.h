@@ -42,9 +42,6 @@ private:
     QMenu *contextMenu;
     QTreeWidgetItem *contextMenuItem;
     QAction *copyTransactionHashAction;
-    //QAction *lockAction;
-    //QAction *unlockAction;
-
     QString strPad(QString, int, QString);
     void sortView(int, Qt::SortOrder);
     void updateView();
@@ -70,8 +67,6 @@ private slots:
     void copyLabel();
     void copyAddress();
     void copyTransactionHash();
-    //void lockCoin();
-    //void unlockCoin();
     void clipboardQuantity();
     void clipboardAmount();
     void clipboardFee();
@@ -86,7 +81,6 @@ private slots:
     void headerSectionClicked(int);
     void buttonBoxClicked(QAbstractButton*);
     void buttonSelectAllClicked();
-    //void updateLabelLocked();
 };
 
 #endif // COINCONTROLDIALOG_H

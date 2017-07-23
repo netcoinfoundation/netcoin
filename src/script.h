@@ -227,8 +227,6 @@ enum opcodetype
 
     // expansion
     OP_NOP1 = 0xb0,
-    // OP_NOP2 = 0xb1,
-    // OP_CHECKLOCKTIMEVERIFY = OP_NOP2,
     OP_CHECKLOCKTIMEVERIFY = 0xb1,
     OP_NOP2 = OP_CHECKLOCKTIMEVERIFY,
     OP_NOP3 = 0xb2,
@@ -239,8 +237,6 @@ enum opcodetype
     OP_NOP8 = 0xb7,
     OP_NOP9 = 0xb8,
     OP_NOP10 = 0xb9,
-
-
 
     // template matching params
     OP_SMALLDATA = 0xf9,
@@ -253,8 +249,6 @@ enum opcodetype
 };
 
 const char* GetOpName(opcodetype opcode);
-
-
 
 inline std::string ValueString(const std::vector<unsigned char>& vch)
 {
@@ -275,12 +269,6 @@ inline std::string StackString(const std::vector<std::vector<unsigned char> >& v
     }
     return str;
 }
-
-
-
-
-
-
 
 
 /** Serialized script, used inside transaction inputs and outputs */
@@ -336,7 +324,6 @@ public:
         return ret;
     }
 
-
     //explicit CScript(char b) is not portable.  Use 'signed char' or 'unsigned char'.
     explicit CScript(signed char b)    { operator<<(b); }
     explicit CScript(short b)          { operator<<(b); }
@@ -353,7 +340,6 @@ public:
     explicit CScript(const uint256& b) { operator<<(b); }
     explicit CScript(const CBigNum& b) { operator<<(b); }
     explicit CScript(const std::vector<unsigned char>& b) { operator<<(b); }
-
 
     //CScript& operator<<(char b) is not portable.  Use 'signed char' or 'unsigned char'.
     CScript& operator<<(signed char b)    { return push_int64(b); }
@@ -391,9 +377,6 @@ public:
 
     CScript& operator<<(const CPubKey& key)
     {
-        // std::vector<unsigned char> vchKey = key.Raw();
-        // return (*this) << vchKey;
-
         assert(key.size() < OP_PUSHDATA1);
         insert(end(), (unsigned char)key.size());
         insert(end(), key.begin(), key.end());
@@ -440,7 +423,6 @@ public:
         assert(!"Warning: Pushing a CScript onto a CScript with << is probably not intended, use + to concatenate!");
         return *this;
     }
-
 
     bool GetOp(iterator& pc, opcodetype& opcodeRet, std::vector<unsigned char>& vchRet)
     {
@@ -718,7 +700,6 @@ public:
         s >> REF(CFlatData(&script[0], &script[script.size()]));
     }
 };
-
 
 
 bool IsDERSignature(const valtype &vchSig, bool haveHashType = true);

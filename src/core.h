@@ -48,24 +48,6 @@ public:
     }
 };
 
-/*
-/** An inpoint - a combination of a transaction and an index n into its vin *
-class CInPoint
-{
-public:
-    CTransaction* ptx;
-    unsigned int n;
-
-    CInPoint() { SetNull(); }
-    CInPoint(CTransaction* ptxIn, unsigned int nIn) { ptx = ptxIn; n = nIn; }
-    void SetNull() { ptx = NULL; n = (unsigned int) -1; }
-    bool IsNull() const { return (ptx == NULL && n == (unsigned int) -1); }
-};
-
-/** An input of a transaction.  It contains the location of the previous
- * transaction's output that it claims and a signature that matches the
- * output's public key.
- */
 class CTxIn
 {
 public:
@@ -131,9 +113,6 @@ public:
         return str;
     }
 };
-
-
-
 
 /** An output of a transaction.  It contains the public key that the next input
  * must be able to sign with to claim it.

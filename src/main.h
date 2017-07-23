@@ -31,7 +31,6 @@ class COutPoint;
 
 class CAddress;
 class CInv;
-// class CRequestTracker;
 class CNode;
 
 class CTxMemPool;
@@ -97,9 +96,6 @@ static const int fHaveUPnP = true;
 static const int fHaveUPnP = false;
 #endif
 
-
-// static const uint256 hashGenesisBlock("0x38624e3834cfdc4410a5acbc32f750171aadad9620e6ba6d5c73201c16f7c8d1");
-
 static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NOT CHANGE
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START = 438500; //DIGISHIELD FIX FORK
@@ -111,8 +107,6 @@ static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
 static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  5000;
 static const int LOW_S_CHECK_SIGNATURES_TESTET = 30;
-
-// static const uint256 hashGenesisBlockTestNet("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f"); //("0x63141eded213b050e2aca8e6beb2070fa37c3520f1c492fd5a82a03c337e90f3");
 
 inline bool ProtocolRetargetingFixed(int nHeight) { return TestNet() || nHeight > 1345000; }
 
@@ -148,10 +142,6 @@ extern double dHashesPerSec;
 extern int64_t nHPSTimerStart;
 extern int64_t nTimeBestReceived;
 extern bool fReindex;
-// extern CCriticalSection cs_setpwalletRegistered;
-// extern std::set<CWallet*> setpwalletRegistered;
-// extern unsigned char pchMessageStart[4];
-// extern std::map<uint256, CBlock*> mapOrphanBlocks;
 struct COrphanBlock;
 extern std::map<uint256, COrphanBlock*> mapOrphanBlocks;
 extern bool fHaveGUI;
@@ -163,8 +153,6 @@ extern int64_t nMinimumInputValue;
 extern bool fUseFastIndex;
 extern unsigned int nDerivationMethodIndex;
 
-// extern bool fEnforceCanonical;
-
 // Minimum disk space required - used in CheckDiskSpace()
 static const uint64_t nMinDiskSpace = 52428800;
 
@@ -173,9 +161,6 @@ class CTxDB;
 class CTxIndex;
 class CWalletInterface;
 
-
-// void RegisterWallet(CWallet* pwalletIn);
-// void UnregisterWallet(CWallet* pwalletIn);
 /** Register a wallet to receive updates from core */
 void RegisterWallet(CWalletInterface* pwalletIn);
 /** Unregister a wallet from core */
@@ -183,7 +168,6 @@ void UnregisterWallet(CWalletInterface* pwalletIn);
 /** Unregister all wallets from core */
 void UnregisterAllWallets();
 
-// void SyncWithWallets(const CTransaction& tx, const CBlock* pblock = NULL, bool fUpdate = false, bool fConnect = true);
 /** Push an updated transaction to all registered wallets */
 void SyncWithWallets(const CTransaction& tx, const CBlock* pblock = NULL, bool fConnect = true);
 /** Ask wallets to resend their transactions */
@@ -207,7 +191,6 @@ bool ProcessMessages(CNode* pfrom);
 bool SendMessages(CNode* pto, bool fSendTrickle);
 bool LoadExternalBlockFile(FILE* fileIn);
 void GenerateBitcoins(bool fGenerate, CWallet* pwallet);
-// CBlock* CreateNewBlock(CReserveKey& reservekey);
 void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 void FormatHashBuffers(CBlock* pblock, char* pmidstate, char* pdata, char* phash1);
 bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey);
@@ -218,27 +201,17 @@ int64_t GetPIRRewardCoinYear(int64_t nCoinValue, int64_t nHeight);
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nCoinValue, int64_t nFees, int64_t nHeight);
 unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime);
 unsigned int ComputeMinStake(unsigned int nBase, int64_t nTime, unsigned int nBlockTime);
-// int GetNumBlocksOfPeers();
 bool IsInitialBlockDownload();
 std::string GetWarnings(std::string strFor);
 bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock);
 uint256 WantedByOrphan(const COrphanBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
-// void StakeMiner(CWallet *pwallet);
 void ThreadStakeMiner(CWallet *pwallet);
-// void ResendWalletTransactions(bool fForce = false);
 
 /** (try to) add transaction to memory pool **/
 bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
                         bool* pfMissingInputs);
 
-
-
-
-
-
-
-// bool GetWalletFile(CWallet* pwallet, std::string &strWalletFileOut);
 
 /** Position on disk for a particular transaction. */
 class CDiskTxPos
@@ -276,7 +249,6 @@ public:
         return !(a == b);
     }
 
-
     std::string ToString() const
     {
         if (IsNull())
@@ -305,221 +277,6 @@ public:
     void SetNull() { ptx = NULL; n = (unsigned int) -1; }
     bool IsNull() const { return (ptx == NULL && n == (unsigned int) -1); }
 };
-
-
-/*
-/** An outpoint - a combination of a transaction hash and an index n into its vout *
-class COutPoint
-{
-public:
-    uint256 hash;
-    unsigned int n;
-
-    COutPoint() { SetNull(); }
-    COutPoint(uint256 hashIn, unsigned int nIn) { hash = hashIn; n = nIn; }
-    IMPLEMENT_SERIALIZE( READWRITE(FLATDATA(*this)); )
-    void SetNull() { hash = 0; n = (unsigned int) -1; }
-    bool IsNull() const { return (hash == 0 && n == (unsigned int) -1); }
-
-    friend bool operator<(const COutPoint& a, const COutPoint& b)
-    {
-        return (a.hash < b.hash || (a.hash == b.hash && a.n < b.n));
-    }
-
-    friend bool operator==(const COutPoint& a, const COutPoint& b)
-    {
-        return (a.hash == b.hash && a.n == b.n);
-    }
-
-    friend bool operator!=(const COutPoint& a, const COutPoint& b)
-    {
-        return !(a == b);
-    }
-
-    std::string ToString() const
-    {
-        return strprintf("COutPoint(%s, %u)", hash.ToString().c_str(), n);
-    }
-
-    void print() const
-    {
-        printf("%s\n", ToString().c_str());
-    }
-};
-
-*/
-
-/*
-/** An input of a transaction.  It contains the location of the previous
- * transaction's output that it claims and a signature that matches the
- * output's public key.
- *
-class CTxIn
-{
-public:
-    COutPoint prevout;
-    CScript scriptSig;
-    unsigned int nSequence;
-
-    CTxIn()
-    {
-        nSequence = std::numeric_limits<unsigned int>::max();
-    }
-
-    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn=CScript(), unsigned int nSequenceIn=std::numeric_limits<unsigned int>::max())
-    {
-        prevout = prevoutIn;
-        scriptSig = scriptSigIn;
-        nSequence = nSequenceIn;
-    }
-
-    CTxIn(uint256 hashPrevTx, unsigned int nOut, CScript scriptSigIn=CScript(), unsigned int nSequenceIn=std::numeric_limits<unsigned int>::max())
-    {
-        prevout = COutPoint(hashPrevTx, nOut);
-        scriptSig = scriptSigIn;
-        nSequence = nSequenceIn;
-    }
-
-    IMPLEMENT_SERIALIZE
-    (
-        READWRITE(prevout);
-        READWRITE(scriptSig);
-        READWRITE(nSequence);
-    )
-
-    bool IsFinal() const
-    {
-        return (nSequence == std::numeric_limits<unsigned int>::max());
-    }
-
-    friend bool operator==(const CTxIn& a, const CTxIn& b)
-    {
-        return (a.prevout   == b.prevout &&
-                a.scriptSig == b.scriptSig &&
-                a.nSequence == b.nSequence);
-    }
-
-    friend bool operator!=(const CTxIn& a, const CTxIn& b)
-    {
-        return !(a == b);
-    }
-
-    std::string ToStringShort() const
-    {
-        return strprintf(" %s %d", prevout.hash.ToString().c_str(), prevout.n);
-    }
-
-    std::string ToString() const
-    {
-        std::string str;
-        str += "CTxIn(";
-        str += prevout.ToString();
-        if (prevout.IsNull())
-            str += strprintf(", coinbase %s", HexStr(scriptSig).c_str());
-        else
-            str += strprintf(", scriptSig=%s", scriptSig.ToString().substr(0,24).c_str());
-        if (nSequence != std::numeric_limits<unsigned int>::max())
-            str += strprintf(", nSequence=%u", nSequence);
-        str += ")";
-        return str;
-    }
-
-    void print() const
-    {
-        printf("%s\n", ToString().c_str());
-    }
-};
-
-
-
-
-/** An output of a transaction.  It contains the public key that the next input
- * must be able to sign with to claim it.
- *
-class CTxOut
-{
-public:
-    int64_t nValue;
-    CScript scriptPubKey;
-
-    CTxOut()
-    {
-        SetNull();
-    }
-
-    CTxOut(int64_t nValueIn, CScript scriptPubKeyIn)
-    {
-        nValue = nValueIn;
-        scriptPubKey = scriptPubKeyIn;
-    }
-
-    IMPLEMENT_SERIALIZE
-    (
-        READWRITE(nValue);
-        READWRITE(scriptPubKey);
-    )
-
-    void SetNull()
-    {
-        nValue = -1;
-        scriptPubKey.clear();
-    }
-
-    bool IsNull()
-    {
-        return (nValue == -1);
-    }
-
-    void SetEmpty()
-    {
-        nValue = 0;
-        scriptPubKey.clear();
-    }
-
-    bool IsEmpty() const
-    {
-        return (nValue == 0 && scriptPubKey.empty());
-    }
-
-    uint256 GetHash() const
-    {
-        return SerializeHash(*this);
-    }
-
-    // bool IsDust() const;
-
-    friend bool operator==(const CTxOut& a, const CTxOut& b)
-    {
-        return (a.nValue       == b.nValue &&
-                a.scriptPubKey == b.scriptPubKey);
-    }
-
-    friend bool operator!=(const CTxOut& a, const CTxOut& b)
-    {
-        return !(a == b);
-    }
-
-    std::string ToStringShort() const
-    {
-        return strprintf(" out %s %s", FormatMoney(nValue).c_str(), scriptPubKey.ToString(true).c_str());
-    }
-
-    std::string ToString() const
-    {
-        if (IsEmpty()) return "CTxOut(empty)";
-        if (scriptPubKey.size() < 6)
-            return "CTxOut(error)";
-        return strprintf("CTxOut(nValue=%s, scriptPubKey=%s)", FormatMoney(nValue).c_str(), scriptPubKey.ToString().c_str());
-    }
-
-    void print() const
-    {
-        printf("%s\n", ToString().c_str());
-    }
-};
-*/
-
-
 
 enum GetMinFee_mode
 {
@@ -586,25 +343,6 @@ public:
         return SerializeHash(*this);
     }
 
-  /*
-    bool IsFinal(int nBlockHeight=0, int64_t nBlockTime=0) const
-    {
-        // Time based nLockTime implemented in 0.1.6
-        if (nLockTime == 0)
-            return true;
-        if (nBlockHeight == 0)
-            nBlockHeight = nBestHeight;
-        if (nBlockTime == 0)
-            nBlockTime = GetAdjustedTime();
-        if ((int64_t)nLockTime < ((int64_t)nLockTime < LOCKTIME_THRESHOLD ? (int64_t)nBlockHeight : nBlockTime))
-            return true;
-        BOOST_FOREACH(const CTxIn& txin, vin)
-            if (!txin.IsFinal())
-                return false;
-        return true;
-    }
-  */
-
     bool IsNewerThan(const CTransaction& old) const
     {
         if (vin.size() != old.vin.size())
@@ -644,39 +382,6 @@ public:
         // ppcoin: the coin stake transaction is marked with the first output empty
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
-
-    /** Check for standard transaction types
-        @return True if all outputs (scriptPubKeys) use only standard transaction forms
-    */
- /*   bool IsStandard(std::string& strReason) const;
-    bool IsStandard() const
-    {
-        std::string strReason;
-        return IsStandard(strReason);
-    }
- */
-
- /*
-    /** Check for standard transaction types
-        @param[in] mapInputs	Map of previous transactions that have outputs we're spending
-        @return True if all inputs (scriptSigs) use only standard transaction forms
-        @see CTransaction::FetchInputs
-    *
-    bool AreInputsStandard(const MapPrevTx& mapInputs) const;
-
-    /** Count ECDSA signature operations the old-fashioned (pre-0.6) way
-        @return number of sigops this transaction's outputs will produce when spent
-        @see CTransaction::FetchInputs
-    */
- //   unsigned int GetLegacySigOpCount() const;
-
-    /** Count ECDSA signature operations in pay-to-script-hash inputs.
-
-        @param[in] mapInputs	Map of previous transactions that have outputs we're spending
-        @return maximum number of sigops required to validate this transaction's inputs
-        @see CTransaction::FetchInputs
-     */
-  //  unsigned int GetP2SHSigOpCount(const MapPrevTx& mapInputs) const;
 
     /** Amount of bitcoins spent by this transaction.
         @return sum of all outputs (note: does not include fees)
@@ -822,12 +527,9 @@ public:
     bool ConnectInputs(CTxDB& txdb, MapPrevTx inputs,
                        std::map<uint256, CTxIndex>& mapTestPool, const CDiskTxPos& posThisTx,
                        const CBlockIndex* pindexBlock, bool fBlock, bool fMiner, unsigned int flags = STANDARD_SCRIPT_VERIFY_FLAGS);
-    // bool ClientConnectInputs();
     bool CheckTransaction() const;
-    // bool AcceptToMemoryPool(CTxDB& txdb, bool* pfMissingInputs=NULL);
     bool GetCoinAge(CTxDB& txdb, unsigned int nTxTime, uint64_t& nCoinAge, int64_t& nCoinValue) const;  // ppcoin: get transaction coin age
 
-// protected:
     const CTxOut& GetOutputFor(const CTxIn& input, const MapPrevTx& inputs) const;
 };
 
@@ -905,7 +607,6 @@ public:
         fMerkleVerified = false;
     }
 
-
     IMPLEMENT_SERIALIZE
     (
         nSerSize += SerReadWrite(s, *(CTransaction*)this, nType, nVersion, ser_action);
@@ -914,7 +615,6 @@ public:
         READWRITE(vMerkleBranch);
         READWRITE(nIndex);
     )
-
 
     int SetMerkleBranch(const CBlock* pblock=NULL);
 
@@ -926,7 +626,6 @@ public:
     int GetDepthInMainChain() const { CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet); }
     bool IsInMainChain() const { CBlockIndex *pindexRet; return GetDepthInMainChainINTERNAL(pindexRet) > 0; }
     int GetBlocksToMaturity() const;
-    // bool AcceptToMemoryPool(CTxDB& txdb);
     bool AcceptToMemoryPool(bool fLimitFree=true);
 };
 
@@ -986,9 +685,6 @@ public:
     int GetDepthInMainChain() const;
 
 };
-
-
-
 
 
 /** Nodes collect new transactions into a block, hash them into a hash tree,
@@ -1128,10 +824,6 @@ public:
     {
         // Unfortunately our transactions are not compatible with this
         return nTime;
-//        int64_t maxTransactionTime = 0;
-//        BOOST_FOREACH(const CTransaction& tx, vtx)
-//            maxTransactionTime = std::max(maxTransactionTime, (int64_t)tx.nTime);
-//        return maxTransactionTime;
     }
 
     uint256 BuildMerkleTree() const
@@ -1194,7 +886,6 @@ public:
 
         // Write index header
         unsigned int nSize = fileout.GetSerializeSize(*this);
-        // fileout << FLATDATA(pchMessageStart) << nSize;
         fileout << FLATDATA(Params().MessageStart()) << nSize;
 
         // Write block
@@ -1277,10 +968,6 @@ public:
 private:
     bool SetBestChainInner(CTxDB& txdb, CBlockIndex *pindexNew);
 };
-
-
-
-
 
 
 /** The block chain is a tree shaped structure starting with the
@@ -1524,7 +1211,6 @@ public:
 };
 
 
-
 /** Used to marshal pointers into hashes for db storage. */
 class CDiskBlockIndex : public CBlockIndex
 {
@@ -1587,25 +1273,6 @@ public:
 		}
     )
 
-    /*
-    uint256 GetBlockHash() const
-    {
-        if ((nVersion >= BLOCKINDEX_VERSION_POS) && fUseFastIndex && (nTime < GetAdjustedTime() - 24 * 60 * 60) && blockHash != 0)
-            return blockHash;
-
-        CBlock block;
-        block.nVersion        = nVersion;
-        block.hashPrevBlock   = hashPrev;
-        block.hashMerkleRoot  = hashMerkleRoot;
-        block.nTime           = nTime;
-        block.nBits           = nBits;
-        block.nNonce          = nNonce;
-
-        const_cast<CDiskBlockIndex*>(this)->blockHash = block.GetHash();
-
-        return blockHash;
-    }
-*/
     uint256 GetBlockHash() const
     {
         CBlock block;
@@ -1634,12 +1301,6 @@ public:
         printf("%s\n", ToString().c_str());
     }
 };
-
-
-
-
-
-
 
 
 /** Describes a place in the block chain to another node such that if the
@@ -1704,7 +1365,6 @@ public:
             if (vHave.size() > 10)
                 nStep *= 2;
         }
-       // vHave.push_back((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
         vHave.push_back(Params().HashGenesisBlock());
     }
 
@@ -1772,12 +1432,6 @@ public:
 };
 
 
-
-
-
-
-
-
 class CTxMemPool
 {
 public:
@@ -1785,7 +1439,6 @@ public:
     std::map<uint256, CTransaction> mapTx;
     std::map<COutPoint, CInPoint> mapNextTx;
 
-    // bool accept(CTxDB& txdb, CTransaction &tx, bool* pfMissingInputs);
     bool addUnchecked(const uint256& hash, CTransaction &tx);
     bool remove(const CTransaction &tx, bool fRecursive = false);
     bool removeConflicts(const CTransaction &tx);
@@ -1804,10 +1457,8 @@ public:
         return (mapTx.count(hash) != 0);
     }
 
-    // CTransaction& lookup(uint256 hash)
     bool lookup(uint256 hash, CTransaction& result) const
     {
-        // return mapTx[hash];
         LOCK(cs);
         std::map<uint256, CTransaction>::const_iterator i = mapTx.find(hash);
         if (i == mapTx.end()) return false;

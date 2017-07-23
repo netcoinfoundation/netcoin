@@ -98,10 +98,6 @@ enum
 #define READWRITE(obj)      (nSerSize += ::SerReadWrite(s, (obj), nType, nVersion, ser_action))
 
 
-
-
-
-
 //
 // Basic types
 //
@@ -153,10 +149,6 @@ template<typename Stream> inline void Unserialize(Stream& s, double& a,         
 inline unsigned int GetSerializeSize(bool a, int, int=0)                          { return sizeof(char); }
 template<typename Stream> inline void Serialize(Stream& s, bool a, int, int=0)    { char f=a; WRITEDATA(s, f); }
 template<typename Stream> inline void Unserialize(Stream& s, bool& a, int, int=0) { char f; READDATA(s, f); a=f; }
-
-
-
-
 
 
 //
@@ -315,7 +307,6 @@ I ReadVarInt(Stream& is)
 #define FLATDATA(obj)  REF(CFlatData((char*)&(obj), (char*)&(obj) + sizeof(obj)))
 #define VARINT(obj)    REF(WrapVarInt(REF(obj)))
 
-// #define FLATDATA(obj)   REF(CFlatData((char*)&(obj), (char*)&(obj) + sizeof(obj)))
 
 /** Wrapper for serializing arrays and POD.
  * There's a clever template way to make arrays serialize normally, but MSVC6 doesn't support it.
@@ -374,6 +365,7 @@ public:
     }
 };
 
+
 template<typename I>
 CVarInt<I> WrapVarInt(I& n) { return CVarInt<I>(n); }
 
@@ -428,9 +420,6 @@ template<typename Stream, typename K, typename Pred, typename A> void Serialize(
 template<typename Stream, typename K, typename Pred, typename A> void Unserialize(Stream& is, std::set<K, Pred, A>& m, int nType, int nVersion);
 
 
-
-
-
 //
 // If none of the specialized versions above matched, default to calling member function.
 // "int nType" is changed to "long nType" to keep from getting an ambiguous overload error.
@@ -454,9 +443,6 @@ inline void Unserialize(Stream& is, T& a, long nType, int nVersion)
 {
     a.Unserialize(is, (int)nType, nVersion);
 }
-
-
-
 
 
 //
@@ -486,7 +472,6 @@ void Unserialize(Stream& is, std::basic_string<C>& str, int, int)
 }
 
 
-
 //
 // vector
 //
@@ -511,7 +496,6 @@ inline unsigned int GetSerializeSize(const std::vector<T, A>& v, int nType, int 
     return GetSerializeSize_impl(v, nType, nVersion, boost::is_fundamental<T>());
 }
 
-
 template<typename Stream, typename T, typename A>
 void Serialize_impl(Stream& os, const std::vector<T, A>& v, int nType, int nVersion, const boost::true_type&)
 {
@@ -533,7 +517,6 @@ inline void Serialize(Stream& os, const std::vector<T, A>& v, int nType, int nVe
 {
     Serialize_impl(os, v, nType, nVersion, boost::is_fundamental<T>());
 }
-
 
 template<typename Stream, typename T, typename A>
 void Unserialize_impl(Stream& is, std::vector<T, A>& v, int nType, int nVersion, const boost::true_type&)
@@ -575,8 +558,6 @@ inline void Unserialize(Stream& is, std::vector<T, A>& v, int nType, int nVersio
     Unserialize_impl(is, v, nType, nVersion, boost::is_fundamental<T>());
 }
 
-
-
 //
 // others derived from vector
 //
@@ -596,8 +577,6 @@ void Unserialize(Stream& is, CScript& v, int nType, int nVersion)
 {
     Unserialize(is, (std::vector<unsigned char>&)v, nType, nVersion);
 }
-
-
 
 //
 // pair
@@ -621,8 +600,6 @@ void Unserialize(Stream& is, std::pair<K, T>& item, int nType, int nVersion)
     Unserialize(is, item.first, nType, nVersion);
     Unserialize(is, item.second, nType, nVersion);
 }
-
-
 
 //
 // 3 tuple
@@ -652,8 +629,6 @@ void Unserialize(Stream& is, boost::tuple<T0, T1, T2>& item, int nType, int nVer
     Unserialize(is, boost::get<1>(item), nType, nVersion);
     Unserialize(is, boost::get<2>(item), nType, nVersion);
 }
-
-
 
 //
 // 4 tuple
@@ -686,8 +661,6 @@ void Unserialize(Stream& is, boost::tuple<T0, T1, T2, T3>& item, int nType, int 
     Unserialize(is, boost::get<2>(item), nType, nVersion);
     Unserialize(is, boost::get<3>(item), nType, nVersion);
 }
-
-
 
 //
 // map
@@ -723,8 +696,6 @@ void Unserialize(Stream& is, std::map<K, T, Pred, A>& m, int nType, int nVersion
     }
 }
 
-
-
 //
 // set
 //
@@ -758,8 +729,6 @@ void Unserialize(Stream& is, std::set<K, Pred, A>& m, int nType, int nVersion)
         it = m.insert(it, key);
     }
 }
-
-
 
 //
 // Support for IMPLEMENT_SERIALIZE and READWRITE macro
@@ -795,14 +764,8 @@ struct ser_streamplaceholder
 };
 
 
-
-
-
-
-
-
-
 typedef std::vector<char, zero_after_free_allocator<char> > CSerializeData;
+
 
 class CSizeComputer
 {
@@ -833,6 +796,7 @@ public:
     }
 };
 
+
 /** Double ended buffer combining vector and stream-like interfaces.
  *
  * >> and << read and write unformatted data using the above serialization templates.
@@ -841,13 +805,15 @@ public:
 class CDataStream
 {
 protected:
-    // typedef std::vector<char, zero_after_free_allocator<char> > vector_type;
+
     typedef CSerializeData vector_type;
     vector_type vch;
     unsigned int nReadPos;
     short state;
     short exceptmask;
+
 public:
+
     int nType;
     int nVersion;
 
@@ -920,7 +886,6 @@ public:
         return (std::string(begin(), end()));
     }
 
-
     //
     // Vector subset
     //
@@ -937,19 +902,6 @@ public:
     void clear()                                     { vch.clear(); nReadPos = 0; }
     iterator insert(iterator it, const char& x=char()) { return vch.insert(it, x); }
     void insert(iterator it, size_type n, const char& x) { vch.insert(it, n, x); }
-
-    /*void insert(iterator it, const_iterator first, const_iterator last)
-    {
-        assert(last - first >= 0);
-        if (it == vch.begin() + nReadPos && (unsigned int)(last - first) <= nReadPos)
-        {
-            // special case for inserting at the front when there's room
-            nReadPos -= (last - first);
-            memcpy(&vch[nReadPos], &first[0], last - first);
-        }
-        else
-            vch.insert(it, first, last);
-    }*/
 
     void insert(iterator it, std::vector<char>::const_iterator first, std::vector<char>::const_iterator last)
     {
@@ -1031,7 +983,6 @@ public:
         return true;
     }
 
-
     //
     // Stream subset
     //
@@ -1061,7 +1012,6 @@ public:
     CDataStream& read(char* pch, size_t nSize)
     {
         // Read from the beginning of the buffer
-        // assert(nSize >= 0);
         unsigned int nReadPosNext = nReadPos + nSize;
         if (nReadPosNext >= vch.size())
         {
@@ -1104,7 +1054,6 @@ public:
     CDataStream& write(const char* pch, size_t nSize)
     {
         // Write to the end of the buffer
-        // assert(nSize >= 0);
         vch.insert(vch.end(), pch, pch + nSize);
         return (*this);
     }
@@ -1198,14 +1147,6 @@ int main(int argc, char *argv[])
 #endif
 
 
-
-
-
-
-
-
-
-
 /** RAII wrapper for FILE*.
  *
  * Will automatically close the file when it goes out of scope if not null.
@@ -1250,7 +1191,6 @@ public:
     FILE** operator&()          { return &file; }
     FILE* operator=(FILE* pnew) { return file = pnew; }
     bool operator!()            { return (file == NULL); }
-
 
     //
     // Stream subset

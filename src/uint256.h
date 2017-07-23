@@ -190,7 +190,6 @@ public:
     {
         // prefix operator
         int i = 0;
-        // while (--pn[i] == -1 && i < WIDTH-1)
         while (--pn[i] == (uint32_t)-1 && i < WIDTH-1)
             i++;
         return *this;
@@ -283,8 +282,6 @@ public:
         return (!(a == b));
     }
 
-
-
     std::string GetHex() const
     {
         char psz[sizeof(pn)*2 + 1];
@@ -362,26 +359,22 @@ public:
 
     uint64_t GetLow64(int n=0) const
     {
-        // return pn[2*n] | (uint64_t)pn[2*n+1] << 32;
         assert(WIDTH >= 2);
         return pn[0] | (uint64_t)pn[1] << 32;
     }
 
-//    unsigned int GetSerializeSize(int nType=0, int nVersion=PROTOCOL_VERSION) const
     unsigned int GetSerializeSize(int nType, int nVersion) const
     {
         return sizeof(pn);
     }
 
     template<typename Stream>
-//    void Serialize(Stream& s, int nType=0, int nVersion=PROTOCOL_VERSION) const
     void Serialize(Stream& s, int nType, int nVersion) const
     {
         s.write((char*)pn, sizeof(pn));
     }
 
     template<typename Stream>
-//    void Unserialize(Stream& s, int nType=0, int nVersion=PROTOCOL_VERSION)
     void Unserialize(Stream& s, int nType, int nVersion)
     {
         s.read((char*)pn, sizeof(pn));
@@ -413,12 +406,10 @@ typedef base_uint<160> base_uint160;
 typedef base_uint<256> base_uint256;
 
 
-
 //
 // uint160 and uint256 could be implemented as templates, but to keep
 // compile errors and debugging cleaner, they're copy and pasted.
 //
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -532,10 +523,6 @@ inline const uint160 operator+(const uint160& a, const uint160& b)      { return
 inline const uint160 operator-(const uint160& a, const uint160& b)      { return (base_uint160)a -  (base_uint160)b; }
 
 
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // uint256
@@ -645,14 +632,6 @@ inline const uint256 operator&(const uint256& a, const uint256& b)      { return
 inline const uint256 operator|(const uint256& a, const uint256& b)      { return (base_uint256)a |  (base_uint256)b; }
 inline const uint256 operator+(const uint256& a, const uint256& b)      { return (base_uint256)a +  (base_uint256)b; }
 inline const uint256 operator-(const uint256& a, const uint256& b)      { return (base_uint256)a -  (base_uint256)b; }
-
-
-
-
-
-
-
-
 
 
 #ifdef TEST_UINT256

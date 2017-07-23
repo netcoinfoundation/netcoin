@@ -24,7 +24,6 @@ public:
     // Add a key to the store.  
     virtual bool AddKeyPubKey(const CKey &key, const CPubKey &pubkey) =0;
     virtual bool AddKey(const CKey &key);
-    // virtual bool AddKey(const CKey& key) =0;
 
     // Check whether a key corresponding to a given address is present in the store.
     virtual bool HaveKey(const CKeyID &address) const =0;
@@ -36,19 +35,8 @@ public:
     virtual bool AddCScript(const CScript& redeemScript) =0;
     virtual bool HaveCScript(const CScriptID &hash) const =0;
     virtual bool GetCScript(const CScriptID &hash, CScript& redeemScriptOut) const =0;
-/*
-    virtual bool GetSecret(const CKeyID &address, CSecret& vchSecret, bool &fCompressed) const
-    {
-        CKey key;
-        if (!GetKey(address, key))
-            return false;
-        vchSecret = key.GetSecret(fCompressed);
-        return true;
-    }
- */
 };
 
-// typedef std::map<CKeyID, std::pair<CSecret, bool> > KeyMap;
 typedef std::map<CKeyID, CKey> KeyMap;
 typedef std::map<CScriptID, CScript > ScriptMap;
 
@@ -60,7 +48,6 @@ protected:
     ScriptMap mapScripts;
 
 public:
-    //bool AddKey(const CKey& key);
     bool AddKeyPubKey(const CKey& key, const CPubKey &pubkey);
     bool HaveKey(const CKeyID &address) const
     {
@@ -91,8 +78,6 @@ public:
             KeyMap::const_iterator mi = mapKeys.find(address);
             if (mi != mapKeys.end())
             {
-                // keyOut.Reset();
-                // keyOut.SetSecret((*mi).second.first, (*mi).second.second);
                 keyOut = mi->second;
                 return true;
             }
@@ -153,7 +138,6 @@ public:
     bool Lock();
 
     virtual bool AddCryptedKey(const CPubKey &vchPubKey, const std::vector<unsigned char> &vchCryptedSecret);
-    // bool AddKey(const CKey& key);
     bool AddKeyPubKey(const CKey& key, const CPubKey &pubkey);
     bool HaveKey(const CKeyID &address) const
     {

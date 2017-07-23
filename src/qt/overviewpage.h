@@ -42,7 +42,6 @@ public:
     explicit OverviewPage(QWidget *parent = 0);
     ~OverviewPage();
 
-    // void setModel(WalletModel *model);
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
     void showOutOfSyncWarning(bool fShow);
@@ -72,7 +71,6 @@ signals:
 
 private:
     Ui::OverviewPage *ui;
-    // WalletModel *model;
     ClientModel *clientModel;
     WalletModel *walletModel;
     CWallet *wallet;
@@ -83,7 +81,6 @@ private:
     qint64 currentUnconfirmedBalance;
     qint64 currentImmatureBalance;
     QMenu *contextMenu;
-
 
     //Weight label
     qint64 currentWeight;
