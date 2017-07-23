@@ -15,22 +15,15 @@ POW Details
 
 POSV Details
 
- - POS activates on block 420,000 - Hard fork
- - Personal Investment Rate (PIR) for the APR
-   Stake reward increases in line with the value of
-          the coins staked on a sliding scale using the
-   following thresholds
+POS activated on block 420,000 - Hard fork
 
-PIR Values  -- Currently on year 2 
- Year 1 (ended Block # 945,600)
- NET Staked APR %
- |      -Year 1-    Ended       | Year 2 Ends Block 1,471,200  | Year 3 Ends Block #1,996,800 |
- 1               10  %          |  1                  20 %     |  1                 20 %      |
- 1,000           15  %          |  1,000              25 %     |  1,000             22 %      |
- 10,000          20  %          |  10,000             30 %     |  10,000            24 %      |
- 100,000         30  %          |  100,000            35 %     |  100,000           26 %      |
- 1,000,000       80  %          |  1,000,000          40 %     |  1,000,000         28 %      |
- 10,000,000+     100 %          |  10,000,000+        45 %     |  10,000,000+       30 %      |
+Personal Investment Rate or PIR is a special reward algoritme unique for a PoS coin. The APR Stake reward increases in line with the value of the coins staked on a sliding scale.In other words the more Netcoin you own and stake the bigger the reward you earn. The last 3 years Netcoin had 3 different levels of PIR and it reached the last and final level end 2016.
+The reward rates now are as followed: 0-999N --> 2%
+                                      1000-9999N --> 4%
+                                      10000-99999N --> 6%
+                                      100000-999999N --> 7%
+                                      1000000-9999999N --> 8%
+                                      10000000N->>> --> 10%
 
  - 120 seconds block time POS
  - 1 hour minimum age for staking.  30 days max age.
