@@ -19,7 +19,7 @@ POS activated on block 420,000 - Hard fork.
 
 POSV stake once each month to earn highest possible rewards incentivises running full nodes to increase POS security. Coin age gradually slows after 1 month with an aging half life of 90 days.
 
-Personal Investment Rate or PIR is a special reward algoritme unique for a PoS coin. The APR Stake reward increases in line with the value of the coins staked on a sliding scale.In other words the more Netcoin you own and stake the bigger the reward you earn. The last 3 years Netcoin had 3 different levels of PIR and it reached the last and final level end 2016.
+Personal Investment Rate or PIR is a special reward algorithm unique for a PoS coin. The APR Stake reward increases in line with the value of the coins staked on a sliding scale.In other words the more Netcoin you own and stake the bigger the reward you earn. The last 3 years Netcoin had 3 different levels of PIR and it reached the last and final level end 2016.
 The reward rates now are as followed: 0-999N --> 2%
                                       1000-9999N --> 4%
                                       10000-99999N --> 6%
