@@ -1,21 +1,23 @@
 NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investment Rate
 
 
- - The default ports: Connection 11310, and RPC 11311
- - No premine 
+The default ports: Connection 11310, and RPC 11311
+No premine. 
 
-POW Details
+POW Details.
 
- - 120 seconds block time POW
- - scrypt algorithm
- - 384 POW coins per block. Halves every 129600 blocks (3 months) -Currently 6.25 NET reward
- - 8X reward random super block each hour -Currently 50 NET reward
- - difficulty retargets on every block
+60 seconds block time POW.
+Scrypt algorithm.
+15 POW coins per block.
+30 confirmations for mined blocks.
+Difficulty retargets on every block.
 
 
-POSV Details
+POS Details.
 
-POS activated on block 420,000 - Hard fork
+POS activated on block 420,000 - Hard fork.
+
+POSV stake once each month to earn highest possible rewards incentivises running full nodes to increase POS security. Coin age gradually slows after 1 month with an aging half life of 90 days.
 
 Personal Investment Rate or PIR is a special reward algoritme unique for a PoS coin. The APR Stake reward increases in line with the value of the coins staked on a sliding scale.In other words the more Netcoin you own and stake the bigger the reward you earn. The last 3 years Netcoin had 3 different levels of PIR and it reached the last and final level end 2016.
 The reward rates now are as followed: 0-999N --> 2%
@@ -25,31 +27,12 @@ The reward rates now are as followed: 0-999N --> 2%
                                       1000000-9999999N --> 8%
                                       10000000N->>> --> 10%
 
- - 120 seconds block time POS
- - 1 hour minimum age for staking.  30 days max age.
- - FAIR-WEIGHT protocol enforced stake weight coin value cap of 100,000 NET
-   replaces the idea of 'block splitting' to prevent very large NET holders
-          signing lots of POS blocks
+120 seconds block time POS
+1 hour minimum age for staking.  30 days max age.
+FAIR-WEIGHT protocol replaces the idea of 'block splitting' to prevent very large NET holders signing lots of POS blocks.
 
- - 6 confirmations for transaction
- - 70 confirmations for minted blocks
-
- - POSV - stake once each month to earn highest possible rewards
-          incentivises running full nodes to increase POS security
-   coin age gradually slows after 1 month with an aging half life of 90 days.
-   
-Articles of interest
-====================
-Read all about Netcoins "Fair Weight" method.
-
-http://cryptomunity.boards.net/thread/719/netcoin-weight-protocol-another-clone?page=1&scrollTo=10447
-
-Read about Netcoins "OWI" method
-
-http://cryptomunity.boards.net/thread/721/posv-rewards-blockchain-guardians-netcoin
-	
-Go NET :)
-	
+70 confirmations for minted blocks
+   	
 Development process
 ===================
 
