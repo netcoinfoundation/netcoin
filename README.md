@@ -1,3 +1,6 @@
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1a8b92aafc7d435288da2d19022080cb)](https://www.codacy.com/app/ghettomining/netcoin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=netcoinfoundation/netcoin&amp;utm_campaign=Badge_Grade)
+
 NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investment Rate
 
 
