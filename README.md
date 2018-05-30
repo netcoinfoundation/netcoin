@@ -1,7 +1,6 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1a8b92aafc7d435288da2d19022080cb)](https://www.codacy.com/app/ghettomining/netcoin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=netcoinfoundation/netcoin&amp;utm_campaign=Badge_Grade)
-
-<iframe src="https://discordapp.com/widget?id=219586006335225856&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
+[![discord](https://discordapp.com/widget?id=219586006335225856&theme=dark)
 
 ![alt text](http://netcoin.io/wp-content/uploads/2013/12/NETCOIN_TRANPARENT_3-INCH_4WEBno-shadow-300x257.png)
 
