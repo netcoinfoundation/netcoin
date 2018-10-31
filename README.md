@@ -63,6 +63,6 @@ be used to issue a warning of closure. The pull will be closed 15 days
 after the warning if action is not taken by the author. Pull requests closed
 in this manner will have their corresponding issue labeled 'stagnant'.
 
-Issues with no commits will be given a similar warning, and closed after
+Issues with no comments will be given a similar warning, and closed after
 15 days from their last activity. Issues closed in this manner will be 
 labeled 'stale'. 
