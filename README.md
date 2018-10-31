@@ -22,7 +22,7 @@ Personal Investment Rate or PIR is a special reward algorithm unique for a PoS c
 
 The reward rates now are as follows:  
                                        
-                                       NET | APR
+                                       NET  |  APR
                               ------------- | -------------
                                       1-999 | 2%
                                   1000-9999 | 4%
