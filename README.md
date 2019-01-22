@@ -22,6 +22,7 @@ Below you shall find links to the specific build environment instructions. These
 Any issues/bugs please see below first to check if your bug/issue was submitted/solved before posting a new issue please try be as clear and concise about the actual issue e.g "wallet crashed" would not be enough detail to do anything and the issue will be closed. However "wallet crashed" I was trying to send coins from (address a) to (address b) both within the same wallet and the wallet reports I have sent 0 coins out but looking at the explorer (insert link with txid) it seems the coins sent but I cannot see they have moved locally, expected outcome was to see funds leave and return. recreatable : yes platform : osx other platforms affected : yes/no/untested build version : 3.0.0.0-stable result : crash/continued to run
 
 If formatted correctly bugs shall be assigned to a member of the team for recreation and resolve. The above bug would receive status closed as an intentional bug(feature) of the wallet.
+
 [bug/issue submission](https://github.com/netcoinfoundation/netcoin/issues)
 
 NetCoin (NET) - Litecoin / PeerCoin POW/POSV hybrid with Personal Investment Rate
