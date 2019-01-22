@@ -5,7 +5,17 @@
 
 ![alt text](http://netcoin.io/wp-content/uploads/2013/12/NETCOIN_TRANPARENT_3-INCH_4WEBno-shadow-300x257.png)
 
-[Contribution guidelines for this project](doc/build-unix.txt)
+[main repo](https://github.com/netcoinfoundation/netcoin)
+
+[compiling headless daemon on unix platform](doc/build-unix.txt)
+
+[compiling headless daemon on osx platform](doc/build-osx.txt)
+
+[compiling headless daemon on windows platform](doc/build-msw.txt)
+
+[compiling QT on multiple platforms](doc/readme-qt.rst)
+
+[bug/issue submission](https://github.com/netcoinfoundation/netcoin/issues)
 
 
 NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investment Rate
