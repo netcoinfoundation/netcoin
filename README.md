@@ -33,7 +33,8 @@ POS Details.
 
 POS activated on block 420,000 - Hard fork.
 
-POSV stake once each month to earn highest possible rewards incentivises running full nodes to increase POS security. Coin age gradually slows after 1 month with an aging half life of 90 days.
+POSV stake once each month to earn highest possible rewards incentivises running full nodes to increase POS security.
+Coin age gradually slows after 1 month with an aging half life of 90 days.
 
 Personal Investment Rate or PIR is a special reward algorithm unique for a PoS coin. The APR Stake reward increases in line with the value of the coins staked on a sliding scale.In other words the more Netcoin you own and stake the bigger the reward you earn. The last 3 years Netcoin had 3 different levels of PIR and it reached the last and final level end 2016.
 
@@ -47,14 +48,19 @@ The reward rates now are as follows:
                           100000-999999 | 7%
                         1000000-9999999 | 8%
                               10000000+ | 10%
-120 seconds block time POS 1 hour minimum age for staking. 30 days max age. FAIR-WEIGHT protocol replaces the idea of 'block splitting' to prevent very large NET holders signing lots of POS blocks.
+
+120 seconds block time POS.
+1 hour minimum age for staking.
+30 days max age. FAIR-WEIGHT protocol replaces the idea of 'block splitting' to prevent very large NET holders signing lots of POS blocks.
 
 70 confirmations for minted blocks
 
 Pow ended on block xxx last official pow block
+
 Q4- 2018 security/chain breach occurs meaning cryptopians funds were stolen, this was an exploit in the workings between central ledgers (exchange) and the chains state all netcoins held at cryptopia were removed from their wallets and or sold into the hands of legitimate users. There is no way to tell if this exploit resulted in real transaction reversals however it is clear that any confirming stakes were wiped out aka stake sniping which is how it was picked up. Large orphan stakes. Once identified cryptopia were asked to up the confirm limits to try and stem the attack in the hopes that the network would bounce back to good standing and the attackers efforts stemmed, unfortunately this made things slightly worse as it seems the attacker had already played out this scenario and hours later attacked again. Markets were paused while we (netcoin) along with cryptopia came to terms with the damages involved. A few months investigating lead us to where we are today (22/1/2019) cryptopias ledgers are down a whopping 265,746,657 netcoins and the chain reports no changes no duplications and no more coins than the expected 10% maximum and 2% minimum inflation through proof of stake rewards, this leaves us in a sticky situation as 2 situations arise:
 
 1. cryptopia is held accountable for all its ledgers its users keys and ultimately the loss of these coins and they have to purchase these back
+
 2. The chain was at fault regardless of it only manipulating centrally held ledgers due to transaction malleability/rewinds/51%/other attack meaning we are responsible for ensuring users funds are replaced.
 
 
