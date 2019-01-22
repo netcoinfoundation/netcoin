@@ -5,7 +5,8 @@
 
 ![alt text](http://netcoin.io/wp-content/uploads/2013/12/NETCOIN_TRANPARENT_3-INCH_4WEBno-shadow-300x257.png)
 
-[Contribution guidelines for this project](doc/build.unix)
+[Contribution guidelines for this project](doc/build-unix)
+
 
 NetCoin (NET) - Litecoin / PeerCoin Hybrid POW/POSV hybrid with Personal Investment Rate
 
