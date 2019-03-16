@@ -178,7 +178,7 @@ struct CMainSignals {
 /*
 // make sure all wallets know about the given transaction, in the given block
 void SyncWithWallets(const CTransaction& tx, const CBlock* pblock, bool fUpdate, bool fConnect)
-{    
+{
     if (!fConnect)
     {
         // ppcoin: wallets need to refund inputs when disconnecting coinstake
@@ -1823,7 +1823,7 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
         return bnTargetLimit.GetCompact(); // genesis block
 
     const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
-    if (pindexPrev->pprev == NULL)        
+    if (pindexPrev->pprev == NULL)
         return bnTargetLimit.GetCompact(); // first block
     const CBlockIndex* pindexPrevPrev = GetLastBlockIndex(pindexPrev->pprev, fProofOfStake);
     if (pindexPrevPrev->pprev == NULL)
@@ -3543,7 +3543,7 @@ bool LoadBlockIndex(bool fAllowNew)
                     ++block.nTime;
                 }
             }
- 
+
 			printf("block.GetHash = %s\n", block.GetHash().ToString().c_str());
         }
 
