@@ -18,7 +18,6 @@
 #include "script.h"
 #include "db.h"
 #include "scrypt.h"
-#include "zerocoin/Zerocoin.h"
 
 #include <list>
 
@@ -57,7 +56,6 @@ static const int64_t DUST_SOFT_LIMIT = 100000000;
 static const int64_t DUST_HARD_LIMIT = 1000000;
 static const int64_t MAX_MONEY = 325000000 * COIN; // NetCoin: maximum of 325M coins
 static const int64_t MIN_TXOUT_AMOUNT = MIN_TX_FEE;
-
 
 // Netcoin PIR personal staking interest rate is organised into percentage reward bands based on the value of the coins being staked
 // madprofezzor@gmail.com
@@ -99,21 +97,30 @@ static const int fHaveUPnP = false;
 static const int BLOCK_HEIGHT_KGW_START = 218500; // HISTORICAL HARD FORK. DO NOT CHANGE
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START = 420000; //POS + DIGISHIELD HISTORICAL FORK
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START = 438500; //DIGISHIELD FIX FORK
-static const int BLOCK_HEIGHT_FINALPOW =  2500000; // this is where the proof of work ends.
+static const int BLOCK_HEIGHT_FINALPOW =  2654000; // this is where the proof of work ends.
+static const int BLOCK_HEIGHT_REPOW =  9999999; // this is where the proof of work restarts placeholder for future useage.
+
 static const int LOW_S_CHECK_SIGNATURES = 1300000; // CHECK SIGNATURE FORK
+static const int MAX_REORG_DEPTH = 68;
+static const unsigned int FORKTIME_REORG_PROTO_CHANGES = 1553212800; // 03/22/2019 @ 12:00am (gmt)
+static const int RECOVER_DBLSP_HEIGHT = 2664096 ; // DoubleSpend Fix MainNet should roughly be 03/22/2019
+
+
 
 static const int BLOCK_HEIGHT_KGW_START_TESTNET = 5;
 static const int BLOCK_HEIGHT_POS_AND_DIGISHIELD_START_TESTNET =10;
 static const int BLOCK_HEIGHT_DIGISHIELD_FIX_START_TESTNET =20;
-static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  5000;
+static const int BLOCK_HEIGHT_FINALPOW_TESTNET =  1000;
+static const int BLOCK_HEIGHT_REPOW_TESTNET =  15197;
 static const int LOW_S_CHECK_SIGNATURES_TESTET = 30;
-
+static const int MAX_REORG_DEPTH_TESTNET = 68;
+static const int RECOVER_DBLSP_HEIGHT_TESTNET = 500; // DoubleSpend Fix Testnet.
+static const unsigned int FORKTIME_REORG_PROTO_CHANGES_TEST_NET = 1547855940; // 11/12/2018 @ 10:50pm (gmt)
 inline bool ProtocolRetargetingFixed(int nHeight) { return TestNet() || nHeight > 1345000; }
 
-inline int64_t PastDrift(int64_t nTime)   { return nTime - 10 * 60; } // up to 10 minutes from the past
-inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; } // up to 10 minutes from the future
+inline int64_t PastDrift(int64_t nTime)   { return nTime -  30; } // up to 30 seconds from the past
+inline int64_t FutureDrift(int64_t nTime) { return nTime +  30; } // up to 30 seconds from the future
 
-extern libzerocoin::Params* ZCParams;
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
 extern std::map<uint256, CBlockIndex*> mapBlockIndex;
@@ -318,7 +325,7 @@ public:
         READWRITE(vout);
         READWRITE(nLockTime);
 
-		if(this->nVersion > LEGACY_VERSION_1) { 
+		if(this->nVersion > LEGACY_VERSION_1) {
         READWRITE(strTxComment); }
 
     )
@@ -473,7 +480,7 @@ public:
     {
         std::string str;
         str += IsCoinBase()? "Coinbase" : (IsCoinStake()? "Coinstake" : "CTransaction");
-        str += strprintf("(hash=%s, nTime=no, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", nLockTime=%d, strComment=%s)\n",
+        str += strprintf("(hash=%s, nTime=no, ver=%d, vin.size=%" PRIszu ", vout.size=%" PRIszu ", nLockTime=%d, strComment=%s)\n",
             GetHash().ToString().c_str(),
             nVersion,
             vin.size(),
@@ -897,7 +904,7 @@ public:
 
         // Flush stdio buffers and commit to disk before returning
         fflush(fileout);
-        if (!IsInitialBlockDownload() || (nBestHeight+1) % 500 == 0)
+        if (!IsInitialBlockDownload() || (nBestHeight+1) % 1000 == 0)
             FileCommit(fileout);
 
         return true;
@@ -933,7 +940,7 @@ public:
 
     void print() const
     {
-        printf("CBlock(hash=%s, PoW=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%"PRI64u", vchBlockSig=%s)\n",
+        printf("CBlock(hash=%s, PoW=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%" PRI64u ", vchBlockSig=%s)\n",
             GetHash().ToString().c_str(),
             GetPoWHash().ToString().c_str(),
             nVersion,
@@ -992,7 +999,7 @@ public:
     int64_t nMoneySupply;
 
     unsigned int nFlags;  // ppcoin: block index flags
-    enum  
+    enum
     {
         BLOCK_PROOF_OF_STAKE = (1 << 0), // is proof-of-stake block
         BLOCK_STAKE_ENTROPY  = (1 << 1), // entropy bit for stake modifier
@@ -1193,11 +1200,11 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockIndex(nprev=%p, pnext=%p, nFile=%u, nBlockPos=%-6d nHeight=%d, nMint=%s, nMoneySupply=%s, nFlags=(%s)(%d)(%s), nStakeModifier=%"PRI64x", nStakeModifierChecksum=%08x, hashProof=%s, prevoutStake=(%s), nStakeTime=%d merkle=%s, hashBlock=%s)",
+        return strprintf("CBlockIndex(nprev=%p, pnext=%p, nFile=%u, nBlockPos=%-6d nHeight=%d, nMint=%s, nMoneySupply=%s, nFlags=(%s)(%d)(%s), nStakeModifier=%" PRI64x ", nStakeModifierChecksum=%08x, hashProof=%s, prevoutStake=(%s), nStakeTime=%d merkle=%s, hashBlock=%s)",
             pprev, pnext, nFile, nBlockPos, nHeight,
             FormatMoney(nMint).c_str(), FormatMoney(nMoneySupply).c_str(),
             GeneratedStakeModifier() ? "MOD" : "-", GetStakeEntropyBit(), IsProofOfStake()? "PoS" : "PoW",
-            nStakeModifier, nStakeModifierChecksum, 
+            nStakeModifier, nStakeModifierChecksum,
             hashProof.ToString().c_str(),
             prevoutStake.ToString().c_str(), nStakeTime,
             hashMerkleRoot.ToString().c_str(),
@@ -1258,7 +1265,7 @@ public:
 	            const_cast<CDiskBlockIndex*>(this)->prevoutStake.SetNull();
 	            const_cast<CDiskBlockIndex*>(this)->nStakeTime = 0;
 	        }
-	        READWRITE(hashProof);	
+	        READWRITE(hashProof);
 		}
 
         // block header

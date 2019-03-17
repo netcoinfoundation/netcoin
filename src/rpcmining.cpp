@@ -44,7 +44,7 @@ Value getmininginfo(const Array& params, bool fHelp)
     obj.push_back(Pair("currentblocksize",(uint64_t)nLastBlockSize));
     obj.push_back(Pair("currentblocktx",(uint64_t)nLastBlockTx));
 
-    if(nBestHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW: BLOCK_HEIGHT_FINALPOW_TESTNET) )
+    if (nBestHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && nBestHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
     {
         diff.push_back(Pair("proof-of-stake",  GetDifficulty(GetLastBlockIndex(pindexBest, true))));
         diff.push_back(Pair("search-interval", (int)nLastCoinStakeSearchInterval));
@@ -122,7 +122,7 @@ Value getworkex(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(-10, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && pindexBest->nHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -190,7 +190,7 @@ Value getworkex(const Array& params, bool fHelp)
         result.push_back(Pair("coinbase", HexStr(ssTx.begin(), ssTx.end())));
 
         Array merkle_arr;
-        printf("DEBUG: merkle size %"PRIszu"\n", merkle.size());
+        printf("DEBUG: merkle size %" PRIszu "\n", merkle.size());
 
         BOOST_FOREACH(uint256 merkleh, merkle) {
             printf("%s\n", merkleh.ToString().c_str());
@@ -258,7 +258,7 @@ Value getwork(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Netcoin is downloading blocks...");
 
-    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+    if (pindexBest->nHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && pindexBest->nHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -406,7 +406,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
             throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "NetCoin is downloading blocks...");
 
 
-    if (pindexBest->nHeight >= (!TestNet() ? BLOCK_HEIGHT_FINALPOW : BLOCK_HEIGHT_FINALPOW_TESTNET))
+        if (pindexBest->nHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && pindexBest->nHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
         // static CReserveKey reservekey(pwalletMain);

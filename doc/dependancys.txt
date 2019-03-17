@@ -1,0 +1,8 @@
+deps used for building netcoin 3.0.0
+windows/mac
+BOOST=1_68_0
+BERKLEY=db-6.2.32.NC
+OPENSSL=1.0.2q
+MINIUPNPC=1.9.2
+QRENCODE=4.0.2
+for linux use latest available from distro servers. or install above deps manually. see build-unix instructions

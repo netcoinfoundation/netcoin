@@ -52,7 +52,7 @@ public:
         pchMessageStart[1] = 0xb6;
         pchMessageStart[2] = 0xa5;
         pchMessageStart[3] = 0xdb;
-        vAlertPubKey = ParseHex("04ef014b36647e8433a2cedf76f1d6ea0bc5914ba936fadceda90d7472da3cf442469d3a1ab5ee416e7428726761dd3188bda3d0ae163db491f8ca0bdad92a0506");
+        vAlertPubKey = ParseHex("04c1139c96e08906035ecb5bef4fe12092d04908bd9e9283c0d9a1e2c0c4dc3e7ddda39373bd150c4e843956f8bc408496a13fd04dfda574890656e38d73f8e96f");
         nDefaultPort = 11310;
         nRPCPort = 11211;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
@@ -81,7 +81,9 @@ public:
         assert(hashGenesisBlock == uint256("0x38624e3834cfdc4410a5acbc32f750171aadad9620e6ba6d5c73201c16f7c8d1"));
         assert(genesis.hashMerkleRoot == uint256("0xe5981b72a47998b021ee8995726282d1a575477897d9d5a319167601fffebb21"));
 
-        vSeeds.push_back(CDNSSeedData("presstab.pw", "netseed.presstab.pw"));
+        vSeeds.push_back(CDNSSeedData("seed1", "95.179.224.137"));
+          vSeeds.push_back(CDNSSeedData("seed2", "coins.prohashing.com:6058"));
+
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 112);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 5);
@@ -91,7 +93,7 @@ public:
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
-        // nLastPOWBlock = 10000;
+
     }
 
     virtual const CBlock& GenesisBlock() const { return genesis; }
@@ -122,7 +124,7 @@ public:
         pchMessageStart[2] = 0xb6;
         pchMessageStart[3] = 0xf1;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 16);
-        vAlertPubKey = ParseHex("0471dc165db490094d35cde15b1f5d755fa6ad6f2b5ed0f340e3f17f57389c3c2af113a8cbcc885bde73305a553b5640c83021128008ddf882e856336269080496");
+        vAlertPubKey = ParseHex("04c1139c96e08906035ecb5bef4fe12092d04908bd9e9283c0d9a1e2c0c4dc3e7ddda39373bd150c4e843956f8bc408496a13fd04dfda574890656e38d73f8e96f");
         nDefaultPort = 21310;
         nRPCPort = 22444;
         strDataDir = "testnet";
@@ -135,6 +137,8 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
+
+                vSeeds.push_back(CDNSSeedData("seedserver1", "95.179.224.137"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);
@@ -202,19 +206,35 @@ void SelectParams(CChainParams::Network network) {
 }
 
 bool SelectParamsFromCommandLine() {
+
     bool fRegTest = GetBoolArg("-regtest", false);
+
     bool fTestNet = GetBoolArg("-testnet", false);
 
+
+
     if (fTestNet && fRegTest) {
+
         return false;
+
     }
 
+
+
     if (fRegTest) {
+
         SelectParams(CChainParams::REGTEST);
+
     } else if (fTestNet) {
+
         SelectParams(CChainParams::TESTNET);
+
     } else {
+
         SelectParams(CChainParams::MAIN);
+
     }
+
     return true;
+
 }

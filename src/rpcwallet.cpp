@@ -287,7 +287,7 @@ Value stakeforcharity(const Array &params, bool fHelp)
 
     int64_t nMinAmount = MIN_TXOUT_AMOUNT;
 	int64_t nMaxAmount = MAX_MONEY;
-	
+
 	// Optional Change Address
     CBitcoinAddress changeAddress;
     if (params.size() > 2) {
@@ -318,7 +318,7 @@ Value stakeforcharity(const Array &params, bool fHelp)
     }
 
     CWalletDB walletdb(pwalletMain->strWalletFile);
-	
+
 	LOCK(pwalletMain->cs_wallet);
 	{
 		bool fFileBacked = pwalletMain->fFileBacked;
@@ -342,10 +342,10 @@ Value stakeforcharity(const Array &params, bool fHelp)
 		//For now max percentage is 50.
         if (nPer > 50 )
 			nPer = 50;
-			
+
 		if(fFileBacked)
               walletdb.EraseStakeForCharity(pwalletMain->strStakeForCharityAddress.ToString());
-			  
+
 		pwalletMain->strStakeForCharityAddress = address;
         pwalletMain->nStakeForCharityPercent = nPer;
 		pwalletMain->strStakeForCharityChangeAddress = changeAddress;
@@ -355,11 +355,35 @@ Value stakeforcharity(const Array &params, bool fHelp)
 		fGlobalStakeForCharity = true;
 		if(fFileBacked)
 			walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(), nMinAmount, nMaxAmount);
-			 
+
      	if(fFileBacked)
                 walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(),nMinAmount,nMaxAmount);
         }
         return Value::null;
+}
+
+double GetPoSKernelPS2(const CBlockIndex* pindex)
+{
+    int nPoSInterval = 72;
+    double dStakeKernelsTriedAvg = 0;
+    int nStakesHandled = 0, nStakesTime = 0;
+
+    const CBlockIndex* pindexPrevStake = NULL;
+
+    while (pindex && nStakesHandled < nPoSInterval)
+    {
+        if (pindex->IsProofOfStake())
+        {
+            dStakeKernelsTriedAvg += GetDifficulty(pindex) * 4294967296.0;
+            nStakesTime += pindexPrevStake ? (pindexPrevStake->nHeight - pindex->nHeight) : 0;
+            pindexPrevStake = pindex;
+            nStakesHandled++;
+        }
+
+        pindex = pindex->pprev;
+    }
+
+    return nStakesTime ? dStakeKernelsTriedAvg / nStakesTime : 0;
 }
 
 
@@ -454,15 +478,15 @@ Value sendtoaddress(const Array& params, bool fHelp)
         wtx.mapValue["comment"] = params[2].get_str();
     if (params.size() > 3 && params[3].type() != null_type && !params[3].get_str().empty())
         wtx.mapValue["to"]      = params[3].get_str();
-		
+
     // Transaction comment
-	std::string txcomment;
+    std::string txcomment;
     if (params.size() > 4 && params[4].type() != null_type && !params[4].get_str().empty())
-	{
+    {
         txcomment = params[4].get_str();
-		if (txcomment.length() > MAX_TX_COMMENT_LEN)
-			txcomment.resize(MAX_TX_COMMENT_LEN);
-	}
+        if (txcomment.length() > MAX_TX_COMMENT_LEN)
+            txcomment.resize(MAX_TX_COMMENT_LEN);
+    }
 
     if (pwalletMain->IsLocked())
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
@@ -473,7 +497,6 @@ Value sendtoaddress(const Array& params, bool fHelp)
 
     return wtx.GetHash().GetHex();
 }
-
 Value listaddressgroupings(const Array& params, bool fHelp)
 {
     if (fHelp)
@@ -830,8 +853,10 @@ Value sendfrom(const Array& params, bool fHelp)
     wtx.strFromAccount = strAccount;
     if (params.size() > 4 && params[4].type() != null_type && !params[4].get_str().empty())
         wtx.mapValue["comment"] = params[4].get_str();
+
     if (params.size() > 5 && params[5].type() != null_type && !params[5].get_str().empty())
-        wtx.mapValue["to"]      = params[5].get_str();
+        wtx.mapValue["to"] = params[5].get_str();
+
 	std::string txcomment;
     if (params.size() > 6 && params[6].type() != null_type && !params[6].get_str().empty())
 	{
@@ -872,7 +897,7 @@ Value sendmany(const Array& params, bool fHelp)
 
     CWalletTx wtx;
 	std::string strTxComment;
-	
+
     wtx.strFromAccount = strAccount;
     if (params.size() > 3 && params[3].type() != null_type && !params[3].get_str().empty())
         wtx.mapValue["comment"] = params[3].get_str();
@@ -947,7 +972,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     if ((int)keys.size() < nRequired)
         throw runtime_error(
             strprintf("not enough keys supplied "
-                      "(got %"PRIszu" keys, but need at least %d to redeem)", keys.size(), nRequired));
+                      "(got %" PRIszu " keys, but need at least %d to redeem)", keys.size(), nRequired));
     // std::vector<CKey> pubkeys;
     std::vector<CPubKey> pubkeys;
     pubkeys.resize(keys.size());
@@ -1949,17 +1974,22 @@ Value makekeypair(const Array& params, bool fHelp)
         strPrefix = params[0].get_str();
 
     CKey key;
-    // int nCount = 0;
-    // do
-    // {
+     int nCount = 0;
+     do
+    {
+
         key.MakeNewKey(false);
-    //     nCount++;
-    // } while (nCount < 10000 && strPrefix != HexStr(key.GetPubKey()).substr(0, strPrefix.size()));
+        nCount++;
+        string strKeyfix = HexStr(key.GetPubKey()).substr(0, strPrefix.size());
+       error("prefix = %s", strPrefix.c_str());
+        error("\n keytry =%s", strKeyfix.c_str());
 
-    // if (strPrefix != HexStr(key.GetPubKey()).substr(0, strPrefix.size()))
-    //   return Value::null;
+     } while ( strPrefix != HexStr(key.GetPubKey()).substr(0, strPrefix.size()) && nCount < 20);
 
-    //bool fCompressed;
+      if (strPrefix != HexStr(key.GetPubKey()).substr(0, strPrefix.size()))
+       return Value::null;
+
+    bool fCompressed;
     // CPrivKey vchSecret = key.GetSecret(fCompressed);
 
     CPrivKey vchPrivKey = key.GetPrivKey();
@@ -1971,3 +2001,168 @@ Value makekeypair(const Array& params, bool fHelp)
     return result;
 }
 
+// getstakereport
+struct StakePeriodRange_T {
+    int64_t Start;
+    int64_t End;
+    int64_t Total;
+    int Count;
+    string Name;
+};
+
+typedef vector<StakePeriodRange_T> vStakePeriodRange_T;
+
+    // **em52: Get total coins staked on given period
+    // inspired from CWallet::GetStake()
+    // Parameter aRange = Vector with given limit date, and result
+    // return int =  Number of Wallet's elements analyzed
+int GetsStakeSubTotal(vStakePeriodRange_T& aRange)
+{
+    int nElement = 0;
+    int64_t nAmount = 0;
+
+
+    const CWalletTx* pindex;
+
+    vStakePeriodRange_T::iterator vIt;
+
+    // scan the entire wallet transactions
+    for (map<uint256, CWalletTx>::const_iterator it = pwalletMain->mapWallet.begin();
+         it != pwalletMain->mapWallet.end();
+         ++it)
+    {
+        pindex = &(*it).second;
+
+        // skip orphan block or immature
+        if  ((!pindex->GetDepthInMainChain()) || (pindex->GetBlocksToMaturity()>0))
+            continue;
+
+        // skip transaction other than POS block
+        if (!(pindex->IsCoinStake()))
+            continue;
+
+        nElement++;
+
+        // use the cached amount if available
+        if (pindex->fCreditCached && pindex->fDebitCached)
+            nAmount = pindex->nCreditCached - pindex->nDebitCached;
+        else
+            nAmount = pindex->GetCredit() - pindex->GetDebit();
+
+        // scan the range
+        for(vIt=aRange.begin(); vIt != aRange.end(); vIt++)
+        {
+            if (pindex->nTimeSmart >= vIt->Start)
+            {
+                if (! vIt->End)
+                {   // Manage Special case
+                    vIt->Start = pindex->nTimeSmart;
+                    vIt->Total = nAmount;
+                }
+                else if (pindex->nTimeSmart <= vIt->End)
+                {
+                    vIt->Count++;
+                    vIt->Total += nAmount;
+                }
+            }
+        }
+
+    }
+    return nElement;
+}
+
+    // prepare range for stake report
+vStakePeriodRange_T PrepareRangeForStakeReport()
+{
+    vStakePeriodRange_T aRange;
+    StakePeriodRange_T x;
+
+    struct tm Loc_MidNight;
+
+    int64_t n1Hour = 60*60;
+    int64_t n1Day = 24 * n1Hour;
+
+    int64_t nToday = GetTime();
+    time_t CurTime = nToday;
+
+    localtime_r(&CurTime, &Loc_MidNight);
+    Loc_MidNight.tm_hour = 0;
+    Loc_MidNight.tm_min = 0;
+    Loc_MidNight.tm_sec = 0;  // set midnight
+
+    x.Start = mktime(&Loc_MidNight);
+    x.End   = nToday;
+    x.Count = 0;
+    x.Total = 0;
+
+    // prepare last single 30 day Range
+    for(int i=0; i<30; i++)
+    {
+        x.Name = DateTimeStrFormat(x.Start);
+
+        aRange.push_back(x);
+
+        x.End    = x.Start - 1;
+        x.Start -= n1Day;
+    }
+
+    // prepare subtotal range of last 24H, 1 week, 30 days, 1 years
+    int GroupDays[4][2] = { {1 ,0}, {7 ,0 }, {30, 0}, {365, 0}};
+    string sGroupName[] = {"24H", "7 Days", "30 Days", "365 Days" };
+
+    nToday = GetTime();
+
+    for(int i=0; i<4; i++)
+    {
+        x.Start = nToday - GroupDays[i][0] * n1Day;
+        x.End   = nToday - GroupDays[i][1] * n1Day;
+        x.Name = "Last " + sGroupName[i];
+
+        aRange.push_back(x);
+    }
+
+    // Special case. not a subtotal, but last stake
+    x.End  = 0;
+    x.Start = 0;
+    x.Name = "Latest Stake";
+    aRange.push_back(x);
+
+return aRange;
+}
+
+    // getstakereport: return SubTotal of the staked coin in last 24H, 7 days, etc.. of all owns address
+Value getstakereport(const Array& params, bool fHelp)
+{
+    if ((params.size()>0) || (fHelp))
+        throw runtime_error(
+            "getstakereport\n"
+            "List last single 30 day stake subtotal and last 24h, 7, 30, 365 day subtotal.\n");
+
+    vStakePeriodRange_T aRange = PrepareRangeForStakeReport();
+
+    // get subtotal calc
+    int64_t nTook = GetTimeMillis();
+    int nItemCounted = GetsStakeSubTotal(aRange);
+    nTook = GetTimeMillis() - nTook;
+
+    Object result;
+
+    vStakePeriodRange_T::iterator vIt;
+
+    // report it
+    for(vIt = aRange.begin(); vIt != aRange.end(); vIt++)
+    {
+        result.push_back(Pair(vIt->Name, FormatMoney(vIt->Total).c_str()));
+    }
+
+    vIt--;
+    result.push_back(Pair("Latest Time",
+       vIt->Start ? DateTimeStrFormat(vIt->Start).c_str() :
+       "Never"));
+
+    // report element counted / time took
+    result.push_back(Pair("Stake counted", nItemCounted));
+    result.push_back(Pair("time took (ms)",  nTook ));
+
+    return  result;
+}

@@ -2,7 +2,7 @@
 #define QTIPCSERVER_H
 
 // Define Netcoin-Qt message queue name
-#define BITCOINURI_QUEUE_NAME "NetcoinURI"
+#define BITCOINURI_QUEUE_NAME "NETCOINURI"
 
 void ipcScanRelay(int argc, char *argv[]);
 void ipcInit(int argc, char *argv[]);

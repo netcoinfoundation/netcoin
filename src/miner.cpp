@@ -364,7 +364,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         nLastBlockSize = nBlockSize;
 
         if (fDebug && GetBoolArg("-printpriority"))
-            printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
+            printf("CreateNewBlock(): total size %" PRI64u"\n", nBlockSize);
 
         if (!fProofOfStake)
             pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
@@ -517,6 +517,8 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
             LOCK(wallet.cs_wallet);
             wallet.mapRequestCount[hashBlock] = 0;
         }
+        if (IsInitialBlockDownload()||vNodes.empty())
+           return error("ProcessBlock() : CheckBlock FAILED no nodes to relay tx");
 
         // Process this block the same as if we had received it from another node
         if (!ProcessBlock(NULL, pblock))

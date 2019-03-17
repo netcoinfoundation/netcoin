@@ -13,7 +13,6 @@
 #include "clientmodel.h"
 #include "bitcoinrpc.h"
 #include "transactionrecord.h"
-
 #include <sstream>
 #include <string>
 
@@ -342,6 +341,26 @@ ShoppingPage::ShoppingPage(QWidget *parent) :
 
     connect(ui->blockButton_2, SIGNAL(pressed()), this, SLOT(blockClicked()));
     connect(ui->txButton_2, SIGNAL(pressed()), this, SLOT(txClicked()));
+    ui->excButton_1->setHidden(true);
+    ui->servButton_2->setHidden(true);
+     ui->servButton_3->setHidden(true);
+      ui->servButton_4->setHidden(true);
+       ui->servButton_5->setHidden(true);
+        ui->servButton_6->setHidden(true);
+         ui->servButton_7->setHidden(true);
+         ui->servButton_8->setHidden(true);
+          ui->servButton_9->setHidden(true);
+          ui->servButton_10->setHidden(true);
+           ui->servButton_11->setHidden(true);
+            ui->servButton_12->setHidden(true);
+                   ui->excButton_6->setHidden(true);
+                    ui->excButton_7->setHidden(true);
+                     ui->excButton_8->setHidden(true);
+                       ui->poolButton_3->setHidden(true);
+                        ui->poolButton_4->setHidden(true);
+                         ui->poolButton_5->setHidden(true);
+                          ui->poolButton_6->setHidden(true);
+
 
 }
 
@@ -365,6 +384,7 @@ void ShoppingPage::updateExplorer(bool block)
         ui->hardBox_2->show();;
         ui->pawLabel_2->show();
         ui->pawBox_2->show();
+
         int height = ui->heightBox_2->value();
         if (height > pindexBest->nHeight)
         {
@@ -396,6 +416,8 @@ void ShoppingPage::updateExplorer(bool block)
         ui->timeBox_2->setText(QTime);
         ui->hardBox_2->setText(QHardness);
         ui->pawBox_2->setText(QPawrate + " MH/s");
+
+
     }
 
     if(block == false) {
@@ -444,60 +466,117 @@ void ShoppingPage::setModel(ClientModel *model)
 }
 
 //Exchange Links
-void ShoppingPage::on_pushButton_36_clicked()
+void ShoppingPage::on_excButton_1_clicked()
+{
+    QString link="";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_excButton_2_clicked()
+{
+    QString link="http://netcoin.io/vote";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_excButton_3_clicked()
+{
+    QString link="https://www.cryptopia.co.nz/Exchange/?market=NET_BTC";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_excButton_4_clicked()
 {
     QString link="https://novaexchange.com/market/BTC_NET/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
-void ShoppingPage::on_pushButton_37_clicked()
+void ShoppingPage::on_excButton_5_clicked()
 {
-    QString link="https://www.cryptopia.co.nz/Exchange/?market=NET_BTC";
+    QString link="https://tradesatoshi.com/Exchange/?market=NET_BTC";
     QDesktopServices::openUrl(QUrl(link));
 }
 
 
 //Shopping Links
 
-void ShoppingPage::on_pushButton_4_clicked()
-{
-    QString link="https://cointopay.com/";
-    QDesktopServices::openUrl(QUrl(link));
-}
+
 
 //Useful links tab
-void ShoppingPage::on_pushButton_8_clicked()
+void ShoppingPage::on_usefulButton_1_clicked()
 {
     QString link="http://forum.netcoin.io//";
     QDesktopServices::openUrl(QUrl(link));
 }
 
-void ShoppingPage::on_pushButton_9_clicked()
+void ShoppingPage::on_usefulButton_3_clicked()
 {
     QString link="http://netcoinfoundation.io/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
-void ShoppingPage::on_pushButton_10_clicked()
+void ShoppingPage::on_usefulButton_2_clicked()
 {
     QString link="http://netcoin.io/";
     QDesktopServices::openUrl(QUrl(link));
 }
+void ShoppingPage::on_usefulButton_4_clicked()
+{
+    QString link="https://discord.me/netcoin";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_usefulButton_5_clicked()
+{
+    QString link="http://paperwallet.netcoin.io/";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_usefulButton_6_clicked()
+{
+    QString link="https://prohashing.com/explorer/Netcoin/";
+    QDesktopServices::openUrl(QUrl(link));
+}
 
 //Development Site links
-void ShoppingPage::on_pushButton_clicked()
-{
-    QString link="http://netcoinfoundation.io/give/";
-    QDesktopServices::openUrl(QUrl(link));
-}
+//void ShoppingPage::on_pushButton_clicked()
+//{
+//    QString link="http://netcoinfoundation.io/give/";
+//    QDesktopServices::openUrl(QUrl(link));
+//}
 
 //Pools
-void ShoppingPage::on_pushButton_2_clicked()
+
+void ShoppingPage::on_poolButton_1_clicked()
 {
-    QString link="https://www.mining-dutch.nl/pools/netcoin.php";
+    QString link="https://stakeminers.com/";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_poolButton_2_clicked()
+{
+    QString link="https://www.ispace.co.uk/";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_poolButton_3_clicked()
+{
+    QString link="";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_poolButton_4_clicked()
+{
+    QString link="";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_poolButton_5_clicked()
+{
+    QString link="";
+    QDesktopServices::openUrl(QUrl(link));
+}
+void ShoppingPage::on_poolButton_6_clicked()
+{
+    QString link="";
     QDesktopServices::openUrl(QUrl(link));
 }
 
+void ShoppingPage::on_servButton_1_clicked()
+{
+    QString link="https://cointopay.com/";
+    QDesktopServices::openUrl(QUrl(link));
+}
 ShoppingPage::~ShoppingPage()
 {
     delete ui;

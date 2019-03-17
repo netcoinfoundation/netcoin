@@ -371,7 +371,7 @@ string FormatMoney(int64_t n, bool fPlus)
     int64_t n_abs = (n > 0 ? n : -n);
     int64_t quotient = n_abs/COIN;
     int64_t remainder = n_abs%COIN;
-    string str = strprintf("%"PRI64d".%08"PRI64d, quotient, remainder);
+    string str = strprintf("%" PRI64d ".%08" PRI64d , quotient, remainder);
 
     // Right-trim excess 0's before the decimal point:
     int nTrim = 0;
@@ -1064,8 +1064,7 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
     } else {
         path = GetDefaultDataDir();
     }
-    // if (fNetSpecific && GetBoolArg("-testnet", false))
-    //    path /= "testnet";
+
 
     if (fNetSpecific)
         path /= Params().DataDir();
@@ -1079,7 +1078,9 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 boost::filesystem::path GetConfigFile()
 {
     boost::filesystem::path pathConfigFile(GetArg("-conf", "netcoin.conf"));
-    if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
+
+     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false)/ pathConfigFile;
+
     return pathConfigFile;
 }
 
@@ -1257,7 +1258,7 @@ void AddTimeData(const CNetAddr& ip, int64_t nTime)
 
     // Add data
     vTimeOffsets.input(nOffsetSample);
-    printf("Added time data, samples %d, offset %+"PRI64d" (%+"PRI64d" minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample/60);
+    printf("Added time data, samples %d, offset %+" PRI64d " (%+" PRI64d " minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample/60);
     if (vTimeOffsets.size() >= 5 && vTimeOffsets.size() % 2 == 1)
     {
         int64_t nMedian = vTimeOffsets.median();
@@ -1292,15 +1293,15 @@ void AddTimeData(const CNetAddr& ip, int64_t nTime)
         }
         if (fDebug) {
             BOOST_FOREACH(int64_t n, vSorted)
-                printf("%+"PRI64d"  ", n);
+                printf("%+" PRI64d "  ", n);
             printf("|  ");
         }
-        printf("nTimeOffset = %+"PRI64d"  (%+"PRI64d" minutes)\n", nTimeOffset, nTimeOffset/60);
+        printf("nTimeOffset = %+" PRI64d "  (%+" PRI64d " minutes)\n", nTimeOffset, nTimeOffset/60);
     }
 }
 
 
-static const long hextable[] = 
+static const long hextable[] =
 {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,		// 10-19
@@ -1333,14 +1334,14 @@ static const long hextable[] =
 
 long hex2long(const char* hexString)
 {
-	long ret = 0; 
+	long ret = 0;
 
-	while (*hexString && ret >= 0) 
+	while (*hexString && ret >= 0)
 	{
 		ret = (ret << 4) | hextable[*hexString++];
 	}
 
-	return ret; 
+	return ret;
 }
 
 uint32_t insecure_rand_Rz = 11;
@@ -1451,4 +1452,3 @@ bool NewThread(void(*pfn)(void*), void* parg)
     }
     return true;
 }
-
