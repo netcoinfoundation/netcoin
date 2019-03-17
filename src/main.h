@@ -102,8 +102,8 @@ static const int BLOCK_HEIGHT_REPOW =  9999999; // this is where the proof of wo
 
 static const int LOW_S_CHECK_SIGNATURES = 1300000; // CHECK SIGNATURE FORK
 static const int MAX_REORG_DEPTH = 68;
-static const unsigned int FORKTIME_REORG_PROTO_CHANGES = 1553212800; // 03/22/2019 @ 12:00am (gmt)
-static const int RECOVER_DBLSP_HEIGHT = 2664096 ; // DoubleSpend Fix MainNet should roughly be 03/22/2019
+static const unsigned int FORKTIME_REORG_PROTO_CHANGES = 1553385600; // 03/24/2019 @ 12:00am (gmt)
+static const int RECOVER_DBLSP_HEIGHT = 2666976 ; // DoubleSpend Fix MainNet should roughly be 03/24/2019
 
 
 
