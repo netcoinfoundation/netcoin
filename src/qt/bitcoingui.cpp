@@ -773,10 +773,8 @@ void BitcoinGUI::setNumBlocks(int count)
 
         tooltip = tr("Catching up...") + QString("<br>") + tooltip;
         labelBlocksIcon->setMovie(syncIconMovie);
-        // syncIconMovie->start();
         if(count != prevBlocks)
             syncIconMovie->start();
-            // syncIconMovie->jumpToNextFrame();
         prevBlocks = count;
 
         overviewPage->showOutOfSyncWarning(true);
