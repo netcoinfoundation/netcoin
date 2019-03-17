@@ -16,8 +16,8 @@ Dependencies
 
  Library        Purpose              Description
  -------        -------              -----------
- libssl         SSL Support       Secure communications
- libdb4.8       Berkeley DB       Blockchain & wallet storage
+ libssl.0-dev         SSL Support       Secure communications
+ libdb6.2       Berkeley DB       Blockchain & wallet storage
  libboost       Boost             C++ Library
 
  # optional
@@ -50,24 +50,17 @@ Dependency Build Instructions: Ubuntu & Debian
 
 Build requirements:
 
-sudo apt-get install build-essential libssl-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-thread-dev 
+sudo apt-get install build-essential libssl1.0 libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-thread-dev  libdb++-dev
 
 If boost fails you can try:
 sudo apt-get install libboost-all-dev
 
 BerkeleyDB4.8 is required for the wallet.
 
-For Ubuntu only: db4.8 packages are available here. You can add the repository and install using the following commands:
-
-sudo apt-get install software-properties-common
-sudo add-apt-repository ppa:bitcoin/bitcoin
-sudo apt-get update
-sudo apt-get install libdb4.8-dev libdb4.8++-dev
-
 #For UPnP support
 sudo apt-get install libminiupnpc-dev
 
-# For building Netcoin-Qt 
+# For building Netcoin-Qt
 sudo apt-get install libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools qt5-default libprotobuf-dev protobuf-compiler libqrencode-dev
 
 To Build
@@ -75,15 +68,15 @@ To Build
 
 # Headless Netcoin (netcoind)
 cd to build folder /src/
-make -f makefile.unix 
-strip netcoind         
+make -f makefile.unix
+strip netcoind
 
 #Netcoin-Qt (GUI  #optional required)
 cd to build folder
 qmake "USE_QRCODE=1"
 make
 
-If leveldb build_detect_platform error do 
+If leveldb build_detect_platform error do
 chmod 755 src/leveldb/build_detect_platform
 
 
@@ -136,8 +129,8 @@ exploit even if a vulnerability is found, you can take the following measures:
     such as: "relocation R_X86_64_32 against `......' can not be used when making a shared object;"
 
     To build with PIE, use:
-    make -f makefile.unix ... -e PIE=1 
-   
+    make -f makefile.unix ... -e PIE=1
+
     To test that you have built PIE executable, install scanelf, part of paxutils, and use:
     scanelf -e ./netcoin
 
