@@ -58,7 +58,7 @@ TransactionView::TransactionView(QWidget *parent) :
 #ifdef Q_OS_MAC
     dateWidget->setFixedWidth(121);
 #else
-    dateWidget->setFixedWidth(120);    
+    dateWidget->setFixedWidth(120);
 #endif
 
     dateWidget->setContentsMargins(1,1,1,1);
@@ -85,6 +85,7 @@ TransactionView::TransactionView(QWidget *parent) :
                                   TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
+    typeWidget->addItem(tr("Pos-mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated2));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
     typeWidget->setContentsMargins(1,1,1,1);
     hlayout->addWidget(typeWidget);
@@ -203,8 +204,8 @@ void TransactionView::setModel(WalletModel *model)
                 TransactionTableModel::Type, 120);
         transactionView->horizontalHeader()->setResizeMode(
                 TransactionTableModel::ToAddress, QHeaderView::Stretch);
-        transactionView->horizontalHeader()->resizeSection(
-                TransactionTableModel::Amount, 100);
+        transactionView->horizontalHeader()->setResizeMode(
+                TransactionTableModel::Amount, QHeaderView::ResizeToContents);
     }
 }
 
@@ -407,7 +408,7 @@ void TransactionView::viewOnPandachain()
     QModelIndexList selection = transactionView->selectionModel()->selectedRows();
     if(!selection.isEmpty())
     {
-        QString format("http://explorer.netcoinfoundation.org/tx/");
+        QString format("https://prohashing.com/explorer/Netcoin/");
         format += selection.at(0).data(TransactionTableModel::TxIDRole).toString();
 
         QDesktopServices::openUrl(QUrl(format));

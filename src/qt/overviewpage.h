@@ -6,7 +6,7 @@
 #include "main.h"
 #include "wallet.h"
 #include "base58.h"
-
+#include "qcustomplot.h"
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -16,6 +16,7 @@
 #include <QMap>
 #include <QSettings>
 #include <QSlider>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
@@ -34,7 +35,7 @@ class QMenu;
 class QFrame;
 class QHBoxLayout;
 
-/** Overview ("home") page widget */
+/** Overview ("home") page widget **/
 class OverviewPage : public QWidget
 {
     Q_OBJECT
@@ -51,7 +52,9 @@ public:
     int volumePrevious;
     int stakeminPrevious;
     int stakemaxPrevious;
-    QString stakecPrevious;
+    int numLookBack;
+    int checkpointPrevious;
+    QString stakePrevious;
     double rewardPrevious;
     double netPawratePrevious;
     QString pawratePrevious;
@@ -64,7 +67,8 @@ public slots:
     void setStatistics(ClientModel *modelStatistics);
     void lockWalletToggle();
     void updateStatistics();
-    void updatePrevious(int, int, int, double, double, double, double, QString, int, int);
+    void updatePrevious(int, int, int, double, double, double, double, QString, int, int,int);
+
 
 signals:
     void transactionClicked(const QModelIndex &index);
@@ -82,6 +86,9 @@ private:
     qint64 currentImmatureBalance;
     QMenu *contextMenu;
 
+    	QVector<double> vX;
+    	QVector<double> vY;
+
     //Weight label
     qint64 currentWeight;
     qint64 currentNetworkWeight;
@@ -96,6 +103,14 @@ private slots:
     void updateAlerts(const QString &warnings);
     void updateMyWeight();
     void on_startButton_clicked();
+    void on_chartState_clicked();
+    void on_toggle10_clicked();
+    void on_toggle100_clicked();
+    void on_toggle1000_clicked();
+    void on_toggleall_clicked();
+    void on_powpos_clicked();
+    void updateGraph();
+
 
 signals:
     void stakeForCharitySignal();

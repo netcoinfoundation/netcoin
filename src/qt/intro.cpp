@@ -119,6 +119,7 @@ void Intro::setDataDirectory(const QString &dataDir)
     ui->dataDirectory->setText(dataDir);
     if(dataDir == getDefaultDataDirectory())
     {
+
         ui->dataDirDefault->setChecked(true);
         ui->dataDirectory->setEnabled(false);
         ui->ellipsisButton->setEnabled(false);

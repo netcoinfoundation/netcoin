@@ -3,6 +3,7 @@ debug/
 release/
 *.o
 *.exe
+
 object_script.netcoin-qt.*
 #################
 ## Eclipse
@@ -83,7 +84,7 @@ build/
 *.pidb
 *.log
 *.scc
-
+*.app
 # Visual C++ cache files
 ipch/
 *.aps

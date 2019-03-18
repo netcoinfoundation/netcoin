@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     app.installEventFilter(new GUIUtil::ToolTipToRichTextFilter(TOOLTIP_WRAP_THRESHOLD, &app));
 
     // Choose the directory for the blockchain:
-    // Intro::pickDataDirectory();
+     Intro::pickDataDirectory();
 
     // ... then bitcoin.conf:
     if (!boost::filesystem::is_directory(GetDataDir(false)))
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)
     app.setOrganizationName("Netcoin");
-    //XXX app.setOrganizationDomain("");
+
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
         app.setApplicationName("Netcoin-Qt-testnet");
     else
@@ -210,9 +210,11 @@ int main(int argc, char *argv[])
 
     QSplashScreen splash(QPixmap(":/images/splash"), 0);
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min"))
-    {
-        splash.show();
-        splashref = &splash;
+{
+
+            splash.show();
+            splashref = &splash;
+
     }
 
     app.processEvents();

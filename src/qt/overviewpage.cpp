@@ -3,7 +3,7 @@
 
 #include "walletmodel.h"
 #include "clientmodel.h"
-#include "main.h"
+
 #include "bitcoinunits.h"
 #include "init.h"
 #include "base58.h"
@@ -17,7 +17,10 @@
 #include "wallet.h"
 #include "bitcoinrpc.h"
 #include "askpassphrasedialog.h"
+#include <algorithm>
 
+#include "main.h"
+#include "util.h"
 #include <QAbstractItemDelegate>
 #include <QPainter>
 #include <QIcon>
@@ -33,10 +36,11 @@
 #define NUM_ITEMS 3
 
 using namespace json_spirit;
+
 extern CWallet* pwalletMain;
 extern int64_t nLastCoinStakeSearchInterval;
 double GetPoSKernelPS();
-
+double GetPoSKernelPS2(const CBlockIndex* pindex);
 class TxViewDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
@@ -97,7 +101,9 @@ public:
 
         painter->setPen(option.palette.color(QPalette::Text));
         painter->drawText(amountRect, Qt::AlignLeft|Qt::AlignVCenter, GUIUtil::dateTimeStr(date));
-
+        painter->setPen(QColor(204,204,204));
+        painter->drawLine(QPoint(mainRect.left(), mainRect.bottom()), QPoint(mainRect.right(), mainRect.bottom()));
+        painter->drawLine(QPoint(amountRect.left()-6, mainRect.top()), QPoint(amountRect.left()-6, mainRect.bottom()));
         painter->restore();
     }
 
@@ -122,7 +128,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
     currentImmatureBalance(-1),
     currentWeight(0),
     currentNetworkWeight(0),
-
     txdelegate(new TxViewDelegate()),
     filter(0)
 {
@@ -154,7 +159,30 @@ OverviewPage::OverviewPage(QWidget *parent) :
     ui->labelTransactionsStatus->setText("(" + tr("out of sync") + ")");
 
     // start with displaying the "out of sync" warnings
+
     showOutOfSyncWarning(true);
+
+        // setup Plot
+        // create graph
+        ui->diffplot->addGraph();
+
+        // give the axes some labels:
+        ui->diffplot->xAxis->setLabel("Block Height");
+
+        // set the pens
+
+        ui->diffplot->graph(0)->setLineStyle(QCPGraph::lsLine);
+
+        // set axes label fonts:
+        QFont label = font();
+        ui->diffplot->xAxis->setLabelFont(label);
+        ui->diffplot->yAxis->setLabelFont(label);
+         ui->diffplot->setBackground(Qt::transparent);
+         ui->diffplot->setStyleSheet("background:transparent");
+         ui->diffplot->axisRect()->setBackground(QColor(0, 0, 0,0));
+             ui->diffplot->xAxis->setLabelColor("#0381ff");
+          ui->diffplot->yAxis->setLabelColor("#0381ff");
+ ui->scrollArea->setStyleSheet("background:transparent");
 }
 
 
@@ -244,7 +272,54 @@ void OverviewPage::updateMyWeight()
             ui->labelMyWeight->setText(tr("Not staking"));
     }
 }
+void OverviewPage::on_chartState_clicked()
+{
+    if (ui->diffplotframe->isHidden()){
+ui->chartState->setText("disable chart");
+ui->diffplotframe->setHidden(false);
+updateGraph();
 
+    }else{
+            ui->diffplotframe->setHidden(true);
+            ui->chartState->setText("enable chart");
+
+
+}
+}
+void OverviewPage::on_powpos_clicked()
+{
+    if (ui->powpos->isChecked()){
+ui->powpos->setText("pos");
+updateGraph();
+
+  }else{
+
+            ui->powpos->setText("pow");
+            updateGraph();
+}
+}
+void OverviewPage::on_toggle10_clicked()
+{
+ numLookBack=10;
+ updateGraph();
+}
+
+void OverviewPage::on_toggle100_clicked()
+{
+  numLookBack=100;
+ updateGraph();
+}
+void OverviewPage::on_toggle1000_clicked()
+{
+ numLookBack=1000;
+ updateGraph();
+}
+void OverviewPage::on_toggleall_clicked()
+{
+ numLookBack=heightPrevious;
+ updateGraph();
+
+}
 void OverviewPage::on_startButton_clicked()
 {
     return stakeForCharitySignal();
@@ -295,7 +370,6 @@ void OverviewPage::setWalletModel(WalletModel *model)
 
     // update statistics
     updateStatistics();
-
     //set up a timer to auto refresh every 30 seconds to update the statistics
     QTimer *timerNetworkStats = new QTimer();
     connect(timerNetworkStats, SIGNAL(timeout()), this, SLOT(updateStatistics()));
@@ -359,14 +433,97 @@ void OverviewPage::lockWalletToggle()
         ui->unlockWalletActionNew->setText("Unlock Wallet");
     }
 }
+int init=0;
+void OverviewPage::updateGraph(){
 
+    if (init==0){
+            numLookBack=10;
+
+     init=1;
+}
+
+if (!ui->diffplotframe->isHidden()){
+
+    if(fDebug) { printf("Plot: Getting Ready: pindexBest: %p\n", pindexBest); }
+
+        bool fProofOfStake = (ui->powpos->isChecked());
+    if (fProofOfStake)
+        ui->diffplot->yAxis->setLabel("24H Network Weight");
+        else
+        ui->diffplot->yAxis->setLabel("Difficulty");
+     double diffMax = 0;
+    const CBlockIndex* pindex = GetLastBlockIndex(pindexBest, fProofOfStake);
+    int height = pindex->nHeight;
+    int xStart = std::max<int>( height-numLookBack , 0) + 1;
+    int xEnd = height;
+
+    // Start at the end and walk backwards
+    int i = numLookBack-1;
+    int x = xEnd;
+
+    // This should be a noop if the size is already 2000
+    vX.resize(numLookBack);
+    vY.resize(numLookBack);
+
+    if(fDebug) {
+        if(height != pindex->nHeight) {
+            printf("Plot: Warning: nBestHeight and pindexBest->nHeight don't match: %d:%d:\n", height, pindex->nHeight);
+        }
+    }
+
+    if(fDebug) { printf("Plot: Reading blockchain\n"); }
+
+    const CBlockIndex* itr = pindex;
+    while(i >= 0 && itr != NULL)
+    {
+        if(fDebug) { printf("Plot: Processing block: %d - pprev: %p\n", itr->nHeight, itr->pprev); }
+        vX[i] = itr->nHeight;
+        if (itr->nHeight < xStart) {
+            xStart = itr->nHeight;
+        }
+        vY[i] = fProofOfStake ?  GetPoSKernelPS2(itr) : GetDifficulty(itr);
+        diffMax = std::max<double>(diffMax, vY[i]);
+
+        itr = GetLastBlockIndex(itr->pprev, fProofOfStake);
+        i--;
+        x--;
+    }
+
+    if(fDebug) { printf("Plot: Drawing plot\n"); }
+
+    ui->diffplot->graph(0)->setData(vX,vY);
+
+    // set axes ranges, so we see all data:
+    ui->diffplot->xAxis->setRange((double)xStart, (double)xEnd);
+    ui->diffplot->yAxis->setRange(0, diffMax+(diffMax/10));
+
+    ui->diffplot->xAxis->setAutoSubTicks(false);
+    ui->diffplot->yAxis->setAutoSubTicks(false);
+    ui->diffplot->xAxis->setSubTickCount(0);
+    ui->diffplot->yAxis->setSubTickCount(0);
+    ui->diffplot->xAxis->setLabelColor("#0381ff");
+ ui->diffplot->yAxis->setLabelColor("#0381ff");
+ ui->diffplot->xAxis->setTickLabelColor("#0381ff");
+ui->diffplot->yAxis->setTickLabelColor("#0381ff");
+
+ui->diffplot->xAxis2->setTickLabelColor("#0381ff");
+    if(fDebug) { printf("Plot: Done!\n"); }
+    ui->diffplot->replot();
+
+
+}
+}
 void OverviewPage::updateStatistics()
 {
+    CBlockIndex* pindexCheckpoint;
+
+pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     double pHardness = GetDifficulty();
     double pHardness2 = GetDifficulty(GetLastBlockIndex(pindexBest, true));
     int pPawrate = GetPoWMHashPS();
     double pPawrate2 = 0.000;
     int nHeight = pindexBest->nHeight;
+    int ncheckpointHeight = pindexCheckpoint->nHeight;
     double nSubsidy = double (GetProofOfWorkReward(nHeight, 0, pindexBest->GetBlockHash())/ double (COIN));
     uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
     pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
@@ -375,29 +532,37 @@ void OverviewPage::updateStatistics()
     int peers = this->modelStatistics->getNumConnections();
     pPawrate2 = (double)pPawrate;
     QString height = QString::number(nHeight);
+    QString checkpointheight = QString::number(ncheckpointHeight);
     QString subsidy = QString::number(nSubsidy, 'f', 6);
     QString hardness = QString::number(pHardness, 'f', 6);
     QString hardness2 = QString::number(pHardness2, 'f', 6);
     QString pawrate = QString::number(pPawrate2, 'f', 3);
     QString Qlpawrate = modelStatistics->getLastBlockDate().toString();
-
+    QPixmap cpconnect (":/icons/connect_4");
+    QPixmap cpnoconnect (":/icons/connect_0");
     QString QPeers = QString::number(peers);
     QString qVolume = QLocale::system().toString((qlonglong)volume);
 
-    if(nHeight > heightPrevious)
+    if(nHeight > heightPrevious && !IsInitialBlockDownload())
     {
         ui->heightBox->setText("<b><font color=\"green\">" + height + "</font></b>");
-    } 
-    else 
+        static int64_t lastUpdate = 0;
+        // Double Check to make sure we don't try to update the plot when it is disabled
+
+    }
+    else
     {
+        if(!IsInitialBlockDownload())
         ui->heightBox->setText(height);
+                else
+                ui->heightBox->setText("downloading");
     }
 
     if(nSubsidy < rewardPrevious)
     {
         ui->rewardBox->setText("<b><font color=\"red\">" + subsidy + "</font></b>");
-    } 
-    else 
+    }
+    else
     {
         ui->rewardBox->setText(subsidy);
     }
@@ -405,38 +570,53 @@ void OverviewPage::updateStatistics()
     if(pHardness > hardnessPrevious)
     {
         ui->diffBox->setText("<b><font color=\"green\">" + hardness + "</font></b>");
-    } 
-    else if(pHardness < hardnessPrevious) 
+    }
+    else if(pHardness < hardnessPrevious)
     {
         ui->diffBox->setText("<b><font color=\"red\">" + hardness + "</font></b>");
-    } 
-    else 
-    {
-        ui->diffBox->setText(hardness);
-    }
-
-    if(pHardness2 > hardnessPrevious2)
-    {
-        ui->diffBox2->setText("<b><font color=\"green\">" + hardness2 + "</font></b>");
-    }
-    else if(pHardness2 < hardnessPrevious2)
-    {
-        ui->diffBox2->setText("<b><font color=\"red\">" + hardness2 + "</font></b>");
     }
     else
     {
         ui->diffBox->setText(hardness);
     }
+    if(nNetworkWeight > stakemaxPrevious)
+    {
+        ui->diffplot->graph(0)->setPen(QPen(QColor("#00bd09")));
+
+    }
+    else if(nNetworkWeight < stakemaxPrevious)
+    {
+
+        ui->diffplot->graph(0)->setPen(QPen(QColor("#ff0015")));
+    }
+    else
+    {
+           ui->diffplot->graph(0)->setPen(QPen(QColor("#00bd09")));
+    }
+    if(pHardness2 > hardnessPrevious2)
+    {
+        ui->diffBox2->setText("<b><font color=\"green\">" + hardness2 + "</font></b>");
+
+    }
+    else if(pHardness2 < hardnessPrevious2)
+    {
+
+        ui->diffBox2->setText("<b><font color=\"red\">" + hardness2 + "</font></b>");
+    }
+    else
+    {
+        ui->diffBox2->setText(hardness2);
+    }
 
     if(pPawrate2 > netPawratePrevious)
     {
         ui->pawrateBox->setText("<b><font color=\"green\">" + pawrate + " MH/s</font></b>");
-    } 
-    else if(pPawrate2 < netPawratePrevious) 
+    }
+    else if(pPawrate2 < netPawratePrevious)
     {
         ui->pawrateBox->setText("<b><font color=\"red\">" + pawrate + " MH/s</font></b>");
-    } 
-    else 
+    }
+    else
     {
         ui->pawrateBox->setText(pawrate + " MH/s");
     }
@@ -444,8 +624,8 @@ void OverviewPage::updateStatistics()
     if(Qlpawrate != pawratePrevious)
     {
         ui->localBox->setText("<b><font color=\"green\">" + Qlpawrate + "</font></b>");
-    } 
-    else 
+    }
+    else
     {
     ui->localBox->setText(Qlpawrate);
     }
@@ -453,33 +633,48 @@ void OverviewPage::updateStatistics()
     if(peers > connectionPrevious)
     {
         ui->connectionBox->setText("<b><font color=\"green\">" + QPeers + "</font></b>");
-    } 
-    else if(peers < connectionPrevious) 
+    }
+    else if(peers < connectionPrevious)
     {
         ui->connectionBox->setText("<b><font color=\"red\">" + QPeers + "</font></b>");
-    } 
-    else 
+    }
+    else
     {
         ui->connectionBox->setText(QPeers);
+    }
+
+    if(ncheckpointHeight >= (nHeight-71))
+    {
+        ui->labelcheckpointHeight->setText("<b><font color=\"green\">" + checkpointheight + "</font></b>");
+         ui->labelcheckpointConnect->setPixmap(cpconnect);
+
+    }
+    else {
+        ui->labelcheckpointHeight->setText("<b><font color=\"red\">" + checkpointheight + "</font></b>");
+           ui->labelcheckpointConnect->setPixmap(cpnoconnect);
+
+
     }
 
     if(volume > volumePrevious)
     {
         ui->volumeBox->setText("<b>" + qVolume + " NET" + "</font></b>");
-    } 
-    else if(volume < volumePrevious) 
+    }
+    else if(volume < volumePrevious)
     {
         ui->volumeBox->setText("<b>" + qVolume + " NET" + "</font></b>");
-    } 
-    else 
+    }
+    else
     {
         ui->volumeBox->setText(qVolume + " NET");
     }
-    
-    updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume);
+
+       //update graph
+       updateGraph();
+    updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume,ncheckpointHeight);
 }
 
-void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume)
+void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume,int ncheckpointHeight)
 {
     heightPrevious = nHeight;
     stakeminPrevious = nMinWeight;
@@ -491,6 +686,7 @@ void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeigh
     pawratePrevious = Qlpawrate;
     connectionPrevious = peers;
     volumePrevious = volume;
+    checkpointPrevious =ncheckpointHeight;
 }
 
 void OverviewPage::setStatistics(ClientModel *modelStatistics)
@@ -504,5 +700,3 @@ OverviewPage::~OverviewPage()
 {
     delete ui;
 }
-
-

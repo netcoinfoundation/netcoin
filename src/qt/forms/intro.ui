@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Welcome</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="styleSheet">
       <string notr="true">QLabel { font-style:italic; }</string>
@@ -27,7 +27,27 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="11" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QRadioButton" name="dataDirDefault">
+     <property name="text">
+      <string>Use the default data directory</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -43,17 +63,7 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>As this is the first time the program is launched, you can choose where Netcoin-Qt will store its data.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
+   <item row="5" column="0" rowspan="2" colspan="2">
     <widget class="QLabel" name="sizeWarningLabel">
      <property name="text">
       <string>Netcoin-Qt will download and store a copy of the NetCoin block chain. At least 1 GB of data will be stored in this directory, and it will grow over time.</string>
@@ -63,21 +73,24 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QRadioButton" name="dataDirDefault">
-     <property name="text">
-      <string>Use the default data directory</string>
-     </property>
-    </widget>
-   </item>
-   <item>
+   <item row="8" column="0" colspan="2">
     <widget class="QRadioButton" name="dataDirCustom">
      <property name="text">
       <string>Use a custom data directory:</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>As this is the first time the program is launched, you can choose where Netcoin-Qt will store its data.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>0</number>
@@ -203,20 +216,7 @@
      </item>
     </layout>
    </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
+   <item row="12" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

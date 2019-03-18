@@ -31,7 +31,7 @@
 
 #include "netbase.h" // for AddTimeData
 
-// to obtain PRI64d on some old systems
+// to obtainPRI64d on some old systems
 #define __STDC_FORMAT_MACROS 1
 
 #include <stdint.h>
@@ -241,7 +241,7 @@ void runCommand(std::string strCommand);
 
 inline std::string i64tostr(int64_t n)
 {
-    return strprintf("%"PRI64d, n);
+    return strprintf("%" PRI64d , n);
 }
 
 inline std::string itostr(int n)
@@ -485,7 +485,7 @@ bool TimingResistantEqual(const T& a, const T& b)
     return accumulator == 0;
 }
 
-/** Median filter over a stream of values. 
+/** Median filter over a stream of values.
  * Returns the median of the last N numbers
  */
 template <typename T> class CMedianFilter

@@ -107,6 +107,7 @@ private:
     QAction *openRPCConsoleAction;
     QAction *charityAction;
     QAction *calcAction;
+    QAction *stakeReportAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -114,6 +115,7 @@ private:
     RPCConsole *rpcConsole;
 
     QMovie *syncIconMovie;
+    QMovie *syncIconMovie2;
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
 
@@ -211,6 +213,7 @@ private slots:
     void unlockWallet();
 
     void lockWallet();
+    void stakeReportClicked();
 
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
     void showNormalIfMinimized(bool fToggleHidden = false);

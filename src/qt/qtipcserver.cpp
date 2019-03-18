@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <boost/version.hpp>
-#if defined(WIN32) && BOOST_VERSION == 104900
+#if defined(WIN32) && BOOST_VERSION > 104900
 #define BOOST_INTERPROCESS_HAS_WINDOWS_KERNEL_BOOTTIME
 #define BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME
 #endif
@@ -42,7 +42,7 @@ static bool ipcScanCmd(int argc, char *argv[], bool fRelay)
     bool fSent = false;
     for (int i = 1; i < argc; i++)
     {
-        if (boost::algorithm::istarts_with(argv[i], "netcoin:"))
+        if (boost::algorithm::istarts_with(argv[i], "Netcoin:"))
         {
             const char *strURI = argv[i];
             try {
@@ -75,7 +75,7 @@ void ipcScanRelay(int argc, char *argv[])
 static void ipcThread(void* pArg)
 {
     // Make this thread recognisable as the GUI-IPC thread
-    RenameThread("netcoin-gui-ipc");
+    RenameThread("Netcoin-gui-ipc");
 	
     try
     {

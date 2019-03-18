@@ -12,7 +12,7 @@
 #include "uint256.h"
 
 
-static const int nCheckpointSpan = 10;
+static const int nCheckpointSpan = 71;
 
 namespace Checkpoints
 {
@@ -46,6 +46,14 @@ static MapCheckpoints mapCheckpoints =
         (530002, uint256("0x7e5982788dae8607994904a59728eff2d69966fa5438e8788ddb1ff931bb4b0a"))
         (1291000, uint256("0x182aa72911c7910b32d1708be94d115d66bb70b4d1f091c7b31f172be8d02802"))
         (1832000, uint256("0x17f2e2c1890578a3d882aeb7d422aa1f154bb1c3a11a7f2ee6ea735004e77d10"))
+        (1842000, uint256("3bde2d3ee5d5f9623f10a4c7180cd9263f1474a5643f8bca21e46ed4507629cb"))
+        (1862000, uint256("fcc008d2cad7a2798f3bf2305110607971479643de0828afe637542617d0fd92"))
+        (1962000, uint256("7d03882fb70a0afa9ad4877b4051614b7e6ba9eac16ffb32822fa42e704a8fc8"))
+        (2062000, uint256("f5d9235578c6a8cdebaf94060912a5d2fee04fb1a15eda47225cfbb242c8b5c0"))
+        (2278000, uint256("c62b6a06c078acc236bb53b3b58c1064892c81eb64e59bb69a23e2ea5c997ed4"))
+        (2500000, uint256("25fab817d3ae696dc60873db7a7cc35ac4c4f99d76edcaf4bb31532103ca5ed8"))
+        (2552218, uint256("bd80cf3a70c40fe4ff328564ea0ab5102568f774f37a31fafdf3fe6d097510bc"))
+
         ;
 
     // TestNet has no checkpoints
@@ -306,10 +314,12 @@ static MapCheckpoints mapCheckpoints =
 
     bool SetCheckpointPrivKey(std::string strPrivKey)
     {
+         printf("set key tried\n");
         // Test signing a sync-checkpoint with genesis block
         CSyncCheckpoint checkpoint;
         // checkpoint.hashCheckpoint = (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet);
         checkpoint.hashCheckpoint = Params().HashGenesisBlock();
+         printf("genesis hashed\n");
         CDataStream sMsg(SER_NETWORK, PROTOCOL_VERSION);
         sMsg << (CUnsignedSyncCheckpoint)checkpoint;
         checkpoint.vchMsg = std::vector<unsigned char>(sMsg.begin(), sMsg.end());
@@ -317,9 +327,9 @@ static MapCheckpoints mapCheckpoints =
         std::vector<unsigned char> vchPrivKey = ParseHex(strPrivKey);
         CKey key;
         key.SetPrivKey(CPrivKey(vchPrivKey.begin(), vchPrivKey.end()), false); // if key is not correct openssl may crash
+          printf("set key\n");
         if (!key.Sign(Hash(checkpoint.vchMsg.begin(), checkpoint.vchMsg.end()), checkpoint.vchSig))
-            return false;
-
+        return false;
         // Test signing successful, proceed
         CSyncCheckpoint::strMasterPrivKey = strPrivKey;
         return true;
@@ -369,7 +379,7 @@ static MapCheckpoints mapCheckpoints =
 }
 
 // netcoin: sync-checkpoint master key
-const std::string CSyncCheckpoint::strMasterPubKey = "046b2e58c8c0502bea592b7ec55f5acb8781a2764520f346642a5c2a6e8ef8b00704752e825d9e739daac343fae5027945e018a15e456e98ef2d0b507fbd9a6d13";
+const std::string CSyncCheckpoint::strMasterPubKey = "04e933c2e324483b7cda0352a58a7c2d670fb23099b0c77c0962c881577830801c1eea696b37073b71d56bb477d5947c8ed2c1c64af9fc13fe6dbe52274f77586c";
 
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 

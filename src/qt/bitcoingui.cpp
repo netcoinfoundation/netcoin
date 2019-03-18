@@ -2,6 +2,7 @@
  * Qt4 bitcoin GUI.
  *
  * W.J. van der Laan 2011-2012
+
  * The Bitcoin Developers 2011-2012
  */
 #include "bitcoingui.h"
@@ -33,6 +34,7 @@
 #include "bitcoinrpc.h"
 #include "allocators.h"
 #include "init.h"
+#include "stakereportdialoge.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -215,7 +217,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     statusBar()->addWidget(progressBar);
     statusBar()->addPermanentWidget(frameBlocks);
 
-    syncIconMovie = new QMovie(":/movies/update_spinner", "mng", this);
+    syncIconMovie = new QMovie(":/movies/loading", "gif", this);
+
+    syncIconMovie2 = new QMovie(":/icons/synced", "gif", this);
     // this->setStyleSheet("background-color: #ceffee;");
 
     // Clicking on a transaction on the overview page simply sends you to transaction history page
@@ -353,6 +357,8 @@ void BitcoinGUI::createActions()
     lockWalletAction->setToolTip(tr("Lock wallet"));
     signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
     verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
+    stakeReportAction = new QAction(QIcon(":/icons/minting"), tr("Show stake report"), this);
+    stakeReportAction->setToolTip(tr("Open the Stake Report Box"));
 
     exportAction = new QAction(QIcon(":/icons/export"), tr("&Export..."), this);
     exportAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/exportTooltip.png/></p></body></html>"));
@@ -372,6 +378,8 @@ void BitcoinGUI::createActions()
     connect(lockWalletAction,        SIGNAL(triggered()), this, SLOT(lockWallet()));
     connect(signMessageAction,       SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction,     SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
+    connect(stakeReportAction, SIGNAL(triggered()), this, SLOT(stakeReportClicked()));
+
     /* zeewolf: Hot swappable wallet themes */
     if (themesList.count()>0)
     {
@@ -420,13 +428,13 @@ void BitcoinGUI::createMenuBar()
     settings->addAction(encryptWalletAction);
     settings->addAction(changePassphraseAction);
     // settings->addAction(unlockWalletAction); //Moved to overviewpage
-    settings->addAction(lockWalletAction);
-	settings->addAction(charityAction);
+    // settings->addAction(lockWalletAction); //Moved to overviewpage
+    //settings->addAction(charityAction); //Moved to overviewpage
     settings->addSeparator();
     settings->addAction(optionsAction);
     settings->addSeparator();
     settings->addAction(calcAction);
-    
+
     /* zeewolf: Hot swappable wallet themes */
     if (themesList.count()>0)
     {
@@ -444,6 +452,8 @@ void BitcoinGUI::createMenuBar()
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
 
+    QMenu *information = appMenuBar->addMenu(tr("Information"));
+  	information->addAction(stakeReportAction);
 	// QString ss("QMenuBar::item { background-color: #ceffee; color: black }");
     // appMenuBar->setStyleSheet(ss);
 }
@@ -726,8 +736,8 @@ void BitcoinGUI::setNumBlocks(int count)
     if(secs < 90*60)
     {
         tooltip = tr("Up to date") + QString(".<br>") + tooltip;
-        labelBlocksIcon->setPixmap(QIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-
+        labelBlocksIcon->setMovie(syncIconMovie2);
+        syncIconMovie2->start();
         overviewPage->showOutOfSyncWarning(false);
 
         progressBarLabel->setVisible(false);
@@ -773,9 +783,10 @@ void BitcoinGUI::setNumBlocks(int count)
 
         tooltip = tr("Catching up...") + QString("<br>") + tooltip;
         labelBlocksIcon->setMovie(syncIconMovie);
-        if(count != prevBlocks)
-            syncIconMovie->start();
-        prevBlocks = count;
+        tooltip = tr("Catching up...") + QString("<br>") + tooltip;
+        labelBlocksIcon->setMovie(syncIconMovie);
+        syncIconMovie->start();
+         prevBlocks = count;
 
         overviewPage->showOutOfSyncWarning(true);
     // }
@@ -1218,6 +1229,12 @@ void BitcoinGUI::charityClicked(QString addr)
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
+void BitcoinGUI::stakeReportClicked()
+{
+    static StakeReportDialog dlg;
+    dlg.setModel(walletModel);
+    dlg.show();
+}
 void BitcoinGUI::calcClicked()
 {
     calcDialog dlg;

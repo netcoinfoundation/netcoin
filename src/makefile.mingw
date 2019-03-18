@@ -6,21 +6,21 @@ USE_UPNP:=0
 USE_IPV6:=1
 
 INCLUDEPATHS= \
- -I"C:\deps\boost_1_55_0" \
- -I"C:\deps\db-4.8.30.NC\build_unix" \
- -I"C:\deps\openssl-1.0.1i\include"
- 
+ -I"C:\deps\64bit\boost_1_68_0" \
+ -I"C:\deps\64bit\db-6.2.32.NC\build_unix" \
+ -I"C:\deps\64bit\openssl-1.0.2q\include"
+
 LIBPATHS= \
- -L"C:\deps\boost_1_55_0\stage\lib" \
- -L"C:\deps\db-4.8.30.NC\build_unix" \
- -L"C:\deps\openssl-1.0.1i"
+ -L"C:\deps\64bit\boost_1_68_0\stage\lib" \
+ -L"C:\deps\64bit\db-6.2.32.NC\build_unix" \
+ -L"C:\deps\64bit\openssl-1.0.2q"
 
 LIBS= \
- -l boost_system-mgw49-mt-s-1_55 \
- -l boost_filesystem-mgw49-mt-s-1_55 \
- -l boost_program_options-mgw49-mt-s-1_55 \
- -l boost_thread-mgw49-mt-s-1_55 \
- -l boost_chrono-mgw49-mt-s-1_55 \
+ -l boost_system-mgw83-mt-s-x64-1_68 \
+ -l boost_filesystem-mgw83-mt-s-x64-1_68 \
+ -l boost_program_options-mgw83-mt-s-x64-1_68 \
+ -l boost_thread-mgw83-mt-s-x64-1_68 \
+ -l boost_chrono-mgw83-mt-s-x64-1_68 \
  -l db_cxx \
  -l ssl \
  -l crypto
@@ -34,12 +34,12 @@ TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
 #ifdef USE_UPNP
 # INCLUDEPATHS += -I"/e"
-# LIBPATHS += -L"C:\upnpc-exe-win32"
+# LIBPATHS += -L"C:\deps\64bit\miniupnpc"
 # LIBS += -l miniupnpc -l iphlpapi
 # DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
 #endif
 
-LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock -l shlwapi
+LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock
 
 # TODO: make the mingw builds smarter about dependencies, like the linux/osx builds are
 HEADERS = $(wildcard *.h)
@@ -81,7 +81,7 @@ OBJS= \
 
 all: netcoind.exe
 
-LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
+LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a -l shlwapi
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/txdb-leveldb.o
@@ -103,8 +103,8 @@ TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 obj-test/%.o: test/%.cpp $(HEADERS)
 	g++ -c $(TESTDEFS) $(CFLAGS) -o $@ $<
 
-test_netcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework-mgw45-mt-d-1_53 $(LIBS)
+test_netcoind.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework-mgw82-mt-s-x64-1_68 $(LIBS)
 
 clean:
 	rm -f netcoind.exe test_netcoin.exe

@@ -379,7 +379,7 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
     case TransactionRecord::Generated:
         return tr("Mined");
     case TransactionRecord::Generated2:
-        return tr("Mined");
+        return tr("POS Mined");
     default:
         return QString();
     }
