@@ -51,7 +51,7 @@ CPubKey CWallet::GenerateNewKey()
     // CKey key;
     // key.MakeNewKey(fCompressed);
 
-    CKey secret;
+    CKey secret ;
     secret.MakeNewKey(fCompressed);
 
     // Compressed public keys were introduced in version 0.6.0

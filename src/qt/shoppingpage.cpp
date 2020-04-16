@@ -478,18 +478,18 @@ void ShoppingPage::on_excButton_2_clicked()
 }
 void ShoppingPage::on_excButton_3_clicked()
 {
-    QString link="https://www.cryptopia.co.nz/Exchange/?market=NET_BTC";
+    QString link="https://freiexchange.com/";
     QDesktopServices::openUrl(QUrl(link));
 }
 void ShoppingPage::on_excButton_4_clicked()
 {
-    QString link="https://novaexchange.com/market/BTC_NET/";
+    QString link="https://btcpop.co/home.php";
     QDesktopServices::openUrl(QUrl(link));
 }
 
 void ShoppingPage::on_excButton_5_clicked()
 {
-    QString link="https://tradesatoshi.com/Exchange/?market=NET_BTC";
+    QString link="https://www.unnamed.exchange/Exchange/Basic?market=NET_UTIP";
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -501,7 +501,7 @@ void ShoppingPage::on_excButton_5_clicked()
 //Useful links tab
 void ShoppingPage::on_usefulButton_1_clicked()
 {
-    QString link="http://forum.netcoin.io//";
+    QString link="https://www.crypto-city.com/index.php/net-netcoin/";
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -528,7 +528,7 @@ void ShoppingPage::on_usefulButton_5_clicked()
 }
 void ShoppingPage::on_usefulButton_6_clicked()
 {
-    QString link="https://prohashing.com/explorer/Netcoin/";
+    QString link="http://net.altcoinwarz.com/";
     QDesktopServices::openUrl(QUrl(link));
 }
 

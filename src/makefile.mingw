@@ -27,13 +27,13 @@ LIBS= \
 
 DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6 -D__NO_SYSTEM_INCLUDES
 #DEBUGFLAGS=-g
-CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
-LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat
+CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS) -static -static-libgcc -static-libstdc++
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat , --large-address-aware
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
 #ifdef USE_UPNP
-# INCLUDEPATHS += -I"/e"
+# INCLUDEPATHS += -I"C:\deps\64bit\miniupnpc"
 # LIBPATHS += -L"C:\deps\64bit\miniupnpc"
 # LIBS += -l miniupnpc -l iphlpapi
 # DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
