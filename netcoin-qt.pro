@@ -32,17 +32,17 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
-   win32:BOOST_LIB_SUFFIX=-mgw74-mt-s-x32-1_68
-    win32:BOOST_INCLUDE_PATH=C:/deps/32bit/boost_1_68_0
-    win32:BOOST_LIB_PATH=C:/deps/32bit/boost_1_68_0/stage/lib
-    win32:BDB_INCLUDE_PATH=C:/deps/32bit/db-6.2.32.NC/build_unix
-  win32:BDB_LIB_PATH=C:/deps/32bit/db-6.2.32.NC/build_unix
-    win32:OPENSSL_INCLUDE_PATH=C:/deps/32bit/openssl-1.0.2q/include
-    win32:OPENSSL_LIB_PATH=C:/deps/32bit/openssl-1.0.2q
-    win32:MINIUPNPC_INCLUDE_PATH=C:/deps/32bit/
-    win32:MINIUPNPC_LIB_PATH=C:/deps/32bit/miniupnpc
-    win32:QRENCODE_INCLUDE_PATH=C:/deps/32bit/qrencode-4.0.2
-    win32:QRENCODE_LIB_PATH=C:/deps/32bit/qrencode-4.0.2/.libs
+   win32:BOOST_LIB_SUFFIX=-mgw83-mt-s-x64-1_68
+    win32:BOOST_INCLUDE_PATH=C:/deps/64bit/boost_1_68_0
+    win32:BOOST_LIB_PATH=C:/deps/64bit/boost_1_68_0/stage/lib
+    win32:BDB_INCLUDE_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
+  win32:BDB_LIB_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
+    win32:OPENSSL_INCLUDE_PATH=C:/deps/64bit/openssl-1.0.2u/include
+    win32:OPENSSL_LIB_PATH=C:/deps/64bit/openssl-1.0.2u
+    win32:MINIUPNPC_INCLUDE_PATH=C:/deps8/64bit/
+    win32:MINIUPNPC_LIB_PATH=C:/deps/64bit/miniupnpc
+    win32:QRENCODE_INCLUDE_PATH=C:/deps/64bit/qrencode-4.0.2
+    win32:QRENCODE_LIB_PATH=C:/deps/64bit/qrencode-4.0.2/.libs
 
 OBJECTS_DIR = build
 MOC_DIR = build
