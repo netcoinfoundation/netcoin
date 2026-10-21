@@ -206,15 +206,15 @@ RPCConsole::RPCConsole(QWidget *parent) :
     // set OpenSSL version label
 
     ui->openSSLVersion->setText(SSLeay_version(SSLEAY_VERSION));
-    ui->openSSLVersion->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->startupTime->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->clientName->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->clientVersion->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->buildDate->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->numberOfBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->numberOfConnections->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    // ui->totalBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->lastBlockTime->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
+    ui->openSSLVersion->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->startupTime->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->clientName->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->clientVersion->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->buildDate->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->numberOfBlocks->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->numberOfConnections->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    // ui->totalBlocks->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->lastBlockTime->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
 
     startExecutor();
 
