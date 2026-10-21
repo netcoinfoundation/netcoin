@@ -1,0 +1,38 @@
+name: Build (Ubuntu)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config \
+            libssl-dev libboost-all-dev libdb5.3++-dev libleveldb-dev \
+            libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
+
+      - name: Build daemon
+        working-directory: src
+        run: make -f makefile.unix -j"$(nproc)" netcoind
+
+      - name: Build and run unit tests
+        working-directory: src
+        run: |
+          make -f makefile.unix -j"$(nproc)" test_netcoin
+          ./test_netcoin
+
+      - name: Build Qt wallet
+        run: |
+          mkdir build-qt && cd build-qt
+          qmake -qt=5 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+          make -j"$(nproc)"

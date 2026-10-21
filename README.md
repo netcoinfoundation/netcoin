@@ -9,6 +9,8 @@
 
 Before starting ensure you have the correct [dependancys (22/01/2019)](doc/dependancys.txt) installed to compile the netcoin wallet for your platform. These can be found from the links provided in the above file or below during system specific setups. Only use the links and steps outlined above if your system does not carry dependancy packages such as ubuntu and homebrew or if you are familiar with editing the makefiles/.pro to reflect your system paths and building dependencies from scratch. However if you wish to learn this process see [dependancy build instructions](doc/build-deps.txt).
 
+**Ubuntu 24.04 and newer:** this branch builds with the stock distribution packages (OpenSSL 3, Boost 1.83, Berkeley DB 5.3, LevelDB 1.23, Qt 5.15). See [building on Ubuntu 24.04](doc/build-ubuntu-24.04.md).
+
 Below you shall find links to the specific build environment instructions. These have been written to aid you in self compiles however you should always seek to use precompiled binaries for your system when available to ensure you are on the latest stable release intended for mainstream consumption.
 
 [compiling headless daemon on unix platform](doc/build-unix.txt)
@@ -27,7 +29,7 @@ If formatted correctly bugs shall be assigned to a member of the team for recrea
 
 NetCoin (NET) - Litecoin / PeerCoin POW/POSV hybrid with Personal Investment Rate
 
-The default ports: Connection 11310, and RPC 11311 No premine.
+The default ports: Connection 11310, and RPC 11211. No premine.
 
 POS Details.
 
