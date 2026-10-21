@@ -991,7 +991,9 @@ void StopRPCThreads()
 
     deadlineTimers.clear();
     rpc_io_service->stop();
-    rpc_worker_group->join_all();
+    // rpc_worker_group is NULL if the RPC server failed to bind its port
+    if (rpc_worker_group != NULL)
+        rpc_worker_group->join_all();
     delete rpc_worker_group; rpc_worker_group = NULL;
     delete rpc_ssl_context; rpc_ssl_context = NULL;
     delete rpc_io_service; rpc_io_service = NULL;

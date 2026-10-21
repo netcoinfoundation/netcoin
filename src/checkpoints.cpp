@@ -59,7 +59,9 @@ static MapCheckpoints mapCheckpoints =
     // TestNet has no checkpoints
     static MapCheckpoints mapCheckpointsTestnet =
         boost::assign::map_list_of
-        ( 0, Params().HashGenesisBlock() )
+        // Hard-coded: calling Params() here runs during static initialisation,
+        // before the chain parameter objects are constructed (UB, read garbage)
+        ( 0, uint256("0x4a1ed64aed30d471b268b7a3ba634d4c63955700db462093a20e3f1f9db6a13f") )
         ;
 
     bool CheckHardened(int nHeight, const uint256& hash)
