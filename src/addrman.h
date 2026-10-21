@@ -406,7 +406,7 @@ public:
             }
         }
         if (nLost + nLostUnk > 0) {
-            printf("addrman", "addrman lost %i new and %i tried addresses due to collisions\n", nLostUnk, nLost);
+            printf("addrman lost %i new and %i tried addresses due to collisions\n", nLostUnk, nLost);
         }
 
         Check();

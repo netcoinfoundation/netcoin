@@ -601,8 +601,12 @@ bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
             {
                 // Any other Script with less than 15 sigops OK:
                 unsigned int sigops = subscript.GetSigOpCount(true);
-                // ... extra data left on the stack after execution is OK, too:
-                return (sigops <= MAX_P2SH_SIGOPS);
+                if (sigops > MAX_P2SH_SIGOPS)
+                    return false;
+                // ... extra data left on the stack after execution is OK, too.
+                // Note: this used to 'return' here, which skipped the checks of
+                // all remaining inputs of the transaction.
+                continue;
             }
         }
 
@@ -1760,7 +1764,7 @@ static unsigned int GetNextWorkRequiredV2(const CBlockIndex* pindexLast, bool fP
        // Limit adjustment step
        int64_t nActualTimespan = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
 
-       printf(" nActualTimespan = %d before bounds\n", nActualTimespan);
+       printf(" nActualTimespan = %" PRI64d " before bounds\n", nActualTimespan);
        if (nActualTimespan < nMinActualTimespan)
        nActualTimespan = nMinActualTimespan;
        if (nActualTimespan > nMaxActualTimespan)

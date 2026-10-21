@@ -1343,7 +1343,9 @@ bool CWallet::SelectCoinsMinConf(int64_t nTargetValue, int nConfMine, int nConfT
     vector<pair<int64_t, pair<const CWalletTx*,unsigned int> > > vValue;
     int64_t nTotalLower = 0;
 
-    random_shuffle(vCoins.begin(), vCoins.end(), GetRandInt);
+    // Fisher-Yates shuffle (std::random_shuffle was removed in C++17)
+    for (int i = (int)vCoins.size() - 1; i > 0; --i)
+        std::swap(vCoins[i], vCoins[GetRandInt(i + 1)]);
 
     BOOST_FOREACH(COutput output, vCoins)
     {

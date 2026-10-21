@@ -338,7 +338,8 @@ bool IsLowDERSignature(const valtype &vchSig, bool haveHashType) {
     // complement modulo the order could have been used instead, which is
     // one byte shorter when encoded correctly.
     // Unfortunately Netcoin blockchain contains S-high signatures so we skip these
-    if (pindexBest->nHeight >= (!TestNet() ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
+    // pindexBest is NULL before the block index is loaded (and in unit tests)
+    if (pindexBest && pindexBest->nHeight >= (!TestNet() ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
     {
         if (!CKey::CheckSignatureElement(S, nLenS, true))
             return error("Non-canonical signature: S value is unnecessarily high");
@@ -1895,7 +1896,7 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const C
     if (!EvalScript(stack, scriptSig, txTo, nIn, flags, nHashType))
         return false;
 
-        stackCopy = stack;
+    stackCopy = stack;
 
     if (!EvalScript(stack, scriptPubKey, txTo, nIn, flags, nHashType))
         return false;
