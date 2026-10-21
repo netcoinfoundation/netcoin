@@ -734,7 +734,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             return false;
     }
 
-    if (filesystem::exists(GetDataDir() / strWalletFileName))
+    if (boost::filesystem::exists(GetDataDir() / strWalletFileName))
     {
         CDBEnv::VerifyResult r = bitdb.Verify(strWalletFileName, CWalletDB::Recover);
         if (r == CDBEnv::RECOVER_OK)
@@ -1042,21 +1042,21 @@ bool AppInit2(boost::thread_group& threadGroup)
         exit(0);
     }
 
-    filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
-    if (filesystem::exists(pathBootstrap)) {
+    boost::filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
+    if (boost::filesystem::exists(pathBootstrap)) {
         uiInterface.InitMessage(_("Importing bootstrap blockchain data file."));
 
         FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
         if (file) {
-            filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
+            boost::filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
             LoadExternalBlockFile(file);
             RenameOver(pathBootstrap, pathBootstrapOld);
         }
     }
 
     // Netcoin: import PoW blockchain
-    filesystem::path pathOldblockchain = GetDataDir() / "blocks";
-    if (filesystem::exists(pathOldblockchain)) {
+    boost::filesystem::path pathOldblockchain = GetDataDir() / "blocks";
+    if (boost::filesystem::exists(pathOldblockchain)) {
         uiInterface.InitMessage(_("Importing blockchain from PoW wallet..."));
 
         FILE *file = fopen((pathOldblockchain / "blk00000.dat").string().c_str(), "rb");
@@ -1069,11 +1069,11 @@ bool AppInit2(boost::thread_group& threadGroup)
         }
 #if BOOST_VERSION >= 105000
         boost::system::error_code errcode;
-        filesystem::remove_all(pathOldblockchain, errcode);
-        filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old", errcode);
+        boost::filesystem::remove_all(pathOldblockchain, errcode);
+        boost::filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old", errcode);
 #else
-        filesystem::remove_all(pathOldblockchain);
-        filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old");
+        boost::filesystem::remove_all(pathOldblockchain);
+        boost::filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old");
 #endif
     }
 

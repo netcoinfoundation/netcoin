@@ -75,11 +75,11 @@ bool CDBEnv::Open(boost::filesystem::path pathEnv_)
     boost::this_thread::interruption_point();
 
     pathEnv = pathEnv_;
-    filesystem::path pathDataDir = pathEnv;
+    boost::filesystem::path pathDataDir = pathEnv;
     strPath = pathDataDir.string();
-    filesystem::path pathLogDir = pathDataDir / "database";
-    filesystem::create_directory(pathLogDir);
-    filesystem::path pathErrorFile = pathDataDir / "db.log";
+    boost::filesystem::path pathLogDir = pathDataDir / "database";
+    boost::filesystem::create_directory(pathLogDir);
+    boost::filesystem::path pathErrorFile = pathDataDir / "db.log";
     printf("dbenv.open LogDir=%s ErrorFile=%s\n", pathLogDir.string().c_str(), pathErrorFile.string().c_str());
 
     unsigned int nEnvFlags = 0;
