@@ -727,6 +727,17 @@ bool AppInit2(boost::thread_group& threadGroup)
         }
     }
 
+    // Wallets used to be Berkeley DB files; convert once to SQLite
+    if (boost::filesystem::exists(GetDataDir() / strWalletFileName))
+    {
+        std::string strErr;
+        if (!MigrateBerkeleyWallet(strWalletFileName, strErr))
+            return InitError(strprintf(_("Cannot convert the old (Berkeley DB) wallet %s: %s\n"
+                                         "Your original wallet file was not changed. You can move your keys with "
+                                         "dumpwallet in the old client and importwallet in this one."),
+                                       strWalletFileName.c_str(), strErr.c_str()));
+    }
+
     if (GetBoolArg("-salvagewallet"))
     {
         // Recover readable keypairs:

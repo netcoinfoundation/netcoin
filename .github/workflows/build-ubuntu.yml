@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential pkg-config \
-            libssl-dev libboost-all-dev libdb5.3++-dev libleveldb-dev \
+            libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev libleveldb-dev \
             libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
 
       - name: Build daemon

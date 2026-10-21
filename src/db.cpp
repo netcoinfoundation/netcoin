@@ -8,8 +8,6 @@
 #include "db.h"
 #include "net.h"
 #include "util.h"
-// #include "main.h"
-// #include "ui_interface.h"
 #include "hash.h"
 #include "addrman.h"
 
@@ -18,38 +16,112 @@
 #include <boost/filesystem/fstream.hpp>
 #include <openssl/rand.h>
 
+#include <sqlite3.h>
+
 #ifndef WIN32
 #include "sys/stat.h"
 #endif
 
 using namespace std;
-using namespace boost;
 
 
 unsigned int nWalletDBUpdated;
 
+// "NETW" - lets tools recognise a NetCoin SQLite wallet
+static const int WALLET_SQLITE_APPLICATION_ID = 0x4e455457;
+static const int WALLET_SQLITE_SCHEMA_VERSION = 1;
 
 
 //
-// CDB
+// helpers
+//
+
+namespace {
+
+bool ExecSQL(sqlite3* pdb, const char* pszSQL, std::string* pstrErr = NULL)
+{
+    char* pszErr = NULL;
+    int ret = sqlite3_exec(pdb, pszSQL, NULL, NULL, &pszErr);
+    if (ret != SQLITE_OK)
+    {
+        std::string strErr = pszErr ? pszErr : sqlite3_errstr(ret);
+        printf("SQLite error in \"%s\": %s\n", pszSQL, strErr.c_str());
+        if (pstrErr)
+            *pstrErr = strErr;
+        sqlite3_free(pszErr);
+        return false;
+    }
+    return true;
+}
+
+// RAII prepared statement
+class CStatement
+{
+public:
+    sqlite3_stmt* pstmt;
+    CStatement(sqlite3* pdb, const char* pszSQL) : pstmt(NULL)
+    {
+        if (sqlite3_prepare_v2(pdb, pszSQL, -1, &pstmt, NULL) != SQLITE_OK)
+        {
+            printf("SQLite prepare failed for \"%s\": %s\n", pszSQL, sqlite3_errmsg(pdb));
+            pstmt = NULL;
+        }
+    }
+    ~CStatement()
+    {
+        if (pstmt)
+        {
+            // do not leave copies of secrets in bound parameters
+            sqlite3_clear_bindings(pstmt);
+            sqlite3_finalize(pstmt);
+        }
+    }
+    bool BindBlob(int n, const CDataStream& ss)
+    {
+        return sqlite3_bind_blob(pstmt, n, ss.size() ? &ss[0] : "", ss.size(), SQLITE_TRANSIENT) == SQLITE_OK;
+    }
+    bool BindBlob(int n, const std::vector<unsigned char>& v)
+    {
+        return sqlite3_bind_blob(pstmt, n, v.size() ? &v[0] : (const unsigned char*)"", v.size(), SQLITE_TRANSIENT) == SQLITE_OK;
+    }
+};
+
+void ColumnToStream(sqlite3_stmt* pstmt, int nCol, CDataStream& ss)
+{
+    const char* p = (const char*)sqlite3_column_blob(pstmt, nCol);
+    int n = sqlite3_column_bytes(pstmt, nCol);
+    ss.SetType(SER_DISK);
+    ss.clear();
+    if (p && n > 0)
+        ss.write(p, n);
+}
+
+} // anon namespace
+
+
+//
+// CDBCursor
+//
+
+CDBCursor::~CDBCursor()
+{
+    if (pstmt)
+        sqlite3_finalize(pstmt);
+}
+
+void CDBCursor::close()
+{
+    delete this;
+}
+
+
+//
+// CDBEnv
 //
 
 CDBEnv bitdb;
 
-void CDBEnv::EnvShutdown()
-{
-    if (!fDbEnvInit)
-        return;
-
-    fDbEnvInit = false;
-    int ret = dbenv.close(0);
-    if (ret != 0)
-        printf("EnvShutdown exception: %s (%d)\n", DbEnv::strerror(ret), ret);
-    if (!fMockDb)
-        DbEnv((u_int32_t)0).remove(strPath.c_str(), 0);
-}
-
-CDBEnv::CDBEnv() : dbenv(DB_CXX_NO_EXCEPTIONS)
+CDBEnv::CDBEnv()
 {
     fDbEnvInit = false;
     fMockDb = false;
@@ -57,12 +129,23 @@ CDBEnv::CDBEnv() : dbenv(DB_CXX_NO_EXCEPTIONS)
 
 CDBEnv::~CDBEnv()
 {
-    EnvShutdown();
+    Close();
 }
 
 void CDBEnv::Close()
 {
-    EnvShutdown();
+    LOCK(cs_db);
+    for (std::map<std::string, CDBFile*>::iterator it = mapDb.begin(); it != mapDb.end(); ++it)
+    {
+        if (it->second)
+        {
+            if (it->second->pdb)
+                sqlite3_close_v2(it->second->pdb);
+            delete it->second;
+        }
+    }
+    mapDb.clear();
+    fDbEnvInit = false;
 }
 
 bool CDBEnv::Open(boost::filesystem::path pathEnv_)
@@ -70,55 +153,15 @@ bool CDBEnv::Open(boost::filesystem::path pathEnv_)
     if (fDbEnvInit)
         return true;
 
-    // if (fShutdown)
-    //    return false;
     boost::this_thread::interruption_point();
 
     pathEnv = pathEnv_;
-    boost::filesystem::path pathDataDir = pathEnv;
-    strPath = pathDataDir.string();
-    boost::filesystem::path pathLogDir = pathDataDir / "database";
-    boost::filesystem::create_directory(pathLogDir);
-    boost::filesystem::path pathErrorFile = pathDataDir / "db.log";
-    printf("dbenv.open LogDir=%s ErrorFile=%s\n", pathLogDir.string().c_str(), pathErrorFile.string().c_str());
-
-    unsigned int nEnvFlags = 0;
-    if (GetBoolArg("-privdb", true))
-        nEnvFlags |= DB_PRIVATE;
-
-    int nDbCache = GetArg("-dbcache", 25);
-    dbenv.set_lg_dir(pathLogDir.string().c_str());
-    dbenv.set_cachesize(nDbCache / 1024, (nDbCache % 1024)*1048576, 1);
-    dbenv.set_lg_bsize(1048576);
-    dbenv.set_lg_max(10485760);
-
-    // Bugfix: Bump lk_max_locks default to 537000, to safely handle reorgs with up to 5 blocks reversed
-    dbenv.set_lk_max_locks(10000); // revert
-    // dbenv.set_lk_max_locks(537000);
-
-    dbenv.set_lk_max_objects(10000);
-    dbenv.set_errfile(fopen(pathErrorFile.string().c_str(), "a")); /// debug
-    dbenv.set_flags(DB_AUTO_COMMIT, 1);
-    dbenv.set_flags(DB_TXN_WRITE_NOSYNC, 1);
-#ifdef DB_LOG_AUTO_REMOVE
-    dbenv.log_set_config(DB_LOG_AUTO_REMOVE, 1);
-#endif
-    int ret = dbenv.open(strPath.c_str(),
-                     DB_CREATE     |
-                     DB_INIT_LOCK  |
-                     DB_INIT_LOG   |
-                     DB_INIT_MPOOL |
-                     DB_INIT_TXN   |
-                     DB_THREAD     |
-                     DB_RECOVER    |
-                     nEnvFlags,
-                     S_IRUSR | S_IWUSR);
-    if (ret != 0)
-        return error("CDB() : error %s (%d) opening database environment", DbEnv::strerror(ret), ret);
+    if (sqlite3_threadsafe() == 0)
+        return error("CDBEnv::Open() : SQLite was built without thread safety");
+    printf("Using SQLite %s for the wallet database\n", sqlite3_libversion());
 
     fDbEnvInit = true;
     fMockDb = false;
-
     return true;
 }
 
@@ -127,48 +170,115 @@ void CDBEnv::MakeMock()
     if (fDbEnvInit)
         throw runtime_error("CDBEnv::MakeMock(): already initialized");
 
-    // if (fShutdown)
-    //    throw runtime_error("CDBEnv::MakeMock(): during shutdown");
     boost::this_thread::interruption_point();
-
     printf("CDBEnv::MakeMock()\n");
-
-    dbenv.set_cachesize(1, 0, 1);
-    dbenv.set_lg_bsize(10485760*4);
-    dbenv.set_lg_max(10485760);
-    dbenv.set_lk_max_locks(10000);
-    dbenv.set_lk_max_objects(10000);
-    dbenv.set_flags(DB_AUTO_COMMIT, 1);
-#ifdef DB_LOG_IN_MEMORY
-    dbenv.log_set_config(DB_LOG_IN_MEMORY, 1);
-#endif
-    int ret = dbenv.open(NULL,
-                     DB_CREATE     |
-                     DB_INIT_LOCK  |
-                     DB_INIT_LOG   |
-                     DB_INIT_MPOOL |
-                     DB_INIT_TXN   |
-                     DB_THREAD     |
-                     DB_PRIVATE,
-                     S_IRUSR | S_IWUSR);
-    if (ret > 0)
-        throw runtime_error(strprintf("CDBEnv::MakeMock(): error %d opening database environment", ret));
-
     fDbEnvInit = true;
     fMockDb = true;
 }
 
+sqlite3* CDBEnv::OpenFile(const boost::filesystem::path& path, bool fCreate, bool fReadOnly, std::string& strErr)
+{
+    sqlite3* pdb = NULL;
+    int nFlags = SQLITE_OPEN_FULLMUTEX;
+    if (fReadOnly)
+        nFlags |= SQLITE_OPEN_READONLY;
+    else
+        nFlags |= SQLITE_OPEN_READWRITE;
+    if (fCreate && !fReadOnly)
+        nFlags |= SQLITE_OPEN_CREATE;
+
+    std::string strPath = path.string();
+    int ret = sqlite3_open_v2(strPath.c_str(), &pdb, nFlags, NULL);
+    if (ret != SQLITE_OK)
+    {
+        strErr = pdb ? sqlite3_errmsg(pdb) : sqlite3_errstr(ret);
+        if (pdb)
+            sqlite3_close_v2(pdb);
+        return NULL;
+    }
+    sqlite3_extended_result_codes(pdb, 1);
+    sqlite3_busy_timeout(pdb, 5000);
+
+    // A file that is not a SQLite database (e.g. an old Berkeley DB wallet)
+    // is only detected on first access:
+    int nAppId = 0;
+    {
+        CStatement stmt(pdb, "PRAGMA application_id");
+        if (!stmt.pstmt || sqlite3_step(stmt.pstmt) != SQLITE_ROW)
+        {
+            strErr = sqlite3_errmsg(pdb);
+            sqlite3_close_v2(pdb);
+            return NULL;
+        }
+        nAppId = sqlite3_column_int(stmt.pstmt, 0);
+    }
+
+    bool fOk = true;
+    // overwrite deleted content (e.g. unencrypted keys) with zeros
+    fOk &= ExecSQL(pdb, "PRAGMA secure_delete = ON");
+    if (!fReadOnly)
+    {
+        // single file at rest, durable commits, no other process may use it
+        fOk &= ExecSQL(pdb, "PRAGMA journal_mode = DELETE");
+        fOk &= ExecSQL(pdb, "PRAGMA synchronous = FULL");
+        fOk &= ExecSQL(pdb, "PRAGMA locking_mode = EXCLUSIVE");
+        fOk &= ExecSQL(pdb, "PRAGMA foreign_keys = OFF");
+        fOk &= ExecSQL(pdb, "CREATE TABLE IF NOT EXISTS main (key BLOB PRIMARY KEY NOT NULL, value BLOB NOT NULL)");
+        if (nAppId == 0)
+        {
+            fOk &= ExecSQL(pdb, strprintf("PRAGMA application_id = %d", WALLET_SQLITE_APPLICATION_ID).c_str());
+            fOk &= ExecSQL(pdb, strprintf("PRAGMA user_version = %d", WALLET_SQLITE_SCHEMA_VERSION).c_str());
+            nAppId = WALLET_SQLITE_APPLICATION_ID;
+        }
+    }
+    if (fOk && nAppId != WALLET_SQLITE_APPLICATION_ID)
+    {
+        strErr = "not a NetCoin wallet database";
+        fOk = false;
+    }
+    if (!fOk)
+    {
+        if (strErr.empty())
+            strErr = sqlite3_errmsg(pdb);
+        sqlite3_close_v2(pdb);
+        return NULL;
+    }
+    return pdb;
+}
+
 CDBEnv::VerifyResult CDBEnv::Verify(std::string strFile, bool (*recoverFunc)(CDBEnv& dbenv, std::string strFile))
 {
-    LOCK(cs_db);
-    assert(mapFileUseCount.count(strFile) == 0);
+    {
+        LOCK(cs_db);
+        assert(mapFileUseCount.count(strFile) == 0 || mapFileUseCount[strFile] == 0);
+        // the shared connection holds an exclusive lock on the file
+        CloseDb(strFile);
 
-    Db db(&dbenv, 0);
-    int result = db.verify(strFile.c_str(), NULL, NULL, 0);
-    if (result == 0)
-        return VERIFY_OK;
-    else if (recoverFunc == NULL)
-        return RECOVER_FAIL;
+        bool fOk = false;
+        std::string strErr;
+        sqlite3* pdb = OpenFile(GetPath(strFile), false, true, strErr);
+        if (pdb)
+        {
+            {
+                CStatement stmt(pdb, "PRAGMA integrity_check");
+                if (stmt.pstmt && sqlite3_step(stmt.pstmt) == SQLITE_ROW)
+                {
+                    const char* psz = (const char*)sqlite3_column_text(stmt.pstmt, 0);
+                    fOk = (psz && strcmp(psz, "ok") == 0);
+                    if (!fOk)
+                        printf("Wallet %s integrity check: %s\n", strFile.c_str(), psz ? psz : "?");
+                }
+            }
+            sqlite3_close_v2(pdb);
+        }
+        else
+            printf("Wallet %s cannot be opened: %s\n", strFile.c_str(), strErr.c_str());
+
+        if (fOk)
+            return VERIFY_OK;
+        if (recoverFunc == NULL)
+            return RECOVER_FAIL;
+    }
 
     // Try to recover:
     bool fRecovered = (*recoverFunc)(*this, strFile);
@@ -179,81 +289,60 @@ bool CDBEnv::Salvage(std::string strFile, bool fAggressive,
                      std::vector<CDBEnv::KeyValPair >& vResult)
 {
     LOCK(cs_db);
-    assert(mapFileUseCount.count(strFile) == 0);
-
-    u_int32_t flags = DB_SALVAGE;
-    if (fAggressive) flags |= DB_AGGRESSIVE;
-
-    stringstream strDump;
-
-    Db db(&dbenv, 0);
-    int result = db.verify(strFile.c_str(), NULL, &strDump, flags);
-    if (result == DB_VERIFY_BAD)
+    std::string strErr;
+    sqlite3* pdb = OpenFile(GetPath(strFile), false, true, strErr);
+    if (!pdb)
     {
-        printf("Error: Salvage found errors, all data may not be recoverable.\n");
-        if (!fAggressive)
-        {
-            printf("Error: Rerun with aggressive mode to ignore errors and continue.\n");
-            return false;
-        }
-    }
-    if (result != 0 && result != DB_VERIFY_BAD)
-    {
-        printf("ERROR: db salvage failed: %d\n",result);
+        printf("Salvage: cannot open %s: %s\n", strFile.c_str(), strErr.c_str());
         return false;
     }
-
-    // Format of bdb dump is ascii lines:
-    // header lines...
-    // HEADER=END
-    // hexadecimal key
-    // hexadecimal value
-    // ... repeated
-    // DATA=END
-
-    string strLine;
-    while (!strDump.eof() && strLine != "HEADER=END")
-        getline(strDump, strLine); // Skip past header
-
-    std::string keyHex, valueHex;
-    while (!strDump.eof() && keyHex != "DATA=END")
+    bool fAllOk = true;
     {
-        getline(strDump, keyHex);
-        if (keyHex != "DATA_END")
+        CStatement stmt(pdb, "SELECT key, value FROM main");
+        if (!stmt.pstmt)
+            fAllOk = false;
+        else
         {
-            getline(strDump, valueHex);
-            vResult.push_back(make_pair(ParseHex(keyHex),ParseHex(valueHex)));
+            while (true)
+            {
+                int ret = sqlite3_step(stmt.pstmt);
+                if (ret == SQLITE_DONE)
+                    break;
+                if (ret != SQLITE_ROW)
+                {
+                    printf("Salvage: read error in %s: %s\n", strFile.c_str(), sqlite3_errmsg(pdb));
+                    fAllOk = false;
+                    break; // a damaged b-tree page ends the scan
+                }
+                const unsigned char* pk = (const unsigned char*)sqlite3_column_blob(stmt.pstmt, 0);
+                int nk = sqlite3_column_bytes(stmt.pstmt, 0);
+                const unsigned char* pv = (const unsigned char*)sqlite3_column_blob(stmt.pstmt, 1);
+                int nv = sqlite3_column_bytes(stmt.pstmt, 1);
+                vResult.push_back(make_pair(std::vector<unsigned char>(pk, pk + nk),
+                                            std::vector<unsigned char>(pv, pv + nv)));
+            }
         }
     }
-
-    return (result == 0);
+    sqlite3_close_v2(pdb);
+    return fAllOk;
 }
 
 
 void CDBEnv::CheckpointLSN(const std::string& strFile)
 {
-    dbenv.txn_checkpoint(0, 0, 0);
-    if (fMockDb)
-        return;
-    dbenv.lsn_reset(strFile.c_str(), 0);
+    // nothing to do: SQLite with a rollback journal keeps the file
+    // self-contained after every commit
 }
 
 
-// CDB::CDB(const char *pszFile, const char* pszMode) :
 CDB::CDB(const std::string& strFilename, const char* pszMode) :
-    pdb(NULL), activeTxn(NULL)
+    pfile(NULL), pdb(NULL), activeTxn(false)
 {
-    int ret;
-    // if (pszFile == NULL)
     fReadOnly = (!strchr(pszMode, '+') && !strchr(pszMode, 'w'));
     if (strFilename.empty())
         return;
 
-    // fReadOnly = (!strchr(pszMode, '+') && !strchr(pszMode, 'w'));
     bool fCreate = strchr(pszMode, 'c');
-    unsigned int nFlags = DB_THREAD;
-    if (fCreate)
-        nFlags |= DB_CREATE;
 
     {
         LOCK(bitdb.cs_db);
@@ -262,80 +351,57 @@ CDB::CDB(const std::string& strFilename, const char* pszMode) :
 
         strFile = strFilename;
         ++bitdb.mapFileUseCount[strFile];
-        pdb = bitdb.mapDb[strFile];
-        if (pdb == NULL)
+        pfile = bitdb.mapDb[strFile];
+        if (pfile == NULL)
         {
-            pdb = new Db(&bitdb.dbenv, 0);
-
-            bool fMockDb = bitdb.IsMock();
-            if (fMockDb)
+            std::string strErr;
+            sqlite3* pdbNew = NULL;
+            if (bitdb.IsMock())
             {
-                DbMpoolFile*mpf = pdb->get_mpf();
-                ret = mpf->set_flags(DB_MPOOL_NOFILE, 1);
-                if (ret != 0)
-                    throw runtime_error(strprintf("CDB() : Failed to configure for no temp file backing for database %s", strFile.c_str()));
+                sqlite3_open_v2(":memory:", &pdbNew, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, NULL);
+                if (pdbNew && !ExecSQL(pdbNew, "CREATE TABLE IF NOT EXISTS main (key BLOB PRIMARY KEY NOT NULL, value BLOB NOT NULL)"))
+                {
+                    sqlite3_close_v2(pdbNew);
+                    pdbNew = NULL;
+                }
             }
+            else
+                // the shared connection is always opened read-write; a
+                // read-only CDB simply never writes
+                pdbNew = CDBEnv::OpenFile(bitdb.GetPath(strFile), fCreate, false, strErr);
 
-            ret = pdb->open(NULL, // Txn pointer
-                            fMockDb ? NULL : strFile.c_str(), // Filename
-                            fMockDb ? strFile.c_str() : "main", // Logical db name
-                            DB_BTREE, // Database type
-                            nFlags, // Flags
-                            0);
-
-            if (ret != 0)
+            if (pdbNew == NULL)
             {
-                delete pdb;
-                pdb = NULL;
-                    --bitdb.mapFileUseCount[strFile];
+                --bitdb.mapFileUseCount[strFile];
+                std::string strFileErr = strFile;
                 strFile = "";
-                // throw runtime_error(strprintf("CDB() : can't open database file %s, error %d", pszFile, ret));
-                throw runtime_error(strprintf("CDB : Error %d, can't open database %s", ret, strFile.c_str()));
+                throw runtime_error(strprintf("CDB : can't open database %s: %s", strFileErr.c_str(), strErr.c_str()));
             }
-
-            if (fCreate && !Exists(string("version")))
-            {
-                bool fTmp = fReadOnly;
-                fReadOnly = false;
-                WriteVersion(CLIENT_VERSION);
-                fReadOnly = fTmp;
-            }
-
-            bitdb.mapDb[strFile] = pdb;
+            pfile = new CDBFile();
+            pfile->pdb = pdbNew;
+            bitdb.mapDb[strFile] = pfile;
         }
+        pdb = pfile->pdb;
+    }
+
+    // (outside cs_db: lock order is file mutex -> cs_db, never the reverse)
+    if (fCreate && !Exists(string("version")))
+    {
+        bool fTmp = fReadOnly;
+        fReadOnly = false;
+        WriteVersion(CLIENT_VERSION);
+        fReadOnly = fTmp;
     }
 }
-
-/*
-static bool IsChainFile(std::string strFile)
-{
-    if (strFile == "blkindex.dat")
-        return true;
-
-    return false;
-}
-*/
 
 void CDB::Close()
 {
     if (!pdb)
         return;
     if (activeTxn)
-        activeTxn->abort();
-    activeTxn = NULL;
+        TxnAbort();
     pdb = NULL;
-
-    // Flush database activity from memory pool to disk log
-    unsigned int nMinutes = 0;
-    if (fReadOnly)
-        nMinutes = 1;
-/*
-    if (IsChainFile(strFile))
-        nMinutes = 2;
-    if (IsChainFile(strFile) && IsInitialBlockDownload())
-        nMinutes = 5;
-*/
-    bitdb.dbenv.txn_checkpoint(nMinutes ? GetArg("-dblogsize", 100)*1024 : 0, nMinutes, 0);
+    pfile = NULL;
 
     {
         LOCK(bitdb.cs_db);
@@ -343,18 +409,145 @@ void CDB::Close()
     }
 }
 
+bool CDB::ReadRaw(const CDataStream& ssKey, CDataStream& ssValue)
+{
+    boost::recursive_mutex::scoped_lock lock(pfile->mutex);
+    CStatement stmt(pdb, "SELECT value FROM main WHERE key = ?");
+    if (!stmt.pstmt || !stmt.BindBlob(1, ssKey))
+        return false;
+    if (sqlite3_step(stmt.pstmt) != SQLITE_ROW)
+        return false;
+    ColumnToStream(stmt.pstmt, 0, ssValue);
+    return true;
+}
+
+bool CDB::WriteRaw(const CDataStream& ssKey, const CDataStream& ssValue, bool fOverwrite)
+{
+    boost::recursive_mutex::scoped_lock lock(pfile->mutex);
+    CStatement stmt(pdb, fOverwrite ? "INSERT OR REPLACE INTO main (key, value) VALUES (?, ?)"
+                                    : "INSERT INTO main (key, value) VALUES (?, ?)");
+    if (!stmt.pstmt || !stmt.BindBlob(1, ssKey) || !stmt.BindBlob(2, ssValue))
+        return false;
+    int ret = sqlite3_step(stmt.pstmt);
+    if (ret != SQLITE_DONE)
+    {
+        if (!(ret == SQLITE_CONSTRAINT_PRIMARYKEY && !fOverwrite))
+            printf("CDB::Write : %s\n", sqlite3_errmsg(pdb));
+        return false;
+    }
+    return true;
+}
+
+bool CDB::EraseRaw(const CDataStream& ssKey)
+{
+    boost::recursive_mutex::scoped_lock lock(pfile->mutex);
+    CStatement stmt(pdb, "DELETE FROM main WHERE key = ?");
+    if (!stmt.pstmt || !stmt.BindBlob(1, ssKey))
+        return false;
+    // like Berkeley DB's DB_NOTFOUND, erasing a missing key is not an error
+    return sqlite3_step(stmt.pstmt) == SQLITE_DONE;
+}
+
+bool CDB::ExistsRaw(const CDataStream& ssKey)
+{
+    boost::recursive_mutex::scoped_lock lock(pfile->mutex);
+    CStatement stmt(pdb, "SELECT 1 FROM main WHERE key = ?");
+    if (!stmt.pstmt || !stmt.BindBlob(1, ssKey))
+        return false;
+    return sqlite3_step(stmt.pstmt) == SQLITE_ROW;
+}
+
+Dbc* CDB::GetCursor()
+{
+    if (!pdb)
+        return NULL;
+    return new CDBCursor(pdb);
+}
+
+int CDB::ReadAtCursor(Dbc* pcursor, CDataStream& ssKey, CDataStream& ssValue, unsigned int fFlags)
+{
+    if (!pcursor)
+        return 99999;
+    if (!pcursor->fStarted)
+    {
+        pcursor->fStarted = true;
+        bool fRange = (fFlags == DB_SET_RANGE);
+        const char* pszSQL = fRange ? "SELECT key, value FROM main WHERE key >= ? ORDER BY key"
+                                    : "SELECT key, value FROM main ORDER BY key";
+        if (sqlite3_prepare_v2(pcursor->pdb, pszSQL, -1, &pcursor->pstmt, NULL) != SQLITE_OK)
+        {
+            printf("CDB::ReadAtCursor : %s\n", sqlite3_errmsg(pcursor->pdb));
+            pcursor->pstmt = NULL;
+            return 99999;
+        }
+        if (fRange &&
+            sqlite3_bind_blob(pcursor->pstmt, 1, ssKey.size() ? &ssKey[0] : "", ssKey.size(), SQLITE_TRANSIENT) != SQLITE_OK)
+            return 99999;
+    }
+    if (!pcursor->pstmt)
+        return 99999;
+
+    int ret = sqlite3_step(pcursor->pstmt);
+    if (ret == SQLITE_DONE)
+        return DB_NOTFOUND;
+    if (ret != SQLITE_ROW)
+    {
+        printf("CDB::ReadAtCursor : %s\n", sqlite3_errmsg(pcursor->pdb));
+        return 99999;
+    }
+    ColumnToStream(pcursor->pstmt, 0, ssKey);
+    ColumnToStream(pcursor->pstmt, 1, ssValue);
+    return 0;
+}
+
+bool CDB::TxnBegin()
+{
+    if (!pdb || activeTxn)
+        return false;
+    // held until TxnCommit/TxnAbort, so that writes of other threads to the
+    // same file cannot end up inside (or be rolled back with) this transaction
+    pfile->mutex.lock();
+    if (!ExecSQL(pdb, "BEGIN IMMEDIATE"))
+    {
+        pfile->mutex.unlock();
+        return false;
+    }
+    activeTxn = true;
+    return true;
+}
+
+bool CDB::TxnCommit()
+{
+    if (!pdb || !activeTxn)
+        return false;
+    bool fOk = ExecSQL(pdb, "COMMIT");
+    if (!fOk)
+        ExecSQL(pdb, "ROLLBACK");
+    activeTxn = false;
+    pfile->mutex.unlock();
+    return fOk;
+}
+
+bool CDB::TxnAbort()
+{
+    if (!pdb || !activeTxn)
+        return false;
+    bool fOk = ExecSQL(pdb, "ROLLBACK");
+    activeTxn = false;
+    pfile->mutex.unlock();
+    return fOk;
+}
+
 void CDBEnv::CloseDb(const string& strFile)
 {
+    LOCK(cs_db);
+    std::map<std::string, CDBFile*>::iterator it = mapDb.find(strFile);
+    if (it != mapDb.end() && it->second != NULL)
     {
-        LOCK(cs_db);
-        if (mapDb[strFile] != NULL)
-        {
-            // Close the database handle
-            Db* pdb = mapDb[strFile];
-            pdb->close(0);
-            delete pdb;
-            mapDb[strFile] = NULL;
-        }
+        if (it->second->pdb)
+            sqlite3_close_v2(it->second->pdb);
+        delete it->second;
+        it->second = NULL;
     }
 }
 
@@ -363,8 +556,48 @@ bool CDBEnv::RemoveDb(const string& strFile)
     this->CloseDb(strFile);
 
     LOCK(cs_db);
-    int rc = dbenv.dbremove(NULL, strFile.c_str(), NULL, DB_AUTO_COMMIT);
-    return (rc == 0);
+    boost::system::error_code ec;
+    boost::filesystem::remove(GetPath(strFile), ec);
+    return !ec;
+}
+
+bool CDB::BackupTo(const boost::filesystem::path& pathDest)
+{
+    if (!pdb)
+        return false;
+
+    // write to a temporary file first, then rename over the destination
+    boost::filesystem::path pathTmp = pathDest;
+    pathTmp += ".tmp";
+    boost::system::error_code ec;
+    boost::filesystem::remove(pathTmp, ec);
+
+    bool fOk = false;
+    {
+        // no transaction of another thread may be in progress during the copy
+        boost::recursive_mutex::scoped_lock lock(pfile->mutex);
+        sqlite3* pdbDest = NULL;
+        if (sqlite3_open_v2(pathTmp.string().c_str(), &pdbDest, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL) == SQLITE_OK)
+        {
+            sqlite3_backup* pbackup = sqlite3_backup_init(pdbDest, "main", pdb, "main");
+            if (pbackup)
+            {
+                int ret = sqlite3_backup_step(pbackup, -1);
+                sqlite3_backup_finish(pbackup);
+                fOk = (ret == SQLITE_DONE);
+            }
+            if (!fOk)
+                printf("Backup : %s\n", sqlite3_errmsg(pdbDest));
+        }
+        if (pdbDest)
+            sqlite3_close_v2(pdbDest);
+    }
+
+    if (fOk)
+        fOk = RenameOver(pathTmp, pathDest);
+    if (!fOk)
+        boost::filesystem::remove(pathTmp, ec);
+    return fOk;
 }
 
 bool CDB::Rewrite(const string& strFile, const char* pszSkip)
@@ -375,83 +608,45 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
             LOCK(bitdb.cs_db);
             if (!bitdb.mapFileUseCount.count(strFile) || bitdb.mapFileUseCount[strFile] == 0)
             {
-                // Flush log data to the dat file
                 bitdb.CloseDb(strFile);
-                bitdb.CheckpointLSN(strFile);
                 bitdb.mapFileUseCount.erase(strFile);
 
-                bool fSuccess = true;
                 printf("Rewriting %s...\n", strFile.c_str());
-                string strFileRes = strFile + ".rewrite";
-                { // surround usage of db with extra {}
-                    CDB db(strFile.c_str(), "r");
-                    Db* pdbCopy = new Db(&bitdb.dbenv, 0);
-    
-                    int ret = pdbCopy->open(NULL,                 // Txn pointer
-                                            strFileRes.c_str(),   // Filename
-                                            "main",    // Logical db name
-                                            DB_BTREE,  // Database type
-                                            DB_CREATE,    // Flags
-                                            0);
-                    if (ret > 0)
-                    {
-                        printf("Cannot create database file %s\n", strFileRes.c_str());
-                        fSuccess = false;
-                    }
-    
-                    Dbc* pcursor = db.GetCursor();
-                    if (pcursor)
-                        while (fSuccess)
-                        {
-                            CDataStream ssKey(SER_DISK, CLIENT_VERSION);
-                            CDataStream ssValue(SER_DISK, CLIENT_VERSION);
-                            int ret = db.ReadAtCursor(pcursor, ssKey, ssValue, DB_NEXT);
-                            if (ret == DB_NOTFOUND)
-                            {
-                                pcursor->close();
-                                break;
-                            }
-                            else if (ret != 0)
-                            {
-                                pcursor->close();
-                                fSuccess = false;
-                                break;
-                            }
-                            if (pszSkip &&
-                                strncmp(&ssKey[0], pszSkip, std::min(ssKey.size(), strlen(pszSkip))) == 0)
-                                continue;
-                            if (strncmp(&ssKey[0], "\x07version", 8) == 0)
-                            {
-                                // Update version:
-                                ssValue.clear();
-                                ssValue << CLIENT_VERSION;
-                            }
-                            Dbt datKey(&ssKey[0], ssKey.size());
-                            Dbt datValue(&ssValue[0], ssValue.size());
-                            int ret2 = pdbCopy->put(NULL, &datKey, &datValue, DB_NOOVERWRITE);
-                            if (ret2 > 0)
-                                fSuccess = false;
-                        }
-                    if (fSuccess)
-                    {
-                        db.Close();
-                        bitdb.CloseDb(strFile);
-                        if (pdbCopy->close(0))
-                            fSuccess = false;
-                        delete pdbCopy;
-                    }
+                std::string strErr;
+                sqlite3* pdb = CDBEnv::OpenFile(bitdb.GetPath(strFile), false, false, strErr);
+                if (!pdb)
+                    return error("Rewriting of %s FAILED: %s", strFile.c_str(), strErr.c_str());
+
+                bool fSuccess = ExecSQL(pdb, "BEGIN IMMEDIATE");
+                if (fSuccess && pszSkip)
+                {
+                    std::vector<unsigned char> vchPrefix(pszSkip, pszSkip + strlen(pszSkip));
+                    CStatement stmt(pdb, "DELETE FROM main WHERE substr(key, 1, ?) = ?");
+                    fSuccess = stmt.pstmt &&
+                               sqlite3_bind_int(stmt.pstmt, 1, vchPrefix.size()) == SQLITE_OK &&
+                               stmt.BindBlob(2, vchPrefix) &&
+                               sqlite3_step(stmt.pstmt) == SQLITE_DONE;
                 }
                 if (fSuccess)
                 {
-                    Db dbA(&bitdb.dbenv, 0);
-                    if (dbA.remove(strFile.c_str(), NULL, 0))
-                        fSuccess = false;
-                    Db dbB(&bitdb.dbenv, 0);
-                    if (dbB.rename(strFileRes.c_str(), NULL, strFile.c_str(), 0))
-                        fSuccess = false;
+                    // Update version
+                    CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+                    ssKey << string("version");
+                    CDataStream ssValue(SER_DISK, CLIENT_VERSION);
+                    ssValue << CLIENT_VERSION;
+                    CStatement stmt(pdb, "UPDATE main SET value = ? WHERE key = ?");
+                    fSuccess = stmt.pstmt && stmt.BindBlob(1, ssValue) && stmt.BindBlob(2, ssKey) &&
+                               sqlite3_step(stmt.pstmt) == SQLITE_DONE;
                 }
+                fSuccess = fSuccess && ExecSQL(pdb, "COMMIT");
                 if (!fSuccess)
-                    printf("Rewriting of %s FAILED!\n", strFileRes.c_str());
+                    ExecSQL(pdb, "ROLLBACK");
+                // rebuild the file so no freed pages with old data remain
+                fSuccess = fSuccess && ExecSQL(pdb, "VACUUM");
+                sqlite3_close_v2(pdb);
+
+                if (!fSuccess)
+                    printf("Rewriting of %s FAILED!\n", strFile.c_str());
                 return fSuccess;
             }
         }
@@ -464,8 +659,7 @@ bool CDB::Rewrite(const string& strFile, const char* pszSkip)
 void CDBEnv::Flush(bool fShutdown)
 {
     int64_t nStart = GetTimeMillis();
-    // Flush log data to the actual data file
-    //  on all files that are not in use
+    // Close all files that are not in use
     printf("Flush(%s)%s\n", fShutdown ? "true" : "false", fDbEnvInit ? "" : " db not started");
     if (!fDbEnvInit)
         return;
@@ -479,19 +673,7 @@ void CDBEnv::Flush(bool fShutdown)
             printf("%s refcount=%d\n", strFile.c_str(), nRefCount);
             if (nRefCount == 0)
             {
-                // Move log data to the dat file
                 CloseDb(strFile);
-                printf("%s checkpoint\n", strFile.c_str());
-                dbenv.txn_checkpoint(0, 0, 0);
-    /*            if (!IsChainFile(strFile) || fDetachDB) {
-                    printf("%s detach\n", strFile.c_str());
-                if (!fMockDb)
-                    dbenv.lsn_reset(strFile.c_str(), 0);
-                }
-     */
-                printf("%s detach\n", strFile.c_str());
-                if (!fMockDb)
-                    dbenv.lsn_reset(strFile.c_str(), 0);
                 printf("%s closed\n", strFile.c_str());
                 mapFileUseCount.erase(mi++);
             }
@@ -499,15 +681,8 @@ void CDBEnv::Flush(bool fShutdown)
                 mi++;
         }
         printf("DBFlush(%s)%s ended %15" PRI64d "ms\n", fShutdown ? "true" : "false", fDbEnvInit ? "" : " db not started", GetTimeMillis() - nStart);
-        if (fShutdown)
-        {
-            char** listp;
-            if (mapFileUseCount.empty())
-            {
-                dbenv.log_archive(&listp, DB_ARCH_REMOVE);
-                Close();
-            }
-        }
+        if (fShutdown && mapFileUseCount.empty())
+            Close();
     }
 }
 
