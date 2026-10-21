@@ -1822,10 +1822,11 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
-
     if (pindexLast == NULL)
-        return bnTargetLimit.GetCompact(); // genesis block
+        return Params().ProofOfWorkLimit().GetCompact(); // genesis block
+
+    // (pindexLast used to be dereferenced here before the NULL check above)
+    CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
 
     const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
     if (pindexPrev->pprev == NULL)

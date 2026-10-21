@@ -1581,7 +1581,9 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
 
                         // Reserve a new key pair from key pool
                         CPubKey vchPubKey;
-                        assert(reservekey.GetReservedKey(vchPubKey)); // should never fail, as we just unlocked
+                        bool fReserved = reservekey.GetReservedKey(vchPubKey); // should never fail, as we just unlocked
+                        assert(fReserved); // (call kept outside assert() so it also runs with NDEBUG)
+                        (void)fReserved;
 
                         scriptChange.SetDestination(vchPubKey.GetID());
                     }
