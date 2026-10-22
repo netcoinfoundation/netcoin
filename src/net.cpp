@@ -1321,7 +1321,17 @@ void ThreadMapPort2(void* parg)
     struct IGDdatas data;
     int r;
 
+#if MINIUPNPC_API_VERSION >= 18
+    // miniupnpc 2.2.8+: also returns the router's WAN address; r == 2 means
+    // the router itself only has a private address (e.g. behind CGNAT), so
+    // a port mapping would be useless
+    char wanaddr[64] = {};
+    r = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr), wanaddr, sizeof(wanaddr));
+    if (r == 2)
+        printf("UPnP: router has a private WAN address (%s), probably behind CGNAT; port mapping skipped\n", wanaddr);
+#else
     r = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
+#endif
     if (r == 1)
     {
         if (fDiscover) {
