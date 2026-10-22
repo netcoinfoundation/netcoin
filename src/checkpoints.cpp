@@ -236,24 +236,28 @@ static MapCheckpoints mapCheckpoints =
         assert(mapBlockIndex.count(hashSyncCheckpoint));
         const CBlockIndex* pindexSync = mapBlockIndex[hashSyncCheckpoint];
 
-        if (nHeight > pindexSync->nHeight &&
-            pindexSync->IsInMainChain() && pindexPrev->IsInMainChain())
-        {
-            // Fast path (normal case when extending the best chain): both
-            // blocks are on the main chain and pindexPrev is not below the
-            // sync-checkpoint, so it descends from it. Walking back from
-            // pindexPrev every time made syncing O(n^2) whenever the
-            // sync-checkpoint is old (e.g. still the genesis block on a
-            // fresh node), slowing initial sync to a crawl.
-        }
-        else if (nHeight > pindexSync->nHeight)
+        if (nHeight > pindexSync->nHeight)
         {
             // trace back to same height as sync-checkpoint
+            //
+            // Shortcut: once the walk reaches a main-chain block that is
+            // still above the sync-checkpoint, and the sync-checkpoint is on
+            // the main chain too, the block descends from it. Without this
+            // every block cost a walk back to the sync-checkpoint, which
+            // made syncing O(n^2) while the sync-checkpoint stays old (no
+            // checkpoint master broadcasts any more; on a fresh node it is
+            // the genesis block).
+            bool fSyncInMainChain = pindexSync->IsInMainChain();
             const CBlockIndex* pindex = pindexPrev;
             while (pindex->nHeight > pindexSync->nHeight)
+            {
+                if (fSyncInMainChain && pindex->IsInMainChain())
+                    break;
                 if (!(pindex = pindex->pprev))
                     return error("CheckSync: pprev null - block index structure failure");
-            if (pindex->nHeight < pindexSync->nHeight || pindex->GetBlockHash() != hashSyncCheckpoint)
+            }
+            if (pindex->nHeight <= pindexSync->nHeight &&
+                (pindex->nHeight < pindexSync->nHeight || pindex->GetBlockHash() != hashSyncCheckpoint))
                 return false; // only descendant of sync-checkpoint can pass check
         }
         if (nHeight == pindexSync->nHeight && hashBlock != hashSyncCheckpoint)

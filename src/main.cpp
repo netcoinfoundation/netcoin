@@ -3160,7 +3160,13 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // ppcoin: check proof-of-stake
     // Limited duplicity on stake: prevents block flood attack
     // Duplicate stake allowed only when there is orphan child block
-    if (pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
+    // Not applied to blocks from a local source (pfrom == NULL: -loadblock /
+    // bootstrap import or our own staking): a block file contains a stale
+    // fork block before the main-chain block that reuses the same stake, and
+    // the main-chain block's children only come later in the file, so the
+    // import used to stop there and leave the rest of the chain orphaned.
+    // This is a DoS protection only; the block is still fully validated.
+    if (pfrom && pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
         return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
 
     // Block signature can be malleated in such a way that it increases block size up to maximum allowed by protocol

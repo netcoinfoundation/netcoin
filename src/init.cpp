@@ -1050,7 +1050,8 @@ bool AppInit2(boost::thread_group& threadGroup)
             if (file)
                 LoadExternalBlockFile(file);
         }
-        exit(0);
+        // (this used to call exit(0) here: the process ended without
+        // flushing its databases, and the node never started)
     }
 
     boost::filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
