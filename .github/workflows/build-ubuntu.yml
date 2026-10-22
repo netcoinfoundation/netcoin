@@ -29,10 +29,10 @@ jobs:
           apt-get install -y git build-essential pkg-config \
             libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
             libleveldb-dev libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build, test and package
         run: bash contrib/ci/build-linux.sh ci-${GITHUB_SHA::8}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: netcoin-${{ matrix.image == 'ubuntu:24.04' && 'ubuntu-24.04' || 'ubuntu-26.04' }}
           path: dist/*.tar.gz
@@ -50,10 +50,10 @@ jobs:
           msystem: UCRT64
           update: true
           install: zip
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Build, test and package
         run: bash contrib/ci/build-windows.sh ci-${GITHUB_SHA::8}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: netcoin-win64

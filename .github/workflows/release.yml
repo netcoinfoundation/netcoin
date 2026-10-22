@@ -48,9 +48,9 @@ jobs:
           apt-get install -y git build-essential pkg-config \
             libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
             libleveldb-dev libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: bash contrib/ci/build-linux.sh "$VERSION"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: release-${{ strategy.job-index }}
           path: dist/*.tar.gz
@@ -68,9 +68,9 @@ jobs:
           msystem: UCRT64
           update: true
           install: zip
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: bash contrib/ci/build-windows.sh "$VERSION"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: release-win64
           path: dist/*.zip
@@ -79,7 +79,7 @@ jobs:
     needs: [linux, windows]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: assets
           merge-multiple: true

@@ -1,7 +1,9 @@
-# Building NetCoin on Ubuntu 24.04 (and newer)
+# Building NetCoin on Ubuntu 24.04 / 26.04
 
 This branch builds with the libraries shipped in the standard Ubuntu
-repositories — no hand-built dependencies are needed.
+repositories — no hand-built dependencies are needed. Tested on Ubuntu
+24.04 (GCC 13, Boost 1.83) and 26.04 (GCC 15, Boost 1.90); the package
+names below are the same on both.
 
 | Library       | Ubuntu 24.04 package        | Version |
 |---------------|-----------------------------|---------|

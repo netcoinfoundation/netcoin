@@ -27,7 +27,15 @@ trap fail ERR
 log "installing packages"
 REQUIRED="toolchain boost openssl sqlite3 leveldb miniupnpc zlib qt5-base qt5-tools"
 OPTIONAL="db qrencode libqrencode"
-pacman -S --noconfirm --needed make git $(for p in $REQUIRED; do echo "$P-$p"; done) >>"$LOG" 2>&1
+# the MSYS2 mirrors are sometimes slow; retry
+for attempt in 1 2 3 4; do
+    if pacman -S --noconfirm --needed make git $(for p in $REQUIRED; do echo "$P-$p"; done) >>"$LOG" 2>&1; then
+        break
+    fi
+    [ $attempt = 4 ] && false
+    echo "pacman failed, retrying ($attempt)" >>"$LOG"
+    sleep 20
+done
 HAVE_BDB=0
 HAVE_QR=0
 for p in $OPTIONAL; do

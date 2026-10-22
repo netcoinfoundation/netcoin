@@ -7,6 +7,19 @@ NCVER="${1:-dev}"
 JOBS="$(nproc)"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DISTRO="ubuntu-$(. /etc/os-release && echo "$VERSION_ID")"
+LOG="$ROOT/build-linux.log"
+: > "$LOG"
+fail() {
+    if [ -n "${GITHUB_ACTIONS:-}" ]; then
+        local msg
+        msg="$( (grep -E 'error|Error|undefined|cannot find|No such|failure' "$LOG" || tail -40 "$LOG") | tail -40 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
+        echo "::error title=Linux build failed::${msg:0:60000}"
+    fi
+    exit 1
+}
+trap fail ERR
+# show everything in the job log and keep a copy for the error summary
+exec > >(tee -a "$LOG") 2>&1
 
 cd "$ROOT/src"
 make -f makefile.unix -j"$JOBS" netcoind test_netcoin
@@ -33,3 +46,4 @@ done | sort -u | grep -v -E '^(libc6|libgcc-s1|libstdc\+\+6)$' > "$DIST/runtime-
 cd "$ROOT/dist"
 tar -czf "$NAME.tar.gz" "$NAME"
 ls -la "$ROOT/dist"
+trap - ERR
