@@ -22,6 +22,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ip/v6_only.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
@@ -53,7 +54,7 @@ static std::string strRPCUserColonPass;
 
 // These are created by StartRPCThreads, destroyed in StopRPCThreads
 static asio::io_context* rpc_io_service = NULL;
-static map<string, boost::shared_ptr<deadline_timer> > deadlineTimers;
+static map<string, boost::shared_ptr<asio::steady_timer> > deadlineTimers;
 static ssl::context* rpc_ssl_context = NULL;
 static boost::thread_group* rpc_worker_group = NULL;
 /*
@@ -605,16 +606,29 @@ void ErrorReply(std::ostream& stream, const Object& objError, const Value& id)
 bool ClientAllowed(const boost::asio::ip::address& address)
 {
     // Make sure that IPv4-compatible and IPv4-mapped IPv6 addresses are treated as IPv4 addresses
-    if (address.is_v6()
-     && (address.to_v6().is_v4_compatible()
-      || address.to_v6().is_v4_mapped()))
-        return ClientAllowed(address.to_v6().to_v4());
+    if (address.is_v6())
+    {
+        const asio::ip::address_v6 addr6 = address.to_v6();
+        if (addr6.is_v4_mapped())
+            return ClientAllowed(asio::ip::make_address_v4(asio::ip::v4_mapped, addr6));
+        // IPv4-compatible (deprecated form ::a.b.c.d, but not :: or ::1)
+        const asio::ip::address_v6::bytes_type b = addr6.to_bytes();
+        bool fCompat = true;
+        for (int i = 0; i < 12; i++)
+            if (b[i] != 0)
+                fCompat = false;
+        if (fCompat && !(b[12] == 0 && b[13] == 0 && b[14] == 0 && b[15] <= 1))
+        {
+            asio::ip::address_v4::bytes_type b4 = {{b[12], b[13], b[14], b[15]}};
+            return ClientAllowed(asio::ip::address_v4(b4));
+        }
+    }
 
     if (address == asio::ip::address_v4::loopback()
      || address == asio::ip::address_v6::loopback()
      || (address.is_v4()
          // Check whether IPv4 addresses match 127.0.0.0/8 (loopback subnet)
-      && (address.to_v4().to_ulong() & 0xff000000) == 0x7f000000))
+      && (address.to_v4().to_uint() & 0xff000000) == 0x7f000000))
         return true;
 
     const string strAddress = address.to_string();
@@ -922,7 +936,7 @@ void StartRPCThreads()
         acceptor->set_option(boost::asio::ip::v6_only(loopback), v6_only_error);
 
         acceptor->bind(endpoint);
-        acceptor->listen(socket_base::max_connections);
+        acceptor->listen(socket_base::max_listen_connections);
 
         // RPCListen(acceptor, context, fUseSSL);
         // Cancel outstanding listen-requests for this acceptor when shutting down
@@ -950,7 +964,7 @@ void StartRPCThreads()
             acceptor->open(endpoint.protocol());
             acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
             acceptor->bind(endpoint);
-            acceptor->listen(socket_base::max_connections);
+            acceptor->listen(socket_base::max_listen_connections);
 
             // RPCListen(acceptor, context, fUseSSL);
             // Cancel outstanding listen-requests for this acceptor when shutting down
@@ -1012,9 +1026,9 @@ void RPCRunLater(const std::string& name, boost::function<void(void)> func, int6
     if (deadlineTimers.count(name) == 0)
     {
         deadlineTimers.insert(make_pair(name,
-                                        boost::shared_ptr<deadline_timer>(new deadline_timer(*rpc_io_service))));
+                                        boost::shared_ptr<asio::steady_timer>(new asio::steady_timer(*rpc_io_service))));
     }
-    deadlineTimers[name]->expires_from_now(boost::posix_time::seconds(nSeconds));
+    deadlineTimers[name]->expires_after(std::chrono::seconds(nSeconds));
     deadlineTimers[name]->async_wait(boost::bind(RPCRunHandler, _1, func));
 }
 
