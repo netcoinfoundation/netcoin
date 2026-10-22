@@ -14,7 +14,7 @@ win32 {
 } else {
     CONFIG += debug_and_release
 }
-CONFIG += static
+!contains(MSYS2, 1):CONFIG += static
 CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 DEFINES += BOOST_BIND_GLOBAL_PLACEHOLDERS OPENSSL_API_COMPAT=0x10100000L
@@ -35,17 +35,22 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
-   win32:BOOST_LIB_SUFFIX=-mgw83-mt-s-x64-1_68
+# Old hand-built Windows dependency layout (C:/deps). Not used for MSYS2
+# builds: qmake MSYS2=1 (libraries come from the MSYS2 packages, see
+# doc/build-windows.md).
+win32:!contains(MSYS2, 1) {
+    win32:BOOST_LIB_SUFFIX=-mgw83-mt-s-x64-1_68
     win32:BOOST_INCLUDE_PATH=C:/deps/64bit/boost_1_68_0
     win32:BOOST_LIB_PATH=C:/deps/64bit/boost_1_68_0/stage/lib
     win32:BDB_INCLUDE_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
-  win32:BDB_LIB_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
+    win32:BDB_LIB_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
     win32:OPENSSL_INCLUDE_PATH=C:/deps/64bit/openssl-1.0.2u/include
     win32:OPENSSL_LIB_PATH=C:/deps/64bit/openssl-1.0.2u
     win32:MINIUPNPC_INCLUDE_PATH=C:/deps8/64bit/
     win32:MINIUPNPC_LIB_PATH=C:/deps/64bit/miniupnpc
     win32:QRENCODE_INCLUDE_PATH=C:/deps/64bit/qrencode-4.0.2
     win32:QRENCODE_LIB_PATH=C:/deps/64bit/qrencode-4.0.2/.libs
+}
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -71,7 +76,7 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
-win32:QMAKE_LFLAGS *= -static
+win32:!contains(MSYS2, 1):QMAKE_LFLAGS *= -static
 
 # use: qmake "USE_QRCODE=1"
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
@@ -172,7 +177,7 @@ macx: {
 
 # LevelDB: on Linux link the system library by default (Ubuntu: libleveldb-dev).
 # use: qmake "USE_SYSTEM_LEVELDB=0" to build the bundled copy instead
-!win32:!macx:isEmpty(USE_SYSTEM_LEVELDB) {
+!macx:isEmpty(USE_SYSTEM_LEVELDB):!win32|contains(MSYS2, 1) {
     USE_SYSTEM_LEVELDB=1
 }
 SOURCES += src/txdb-leveldb.cpp
@@ -488,7 +493,7 @@ isEmpty(BOOST_INCLUDE_PATH) {
 windows:DEFINES += WIN32
 windows:RC_FILE = src/qt/res/bitcoin-qt.rc
 
-windows:!contains(MINGW_THREAD_BUGFIX, 0) {
+windows:!contains(MSYS2, 1):!contains(MINGW_THREAD_BUGFIX, 0) {
     # At least qmake's win32-g++-cross profile is missing the -lmingwthrd
     # thread-safety flag. GCC has -mthreads to enable this, but it doesn't
     # work with static linking. -lmingwthrd must come BEFORE -lmingw, so
@@ -515,7 +520,7 @@ LIBS += -lssl -lcrypto -lsqlite3
     LIBS += -ldb_cxx$$BDB_LIB_SUFFIX
 }
 # -lgdi32 has to happen after -lcrypto (see  #681)
-windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
+windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32 -liphlpapi
 LIBS += -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
 LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
   windows:QMAKE_CFLAGS_THREAD += -mthread

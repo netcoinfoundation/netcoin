@@ -2085,7 +2085,11 @@ vStakePeriodRange_T PrepareRangeForStakeReport()
     int64_t nToday = GetTime();
     time_t CurTime = nToday;
 
+#ifdef WIN32
+    localtime_s(&Loc_MidNight, &CurTime);
+#else
     localtime_r(&CurTime, &Loc_MidNight);
+#endif
     Loc_MidNight.tm_hour = 0;
     Loc_MidNight.tm_min = 0;
     Loc_MidNight.tm_sec = 0;  // set midnight

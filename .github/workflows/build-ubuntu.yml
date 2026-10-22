@@ -1,38 +1,63 @@
-name: Build (Ubuntu)
+name: Build
+
+# Compile and test on every push / pull request. Binaries built here are
+# kept as workflow artifacts for a few days; official downloads are made by
+# the "Release" workflow.
 
 on:
   push:
   pull_request:
 
 jobs:
-  build:
+  linux:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04]
-    runs-on: ${{ matrix.os }}
+        include:
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+          - name: Ubuntu 26.04
+            image: ubuntu:26.04
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
     steps:
-      - uses: actions/checkout@v4
-
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config \
-            libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev libleveldb-dev \
-            libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y git build-essential pkg-config \
+            libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
+            libleveldb-dev libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
+      - uses: actions/checkout@v4
+      - name: Build, test and package
+        run: bash contrib/ci/build-linux.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: netcoin-${{ matrix.image == 'ubuntu:24.04' && 'ubuntu-24.04' || 'ubuntu-26.04' }}
+          path: dist/*.tar.gz
+          retention-days: 7
 
-      - name: Build daemon
-        working-directory: src
-        run: make -f makefile.unix -j"$(nproc)" netcoind
-
-      - name: Build and run unit tests
-        working-directory: src
-        run: |
-          make -f makefile.unix -j"$(nproc)" test_netcoin
-          ./test_netcoin
-
-      - name: Build Qt wallet
-        run: |
-          mkdir build-qt && cd build-qt
-          qmake -qt=5 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
-          make -j"$(nproc)"
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: zip
+      - uses: actions/checkout@v4
+      - name: Build, test and package
+        run: bash contrib/ci/build-windows.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: netcoin-win64
+          path: |
+            dist/*.zip
+            build-windows.log
+          retention-days: 7
