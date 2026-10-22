@@ -1521,15 +1521,18 @@ void ThreadDNSAddressSeed2(void* parg)
                 // vector<CNetAddr> vaddr;
                 vector<CNetAddr> vIPs;
                 vector<CAddress> vAdd;
-                // if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
-                if (LookupHost(seed.host.c_str(), vIPs))
+                // Seeds may be given as "host:port" (e.g. a node on a
+                // non-default port); LookupHost alone cannot parse that and
+                // the port used to be ignored.
+                int nSeedPort = Params().GetDefaultPort();
+                std::string strSeedHost;
+                SplitHostPort(seed.host, nSeedPort, strSeedHost);
+                if (LookupHost(strSeedHost.c_str(), vIPs))
                 {
-                    // BOOST_FOREACH(CNetAddr& ip, vaddr)
                     BOOST_FOREACH(CNetAddr& ip, vIPs)
                     {
                         int nOneDay = 24*3600;
-                        // CAddress addr = CAddress(CService(ip, GetDefaultPort()));
-                        CAddress addr = CAddress(CService(ip, Params().GetDefaultPort()));
+                        CAddress addr = CAddress(CService(ip, nSeedPort));
                         addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
                         vAdd.push_back(addr);
                         found++;
