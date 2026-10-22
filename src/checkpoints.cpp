@@ -236,7 +236,17 @@ static MapCheckpoints mapCheckpoints =
         assert(mapBlockIndex.count(hashSyncCheckpoint));
         const CBlockIndex* pindexSync = mapBlockIndex[hashSyncCheckpoint];
 
-        if (nHeight > pindexSync->nHeight)
+        if (nHeight > pindexSync->nHeight &&
+            pindexSync->IsInMainChain() && pindexPrev->IsInMainChain())
+        {
+            // Fast path (normal case when extending the best chain): both
+            // blocks are on the main chain and pindexPrev is not below the
+            // sync-checkpoint, so it descends from it. Walking back from
+            // pindexPrev every time made syncing O(n^2) whenever the
+            // sync-checkpoint is old (e.g. still the genesis block on a
+            // fresh node), slowing initial sync to a crawl.
+        }
+        else if (nHeight > pindexSync->nHeight)
         {
             // trace back to same height as sync-checkpoint
             const CBlockIndex* pindex = pindexPrev;
