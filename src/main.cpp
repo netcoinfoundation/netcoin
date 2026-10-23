@@ -4080,6 +4080,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         //    AddTimeData(pfrom->addr, nTime);
 
         // Change version
+        // BIP155: we understand addrv2 (Tor v3 addresses). Must be sent
+        // before verack; older nodes ignore the unknown message.
+        pfrom->PushMessage("sendaddrv2");
         pfrom->PushMessage("verack");
         // pfrom->vSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
         pfrom->ssSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
@@ -4173,10 +4176,22 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
 
-    else if (strCommand == "addr")
+    else if (strCommand == "sendaddrv2")
+    {
+        pfrom->fWantsAddrV2 = true;
+    }
+
+
+    else if (strCommand == "addr" || strCommand == "addrv2")
     {
         vector<CAddress> vAddr;
-        vRecv >> vAddr;
+        if (strCommand == "addrv2") {
+            CAddrV2Vector wrap(vAddr);
+            vRecv >> wrap;
+        } else
+            vRecv >> vAddr;
+        if (fDebugNet)
+            printf("received %s with %" PRIszu " addresses from %s\n", strCommand.c_str(), vAddr.size(), pfrom->addr.ToString().c_str());
 
         // Don't want addr from older versions unless seeding
         if (pfrom->nVersion < CADDR_TIME_VERSION && addrman.size() > 1000)
@@ -4801,11 +4816,27 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     // Update the last seen time for this node's address
     if (pfrom->fNetworkNode)
-        if (strCommand == "version" || strCommand == "addr" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
+        if (strCommand == "version" || strCommand == "addr" || strCommand == "addrv2" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
             AddressCurrentlyConnected(pfrom->addr);
 
 
     return true;
+}
+
+// addr (old format) or addrv2 (BIP155), depending on what the peer supports
+static void PushAddrMessage(CNode* pto, std::vector<CAddress>& vAddr)
+{
+    if (pto->fWantsAddrV2) {
+        CAddrV2Vector wrap(vAddr);
+        pto->PushMessage("addrv2", wrap);
+    } else {
+        std::vector<CAddress> vOld;
+        BOOST_FOREACH(const CAddress& addr, vAddr)
+            if (addr.IsAddrV1Compatible())
+                vOld.push_back(addr);
+        if (!vOld.empty())
+            pto->PushMessage("addr", vOld);
+    }
 }
 
 bool ProcessMessages(CNode* pfrom)
@@ -5111,14 +5142,14 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                     // receiver rejects addr messages larger than 1000
                     if (vAddr.size() >= 1000)
                     {
-                        pto->PushMessage("addr", vAddr);
+                        PushAddrMessage(pto, vAddr);
                         vAddr.clear();
                     }
                 }
             }
             pto->vAddrToSend.clear();
             if (!vAddr.empty())
-                pto->PushMessage("addr", vAddr);
+                PushAddrMessage(pto, vAddr);
         }
 
 

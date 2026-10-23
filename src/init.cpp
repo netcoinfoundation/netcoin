@@ -12,6 +12,7 @@
 #include "db.h"
 #include "main.h"
 #include "walletdb.h"
+#include "torcontrol.h"
 #include "bitcoinrpc.h"
 #include "net.h"
 // #include "init.h"
@@ -368,7 +369,10 @@ std::string HelpMessage()
         "  -timeout=<n>           " + _("Specify connection timeout (in milliseconds)") + "\n" +
         "  -proxy=<ip:port>       " + _("Connect through socks proxy") + "\n" +
         "  -socks=<n>             " + _("Select the version of socks proxy to use (4-5, default: 5)") + "\n" +
-        "  -tor=<ip:port>         " + _("Use proxy to reach tor hidden services (default: same as -proxy)") + "\n"
+        "  -tor=<ip:port>         " + _("Use proxy to reach tor hidden services (default: same as -proxy)") + "\n" +
+        "  -listenonion           " + _("Automatically create a Tor onion service (reachable behind NAT/CGNAT) if Tor is running (default: 1)") + "\n" +
+        "  -torcontrol=<ip:port>  " + _("Tor control port to use for -listenonion (default: 127.0.0.1:9051)") + "\n" +
+        "  -torpassword=<pass>    " + _("Tor control port password (default: cookie authentication)") + "\n" +
         "  -dns                   " + _("Allow DNS lookups for -addnode, -seednode and -connect") + "\n" +
         "  -port=<port>           " + _("Listen for connections on <port> (default: 11310 or testnet: 21310)") + "\n" +
         "  -maxconnections=<n>    " + _("Maintain at most <n> connections to peers (default: 125)") + "\n" +
@@ -1125,6 +1129,11 @@ bool AppInit2(boost::thread_group& threadGroup)
     // if (!NewThread(StartNode, (void*)&threadGroup))
     //    InitError(_("Error: could not start node"));
     StartNode(threadGroup);
+
+    // Onion service through a local Tor daemon (makes the node reachable
+    // and advertised even behind CGNAT)
+    if (!fNoListen && GetBoolArg("-listenonion", DEFAULT_LISTEN_ONION))
+        threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "torcontrol", &ThreadTorControl));
 
     // InitRPCMining is needed here so getwork/getblocktemplate in the GUI debug console works properly.
     InitRPCMining();

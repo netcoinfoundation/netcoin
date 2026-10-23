@@ -269,8 +269,12 @@ public:
     {
         LOCK(cs);
 
-        unsigned char nVersion = 1;
+        // version 2: addresses are stored in the BIP155 (addrv2) format so
+        // that Tor v3 addresses can be kept
+        unsigned char nVersion = 2;
         s << nVersion;
+        int nStreamVersion = s.GetVersion();
+        s.SetVersion(nStreamVersion | ADDRV2_FORMAT);
         s << ((unsigned char)32);
         s << nKey;
         s << nNew;
@@ -312,6 +316,7 @@ public:
                 }
             }
         }
+        s.SetVersion(nStreamVersion);
     }
 
     template<typename Stream>
@@ -323,6 +328,11 @@ public:
 
         unsigned char nVersion;
         s >> nVersion;
+        if (nVersion > 2)
+            throw std::ios_base::failure("peers.dat is from a newer version");
+        int nStreamVersion = s.GetVersion();
+        if (nVersion >= 2)
+            s.SetVersion(nStreamVersion | ADDRV2_FORMAT);
         unsigned char nKeySize;
         s >> nKeySize;
         if (nKeySize != 32) throw std::ios_base::failure("Incorrect keysize in addrman deserialization");
@@ -342,7 +352,7 @@ public:
             mapAddr[info] = n;
             info.nRandomPos = vRandom.size();
             vRandom.push_back(n);
-            if (nVersion != 1 || nUBuckets != ADDRMAN_NEW_BUCKET_COUNT) {
+            if ((nVersion != 1 && nVersion != 2) || nUBuckets != ADDRMAN_NEW_BUCKET_COUNT) {
                 // In case the new table data cannot be used (nVersion unknown, or bucket count wrong),
                 // immediately try to give them a reference based on their primary source address.
                 int nUBucket = info.GetNewBucket(nKey);
@@ -386,7 +396,7 @@ public:
                 if (nIndex >= 0 && nIndex < nNew) {
                     CAddrInfo &info = mapInfo[nIndex];
                     int nUBucketPos = info.GetBucketPosition(nKey, true, bucket);
-                    if (nVersion == 1 && nUBuckets == ADDRMAN_NEW_BUCKET_COUNT && vvNew[bucket][nUBucketPos] == -1 && info.nRefCount < ADDRMAN_NEW_BUCKETS_PER_ADDRESS) {
+                    if ((nVersion == 1 || nVersion == 2) && nUBuckets == ADDRMAN_NEW_BUCKET_COUNT && vvNew[bucket][nUBucketPos] == -1 && info.nRefCount < ADDRMAN_NEW_BUCKETS_PER_ADDRESS) {
                         info.nRefCount++;
                         vvNew[bucket][nUBucketPos] = nIndex;
                     }
@@ -408,6 +418,7 @@ public:
         if (nLost + nLostUnk > 0) {
             printf("addrman lost %i new and %i tried addresses due to collisions\n", nLostUnk, nLost);
         }
+        s.SetVersion(nStreamVersion);
 
         Check();
     }

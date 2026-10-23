@@ -275,6 +275,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/key.h \
     src/db.h \
     src/db_bdb.h \
+    src/torcontrol.h \
     src/txdb.h \
     src/walletdb.h \
     src/script.h \
@@ -361,6 +362,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/addrman.cpp \
     src/db.cpp \
     src/db_bdb.cpp \
+    src/torcontrol.cpp \
     src/walletdb.cpp \
     src/qt/clientmodel.cpp \
     src/qt/guiutil.cpp \

@@ -303,6 +303,14 @@ bool AddLocal(const CService& addr, int nScore)
     return true;
 }
 
+bool RemoveLocal(const CService& addr)
+{
+    LOCK(cs_mapLocalHost);
+    printf("RemoveLocal(%s)\n", addr.ToString().c_str());
+    mapLocalHost.erase(addr);
+    return true;
+}
+
 bool AddLocal(const CNetAddr &addr, int nScore)
 {
     return AddLocal(CService(addr, GetListenPort()), nScore);

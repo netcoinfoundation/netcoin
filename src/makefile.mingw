@@ -61,6 +61,7 @@ OBJS= \
     obj/key.o \
     obj/db.o \
     obj/db_bdb.o \
+    obj/torcontrol.o \
     obj/init.o \
     obj/keystore.o \
     obj/core.o \

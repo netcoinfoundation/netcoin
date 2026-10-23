@@ -67,6 +67,17 @@ enum
     NODE_NETWORK = (1 << 0),
 };
 
+/** Serializes a uint64 as a CompactSize (used for nServices in addrv2) */
+class CCompactSizeRef
+{
+    uint64& n;
+public:
+    explicit CCompactSizeRef(uint64& nIn) : n(nIn) {}
+    unsigned int GetSerializeSize(int, int) const { return GetSizeOfCompactSize(n); }
+    template<typename Stream> void Serialize(Stream& s, int, int) const { WriteCompactSize(s, n); }
+    template<typename Stream> void Unserialize(Stream& s, int, int) { n = ReadCompactSize(s); }
+};
+
 /** A CService with information about it as peer */
 class CAddress : public CService
 {
@@ -87,7 +98,10 @@ class CAddress : public CService
              if ((nType & SER_DISK) ||
                  (nVersion >= CADDR_TIME_VERSION && !(nType & SER_GETHASH)))
                  READWRITE(nTime);
-             READWRITE(nServices);
+             if (nVersion & ADDRV2_FORMAT)
+                 READWRITE(REF(CCompactSizeRef(pthis->nServices)));
+             else
+                 READWRITE(nServices);
              READWRITE(*pip);
             )
 

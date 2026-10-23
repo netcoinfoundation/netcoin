@@ -7,6 +7,7 @@
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/filesystem/fstream.hpp>
 
 #include <leveldb/env.h>
@@ -24,6 +25,12 @@ using namespace std;
 using namespace boost;
 
 leveldb::DB *txdb; // global pointer for LevelDB object instance
+
+// The database is opened on first use from whichever thread gets there
+// first. Without this lock two threads could both try to open it: the old
+// bundled LevelDB then silently opened it twice (risking corruption), newer
+// LevelDB versions refuse ("lock already held") and the node stopped.
+static boost::mutex csTxdbOpen;
 
 static leveldb::Options GetOptions() {
     leveldb::Options options;
@@ -76,6 +83,13 @@ CTxDB::CTxDB(const char* pszMode)
         return;
     }
 
+    boost::mutex::scoped_lock lockOpen(csTxdbOpen);
+    if (txdb) {
+        // another thread opened it while we were waiting
+        pdb = txdb;
+        return;
+    }
+
     bool fCreate = strchr(pszMode, 'c');
 
     options = GetOptions();
@@ -122,6 +136,7 @@ CTxDB::CTxDB(const char* pszMode)
 
 void CTxDB::Close()
 {
+    boost::mutex::scoped_lock lockOpen(csTxdbOpen);
     delete txdb;
     txdb = pdb = NULL;
     delete options.filter_policy;

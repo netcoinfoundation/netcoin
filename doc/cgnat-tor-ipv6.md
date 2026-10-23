@@ -18,38 +18,67 @@ reachability of `[your-ipv6-address]:11310` from outside.
 
 ## 2. Tor onion service (works through any NAT)
 
-Install Tor (`sudo apt install tor`) and add to `/etc/tor/torrc`:
+Since 3.1.0 the node creates its own Tor v3 onion service automatically
+when a Tor daemon with an enabled control port is running
+(`-listenonion`, on by default). The `.onion` address is advertised to
+other 3.1.0+ nodes in the new BIP155 (`addrv2`) address format, so the node
+becomes reachable — and is found by others — even behind CGNAT. Nodes older
+than 3.1.0 keep working with it but do not learn or relay `.onion`
+addresses.
+
+### Linux (Debian / Ubuntu)
+
+```sh
+sudo apt install tor
+```
+
+In `/etc/tor/torrc` enable the control port (both lines are usually
+there, commented out):
+
+```
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+```
+
+then `sudo systemctl restart tor` and allow your user to read Tor's auth
+cookie: `sudo usermod -aG debian-tor $USER` (log in again afterwards).
+
+### Windows
+
+Run the Tor Browser (it provides a control port on 9151) or the Tor
+Expert Bundle, and add to `netcoin.conf`:
+
+```
+torcontrol=127.0.0.1:9151
+```
+
+### Checking it
+
+`debug.log` shows e.g.
+
+```
+tor: this node is reachable as <56 characters>.onion:11310
+```
+
+The onion key is kept in `onion_v3_private_key` in the data directory, so
+the address stays the same across restarts (delete the file to get a new
+address). Options: `-listenonion=0` disables this, `-torcontrol=<ip:port>`
+sets the control port, `-torpassword=<pw>` uses password authentication
+instead of the cookie. Outgoing connections to `.onion` peers use Tor's
+SOCKS port automatically unless `-proxy` / `-tor` is set.
+
+To send *all* traffic through Tor (hide your IP address) also set
+`proxy=127.0.0.1:9050` and `listen=1`.
+
+### Manual onion service (alternative)
+
+Without a control port you can configure the service in `torrc` yourself:
 
 ```
 HiddenServiceDir /var/lib/tor/netcoin/
 HiddenServicePort 11310 127.0.0.1:11310
 ```
 
-Restart Tor; your address is in `/var/lib/tor/netcoin/hostname`
-(a 56-character v3 `.onion` name).
-
-`netcoin.conf`:
-
-```
-proxy=127.0.0.1:9050   # all outgoing connections through Tor
-listen=1               # listening is off by default when a proxy is set
-bind=127.0.0.1         # only Tor connects to us
-```
-
-Other nodes connect to you with (they also need Tor and `proxy=`):
-
-```
-addnode=<your-56-character-address>.onion:11310
-```
-
-Notes and current limitations:
-
-* Connecting to v3 onion addresses works by name through the SOCKS5
-  proxy (tested). The P2P protocol of this version can only *gossip*
-  IPv4/IPv6 and old (v2) onion addresses, so a v3 address is not spread
-  automatically — share it with other node operators and use `addnode`.
-  For the same reason `-externalip=<v3>.onion` is not accepted.
-* Without `proxy=` (no Tor for outgoing traffic) you can still run the
-  onion service for incoming connections and connect out normally;
-  then only the onion address hides your IP for incoming traffic.
-* Tor v2 onion addresses no longer exist on the Tor network.
+and announce the address from `/var/lib/tor/netcoin/hostname` with
+`externalip=<address>.onion` in `netcoin.conf`.

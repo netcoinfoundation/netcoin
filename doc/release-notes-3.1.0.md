@@ -77,6 +77,10 @@ re-validated the complete main chain, from the genesis block up to block
 * `--help` was missing all RPC, block creation and SSL options.
 * The documented default RPC port was wrong: it is 11211 (testnet
   22444), not 11311 / 21311.
+* Two threads opening the block/transaction database at the same time:
+  the old bundled LevelDB then opened it twice (risk of corruption),
+  newer LevelDB versions refused and the node stopped.
+* I2P addresses given as `.oc.b32.i2p` were stored with the Tor prefix.
 * Wallet database cursors leaked on error paths.
 * Several accesses to empty vectors and a negative array index in hex
   parsing.
@@ -95,15 +99,20 @@ re-validated the complete main chain, from the genesis block up to block
 
 ## Network
 
-* Outgoing connections through Tor, including v3 `.onion` addresses with
-  `addnode` / `connect` (`doc/cgnat-tor-ipv6.md`). Gossiping v3 onion
-  addresses is not supported by the protocol of this version.
+* Nodes behind NAT or carrier-grade NAT (CGNAT) can now be reachable:
+  with a local Tor daemon the node creates its own Tor v3 onion service
+  (`-listenonion`, default on) and advertises it (`doc/cgnat-tor-ipv6.md`).
+* BIP155 `addrv2` address messages: Tor v3 `.onion` addresses are relayed
+  between 3.1.0 nodes and stored in `peers.dat`. Older nodes are
+  unaffected — they ignore the new messages and keep receiving addresses
+  in the old format, without `.onion` v3 entries.
+* `externalip=`, `addnode=` and `connect=` accept v3 `.onion` addresses.
 * UPnP: support for miniupnpc 2.2.8+; logs when the router itself is
   behind carrier-grade NAT (CGNAT), where port mapping cannot help.
 
 ## Development
 
-* The unit tests compile again and all 73 pass.
+* The unit tests compile again and all 75 pass.
 * GitHub Actions build and test every change on Ubuntu 24.04, Ubuntu
   26.04 and Windows; release packages are built by the "Release" workflow,
   which only the repository owner can start.

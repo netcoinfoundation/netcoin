@@ -77,6 +77,7 @@ bool IsLimited(enum Network net);
 bool IsLimited(const CNetAddr& addr);
 bool AddLocal(const CService& addr, int nScore = LOCAL_NONE);
 bool AddLocal(const CNetAddr& addr, int nScore = LOCAL_NONE);
+bool RemoveLocal(const CService& addr);
 bool SeenLocal(const CService& addr);
 bool IsLocal(const CService& addr);
 bool GetLocal(CService &addr, const CNetAddr *paddrPeer = NULL);
@@ -145,6 +146,18 @@ public:
 };
 
 
+
+/** Wraps a vector of addresses so that it is (de)serialized in the BIP155
+ *  addrv2 format, whatever the stream version is */
+class CAddrV2Vector
+{
+public:
+    std::vector<CAddress>& v;
+    explicit CAddrV2Vector(std::vector<CAddress>& vIn) : v(vIn) {}
+    unsigned int GetSerializeSize(int nType, int nVersion) const { return ::GetSerializeSize(v, nType, nVersion | ADDRV2_FORMAT); }
+    template<typename Stream> void Serialize(Stream& s, int nType, int nVersion) const { ::Serialize(s, v, nType, nVersion | ADDRV2_FORMAT); }
+    template<typename Stream> void Unserialize(Stream& s, int nType, int nVersion) { ::Unserialize(s, v, nType, nVersion | ADDRV2_FORMAT); }
+};
 
 class CNodeStats
 {
@@ -221,6 +234,8 @@ public:
     std::vector<CAddress> vAddrToSend;
     mruset<CAddress> setAddrKnown;
     bool fGetAddr;
+    // peer sent "sendaddrv2" (BIP155): it understands addrv2 messages
+    bool fWantsAddrV2;
     std::set<uint256> setKnown;
     uint256 hashCheckpointKnown; // ppcoin: known sent sync-checkpoint
 
@@ -267,6 +282,7 @@ public:
         nStartingHeight = -1;
         fStartSync = false;
         fGetAddr = false;
+        fWantsAddrV2 = false;
         nMisbehavior = 0;
         hashCheckpointKnown = 0;
         setInventoryKnown.max_size(SendBufferSize() / 1000);
@@ -342,6 +358,10 @@ public:
         // Known checking here is only to save space from duplicates.
         // SendMessages will filter it again for knowns that were added
         // after addresses were pushed.
+        // addresses that do not fit the old format (Tor v3) only go to
+        // peers that support addrv2
+        if (!fWantsAddrV2 && !addr.IsAddrV1Compatible())
+            return;
         if (addr.IsValid() && !setAddrKnown.count(addr))
             vAddrToSend.push_back(addr);
     }
