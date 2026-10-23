@@ -115,10 +115,17 @@ sudo chown netcoin:netcoin /var/lib/netcoin/import.dat
 sudo -u netcoin netcoind -datadir=/var/lib/netcoin -loadblock=/var/lib/netcoin/import.dat
 ```
 
-Every block is fully verified during the import. When `nc-cli getblockcount`
-(in a second terminal) stops growing, stop the node with Ctrl+C, delete
-`/var/lib/netcoin/import.dat` and start the service again:
-`sudo systemctl start netcoind`.
+Every block is fully verified during the import, which takes one to two
+hours. RPC (`nc-cli`) is not available until the import has finished; watch
+the progress in a second terminal instead:
+
+```bash
+sudo tail -f /var/lib/netcoin/debug.log | grep --line-buffered -o 'height=[0-9]*'
+```
+
+When `debug.log` shows `Done loading`, the import is complete. Stop the node
+with Ctrl+C, delete `/var/lib/netcoin/import.dat` and start the service
+again: `sudo systemctl start netcoind`.
 
 ## 6. Tor (optional)
 
