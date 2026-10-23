@@ -91,6 +91,28 @@ CCriticalSection cs_vAddedNodes;
 
 static CSemaphore *semOutbound = NULL;
 
+// Addresses resolved from the DNS seeds. While the node has no outbound
+// connection these are tried first: peers.dat of an old installation can
+// hold thousands of addresses of nodes that are long gone, and trying them
+// one by one (5 s timeout each) can take a very long time before a working
+// seed is picked at random.
+static std::map<CService, int64_t> mapSeedLastTry;
+static CCriticalSection cs_mapSeedLastTry;
+
+static bool GetSeedToTry(CAddress& addrOut)
+{
+    LOCK(cs_mapSeedLastTry);
+    int64_t nNow = GetTime();
+    for (std::map<CService, int64_t>::iterator it = mapSeedLastTry.begin(); it != mapSeedLastTry.end(); ++it) {
+        if (nNow - it->second < 60 || IsLimited(it->first))
+            continue;
+        it->second = nNow;
+        addrOut = CAddress(it->first);
+        return true;
+    }
+    return false;
+}
+
 // Signals for message handling
 static CNodeSignals g_signals;
 CNodeSignals& GetNodeSignals() { return g_signals; }
@@ -1563,6 +1585,11 @@ void ThreadDNSAddressSeed2(void* parg)
                 }
                 // addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
                 addrman.Add(vAdd, CNetAddr(seed.name, true));
+                {
+                    LOCK(cs_mapSeedLastTry);
+                    BOOST_FOREACH(const CAddress& a, vAdd)
+                        mapSeedLastTry.insert(std::make_pair((CService)a, (int64_t)0));
+                }
             }
         }
     }
@@ -1803,6 +1830,15 @@ void ThreadOpenConnections()
                     setConnected.insert(pnode->addr.GetGroup());
                     nOutbound++;
                 }
+            }
+        }
+
+        // No connection yet: try the DNS seed addresses before random old ones
+        if (nOutbound == 0) {
+            CAddress addrSeed;
+            if (GetSeedToTry(addrSeed)) {
+                OpenNetworkConnection(addrSeed, &grant);
+                continue;
             }
         }
 
