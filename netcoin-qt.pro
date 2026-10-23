@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = netcoin
-VERSION = 3.0.0
+VERSION = 3.1.0
 
 CONFIG += qt
 QT += gui

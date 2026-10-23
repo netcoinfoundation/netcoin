@@ -82,6 +82,7 @@ jobs:
     needs: [linux, windows]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
         with:
           path: assets
@@ -96,9 +97,15 @@ jobs:
         run: |
           FLAGS="--target ${GITHUB_SHA}"
           [ "$PRERELEASE" = "true" ] && FLAGS="$FLAGS --prerelease"
+          # release notes: doc/release-notes-<x.y.z>.md (v3.1.0-rc1 -> 3.1.0)
+          BASE="${VERSION#v}"; BASE="${BASE%%-*}"
+          NOTES="doc/release-notes-$BASE.md"
+          if [ ! -f "$NOTES" ]; then
+            NOTES="$RUNNER_TEMP/notes.md"
+            echo "Binaries for Windows 10/11 (64-bit) and Ubuntu 24.04 / 26.04 (x86_64). Check the files against SHA256SUMS.txt." > "$NOTES"
+          fi
           if gh release view "$VERSION" >/dev/null 2>&1; then
             gh release upload "$VERSION" assets/* --clobber
           else
-            gh release create "$VERSION" assets/* $FLAGS --title "NetCoin $VERSION" \
-              --notes "Binaries for Windows 10/11 (64-bit) and Ubuntu 24.04 / 26.04 (x86_64). Check the files against SHA256SUMS.txt."
+            gh release create "$VERSION" assets/* $FLAGS --title "NetCoin $VERSION" --notes-file "$NOTES"
           fi
