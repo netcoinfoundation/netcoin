@@ -96,6 +96,8 @@ jobs:
           PRERELEASE: ${{ github.event.inputs.prerelease || 'false' }}
         run: |
           FLAGS="--target ${GITHUB_SHA}"
+          # tags like v3.1.0-rc1 are always pre-releases
+          case "$VERSION" in *-*) PRERELEASE=true;; esac
           [ "$PRERELEASE" = "true" ] && FLAGS="$FLAGS --prerelease"
           # release notes: doc/release-notes-<x.y.z>.md (v3.1.0-rc1 -> 3.1.0)
           BASE="${VERSION#v}"; BASE="${BASE%%-*}"
