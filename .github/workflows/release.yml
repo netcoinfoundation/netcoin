@@ -27,7 +27,7 @@ env:
 jobs:
   check:
     name: Only the owner may release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.actor == github.repository_owner
     steps:
       - run: echo "Release ${VERSION} requested by ${{ github.actor }}"
@@ -80,7 +80,7 @@ jobs:
 
   publish:
     needs: [linux, windows]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
@@ -104,8 +104,16 @@ jobs:
             NOTES="$RUNNER_TEMP/notes.md"
             echo "Binaries for Windows 10/11 (64-bit) and Ubuntu 24.04 / 26.04 (x86_64). Check the files against SHA256SUMS.txt." > "$NOTES"
           fi
+          echo "version=$VERSION flags=$FLAGS notes=$NOTES"; ls -la assets
+          set +e
           if gh release view "$VERSION" >/dev/null 2>&1; then
-            gh release upload "$VERSION" assets/* --clobber
+            OUT="$(gh release upload "$VERSION" assets/* --clobber 2>&1)"
           else
-            gh release create "$VERSION" assets/* $FLAGS --title "NetCoin $VERSION" --notes-file "$NOTES"
+            OUT="$(gh release create "$VERSION" assets/* $FLAGS --title "NetCoin $VERSION" --notes-file "$NOTES" 2>&1)"
+          fi
+          RC=$?
+          echo "$OUT"
+          if [ $RC -ne 0 ]; then
+            echo "::error title=Publishing the release failed::$(echo "$OUT" | tail -20 | sed ':a;N;$!ba;s/\n/%0A/g')"
+            exit $RC
           fi

@@ -65,13 +65,14 @@ findtool() {
 }
 QMAKE="$(findtool qmake-qt5 qmake)" || { echo "qmake not found" >>"$LOG"; ls "$MINGW_PREFIX/bin" | grep -i -E "qmake|deployqt" >>"$LOG"; false; }
 WINDEPLOYQT="$(findtool windeployqt-qt5 windeployqt)" || WINDEPLOYQT=""
-log "qmake: $QMAKE  windeployqt: ${WINDEPLOYQT:-none}"
+LRELEASE="$(findtool lrelease-qt5 lrelease)" || { echo "lrelease not found" >>"$LOG"; false; }
+log "qmake: $QMAKE  lrelease: $LRELEASE  windeployqt: ${WINDEPLOYQT:-none}"
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
 QRARG="USE_QRCODE=$HAVE_QR"
 BDBARG=""
 [ "$HAVE_BDB" = 1 ] || BDBARG="USE_BDB=0"
-"$QMAKE" ../netcoin-qt.pro MSYS2=1 USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
+"$QMAKE" ../netcoin-qt.pro MSYS2=1 "QMAKE_LRELEASE=$(cygpath -m "$LRELEASE")" USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
 make -j"$JOBS" >>"$LOG" 2>&1
 
 log "collecting files"
