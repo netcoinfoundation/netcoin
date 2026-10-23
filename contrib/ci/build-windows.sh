@@ -54,12 +54,24 @@ make -f makefile.mingw -j"$JOBS" USE_BDB=$HAVE_BDB test_netcoin.exe >>"$LOG" 2>&
 ./test_netcoin.exe >>"$LOG" 2>&1
 
 log "building netcoin.exe (Qt wallet)"
+# MSYS2 names the Qt 5 tools with a -qt5 suffix (Qt 6 owns the plain names)
+findtool() {
+    for t in "$@"; do
+        for c in "$t" "$MINGW_PREFIX/bin/$t" "$MINGW_PREFIX/qt5/bin/$t" "$MINGW_PREFIX/lib/qt5/bin/$t"; do
+            if command -v "$c" >/dev/null 2>&1; then command -v "$c"; return 0; fi
+        done
+    done
+    return 1
+}
+QMAKE="$(findtool qmake-qt5 qmake)" || { echo "qmake not found" >>"$LOG"; ls "$MINGW_PREFIX/bin" | grep -i -E "qmake|deployqt" >>"$LOG"; false; }
+WINDEPLOYQT="$(findtool windeployqt-qt5 windeployqt)" || WINDEPLOYQT=""
+log "qmake: $QMAKE  windeployqt: ${WINDEPLOYQT:-none}"
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
 QRARG="USE_QRCODE=$HAVE_QR"
 BDBARG=""
 [ "$HAVE_BDB" = 1 ] || BDBARG="USE_BDB=0"
-qmake ../netcoin-qt.pro MSYS2=1 USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
+"$QMAKE" ../netcoin-qt.pro MSYS2=1 USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
 make -j"$JOBS" >>"$LOG" 2>&1
 
 log "collecting files"
@@ -70,7 +82,7 @@ cp "$ROOT/src/netcoind.exe" "$DIST/"
 QTEXE="$(ls release/netcoin.exe 2>/dev/null || ls netcoin.exe)"
 cp "$QTEXE" "$DIST/netcoin.exe"
 strip "$DIST/netcoind.exe" "$DIST/netcoin.exe"
-windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw \
+[ -n "$WINDEPLOYQT" ] && "$WINDEPLOYQT" --release --no-translations --no-system-d3d-compiler --no-opengl-sw \
     --no-compiler-runtime "$DIST/netcoin.exe" >>"$LOG" 2>&1 || true
 # the Qt platform plugin is required for the wallet window to open
 if [ ! -f "$DIST/platforms/qwindows.dll" ]; then
