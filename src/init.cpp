@@ -305,7 +305,13 @@ bool AppInit(int argc, char* argv[])
         delete detectShutdownThread;
         detectShutdownThread = NULL;
     }
-        Shutdown();
+    // Wait for all worker threads (staking, message handler, network, ...)
+    // before Shutdown() frees the wallet; otherwise they kept running while
+    // the wallet was deleted and the static mutexes were destroyed at exit
+    // ("boost::lock_error ... Invalid argument" after Ctrl+C).
+    threadGroup.interrupt_all();
+    threadGroup.join_all();
+    Shutdown();
 
     return fRet;
 }
