@@ -21,6 +21,9 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-24.04
     container: ${{ matrix.image }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Install dependencies
         run: |

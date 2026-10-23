@@ -17,7 +17,7 @@ fail() {
     # make the end of the log visible as an annotation in the Actions UI
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
         local msg
-        msg="$(grep -E 'error|Error|undefined|cannot find|No such' "$LOG" | tail -40 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
+        msg="$( (grep -E 'error:|Error [0-9]|undefined reference|cannot find|No such file' "$LOG" | tail -15; echo '--- last lines ---'; tail -25 "$LOG") | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
         echo "::error title=Windows build failed::${msg:0:60000}"
     fi
     exit 1
