@@ -120,7 +120,9 @@ void CNode::PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd)
 */
 
 // find 'best' local address for a particular peer
-bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
+// fAddrV1Only: skip addresses that cannot be sent in the old address format
+// (Tor v3), e.g. for the version message or for peers without addrv2
+bool GetLocal(CService& addr, const CNetAddr *paddrPeer, bool fAddrV1Only)
 {
     if (fNoListen)
         return false;
@@ -131,6 +133,8 @@ bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
         LOCK(cs_mapLocalHost);
         for (map<CNetAddr, LocalServiceInfo>::iterator it = mapLocalHost.begin(); it != mapLocalHost.end(); it++)
         {
+            if (fAddrV1Only && !(*it).first.IsAddrV1Compatible())
+                continue;
             int nScore = (*it).second.nScore;
             int nReachability = (*it).first.GetReachabilityFrom(paddrPeer);
             if (nReachability > nBestReachability || (nReachability == nBestReachability && nScore > nBestScore))
@@ -148,12 +152,12 @@ bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
 // Otherwise, return the unroutable 0.0.0.0 but filled in with
 // the normal parameters, since the IP may be changed to a useful
 // one by discovery.
-CAddress GetLocalAddress(const CNetAddr *paddrPeer)
+CAddress GetLocalAddress(const CNetAddr *paddrPeer, bool fAddrV1Only)
 {
     // CAddress ret(CService("0.0.0.0",0),0);
     CAddress ret(CService("0.0.0.0",GetListenPort()),0);
     CService addr;
-    if (GetLocal(addr, paddrPeer))
+    if (GetLocal(addr, paddrPeer, fAddrV1Only))
     {
         ret = CAddress(addr);
         // ret.nServices = nLocalServices;
@@ -242,7 +246,7 @@ void AdvertizeLocal(CNode *pnode)
     if (!fNoListen && pnode->fSuccessfullyConnected)
     {
         // if (pnode->fSuccessfullyConnected)
-        CAddress addrLocal = GetLocalAddress(&pnode->addr);
+        CAddress addrLocal = GetLocalAddress(&pnode->addr, !pnode->fWantsAddrV2);
         // If discovery is enabled, sometimes give our peer the address it
         // tells us that it sees us as in case it has a better idea of our
         // address than we do.
@@ -626,7 +630,8 @@ void CNode::PushVersion()
     /// when NTP implemented, change to just nTime = GetAdjustedTime()
     int64_t nTime = (fInbound ? GetAdjustedTime() : GetTime());
     CAddress addrYou = (addr.IsRoutable() && !IsProxy(addr) ? addr : CAddress(CService("0.0.0.0",0)));
-    CAddress addrMe = GetLocalAddress(&addr);
+    // the version message always uses the old address format
+    CAddress addrMe = GetLocalAddress(&addr, true);
     RAND_bytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
     printf("send version message: version %d, blocks=%d, us=%s, them=%s, peer=%s\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString().c_str(), addrYou.ToString().c_str(), addr.ToString().c_str());
     PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,

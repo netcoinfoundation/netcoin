@@ -119,9 +119,9 @@ re-validated the complete main chain, from the genesis block up to block
 
 ## Known limitations
 
-* The automatic wallet conversion was tested with wallets created by
-  Berkeley DB 5.3 on Linux. If a wallet from the old Windows client
-  (Berkeley DB 6.2) cannot be converted, use `dumpwallet` / `importwallet`.
+* The automatic wallet conversion was tested with Berkeley DB 5.3 wallets
+  from Linux and with an encrypted wallet from the old Windows client. If a
+  wallet cannot be converted, use `dumpwallet` / `importwallet`.
 * IPv6 connectivity is implemented as before but was not tested in this
   release.
 * At the time of this release the network has very few nodes and no new

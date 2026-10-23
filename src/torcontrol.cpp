@@ -198,27 +198,52 @@ void Authenticate(TorConnection& conn)
     }
 }
 
-/** If no proxy for .onion is configured, use Tor's SOCKS port */
-void ConfigureOnionProxy(TorConnection& conn)
+/**
+ * If no proxy for .onion is configured, use Tor's SOCKS port. Tor reports
+ * it with GETINFO net/listeners/socks; when that gives nothing usable (e.g.
+ * a unix socket, or an empty list) fall back to the usual port next to the
+ * control port: 9150 for the Tor Browser (control 9151), otherwise 9050.
+ */
+void ConfigureOnionProxy(TorConnection& conn, const std::string& strControl)
 {
     proxyType proxy;
     if (GetProxy(NET_TOR, proxy))
         return;
+
+    CService addrProxy;
     try {
         std::vector<std::string> v = conn.Command("GETINFO net/listeners/socks");
-        std::string val = GetReplyValue(v[0], "net/listeners/socks");
-        std::string first = val.substr(0, val.find(' '));
-        if (!first.empty() && first[0] == '"')
-            first = first.substr(1, first.size() - 2);
-        if (first.empty())
-            return;
-        CService addrProxy(first, 9050);
-        if (addrProxy.IsValid() && SetProxy(NET_TOR, addrProxy, 5)) {
-            SetReachable(NET_TOR);
-            printf("tor: using %s to connect to .onion peers\n", addrProxy.ToString().c_str());
+        BOOST_FOREACH(const std::string& line, v) {
+            if (line.find("net/listeners/socks=") == std::string::npos)
+                continue;
+            std::string val = line.substr(line.find('=') + 1);
+            // space separated list of optionally quoted entries
+            std::stringstream ss(val);
+            std::string entry;
+            while (ss >> entry) {
+                if (entry.size() >= 2 && entry[0] == '"' && entry[entry.size() - 1] == '"')
+                    entry = entry.substr(1, entry.size() - 2);
+                CService addr(entry, 9050);
+                if (addr.IsValid()) {
+                    addrProxy = addr;
+                    break;
+                }
+            }
+            if (!addrProxy.IsValid())
+                printf("tor: no usable SOCKS port in Tor's reply: %s\n", line.c_str());
         }
     } catch (const TorControlError& e) {
         printf("tor: cannot get the SOCKS port: %s\n", e.what());
+    }
+
+    if (!addrProxy.IsValid()) {
+        CService addrControl(strControl, 9051);
+        unsigned short nPort = (addrControl.GetPort() == 9151) ? 9150 : 9050;
+        addrProxy = CService(addrControl.IsValid() ? addrControl.ToStringIP() : std::string("127.0.0.1"), nPort);
+    }
+    if (addrProxy.IsValid() && SetProxy(NET_TOR, addrProxy, 5)) {
+        SetReachable(NET_TOR);
+        printf("tor: using %s to connect to .onion peers\n", addrProxy.ToString().c_str());
     }
 }
 
@@ -275,7 +300,7 @@ void ThreadTorControl()
             TorConnection conn;
             conn.Connect(strTarget);
             Authenticate(conn);
-            ConfigureOnionProxy(conn);
+            ConfigureOnionProxy(conn, strTarget);
             addrOnion = AddOnion(conn);
             printf("tor: this node is reachable as %s\n", addrOnion.ToString().c_str());
             AddLocal(addrOnion, LOCAL_MANUAL);

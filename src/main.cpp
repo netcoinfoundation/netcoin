@@ -4092,7 +4092,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             // Advertise our address
             if (!fNoListen && !IsInitialBlockDownload())
             {
-                CAddress addr = GetLocalAddress(&pfrom->addr);
+                // addrv2 support is only known after "sendaddrv2", so a Tor
+                // v3 address is advertised on "verack" instead
+                CAddress addr = GetLocalAddress(&pfrom->addr, true);
                 if (addr.IsRoutable())
                 {
                     pfrom->PushAddress(addr);
@@ -4173,6 +4175,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     {
         // pfrom->vRecv.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
         pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+
+        // Advertise our onion address to outbound peers that support addrv2
+        if (!pfrom->fInbound && pfrom->fWantsAddrV2 && !fNoListen && !IsInitialBlockDownload())
+        {
+            CAddress addr = GetLocalAddress(&pfrom->addr);
+            if (!addr.IsAddrV1Compatible() && addr.IsRoutable())
+                pfrom->PushAddress(addr);
+        }
     }
 
 
