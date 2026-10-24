@@ -27,6 +27,11 @@ using namespace std;
 unsigned int nStakeSplitAge = 0; // If you find a POS block with coins aged less than this, it assumes you are staking well over the nStakeCombineThreshold and are finding blocks too quickly (
 // ( probably have a very high value compared to the network). It will split the payout back to you into two blocks, to give other people a better chance to stake.
 int64_t nStakeCombineThreshold = 10000000 * COIN;   //When appending coins to submit as a POS block, no further coins are added if this total is achieved
+// Whether a stake may take in more coins of the same address than the one
+// that found the kernel (-stakecombine). Combined coins are locked for the
+// whole coinstake maturity, so by default only the kernel coin is used and
+// the rest of the balance stays spendable.
+bool fStakeCombine = false;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -1861,6 +1866,9 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
 
             int64_t nTimeWeight = GetWeight((int64_t)blockTmp.nTime, (int64_t)nTxTime);
 
+            // Only the kernel coin unless combining is switched on
+            if (!fStakeCombine)
+                break;
             // Stop adding more inputs if already too many inputs
             if (txNew.vin.size() >= 100)
                 break;

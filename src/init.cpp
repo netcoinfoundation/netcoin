@@ -395,6 +395,9 @@ std::string HelpMessage()
         "  -dnsseed               " + _("Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)") + "\n" +
         "  -forcednsseed          " + _("Always query for peer addresses via DNS lookup (default: 0)") + "\n" +
         "  -staking               " + _("Stake your coins to support network and gain reward (default: 1)") + "\n" +
+        "  -reservebalance=<amt>  " + _("Amount that never takes part in staking and stays spendable (default: 0)") + "\n" +
+        "  -stakecombine          " + _("Let a stake take in more coins of the same address; they are then locked until the stake matures (default: 0)") + "\n" +
+        "  -stakecombinethreshold=<amt> " + _("With -stakecombine: stop adding coins to a stake at this amount (default: 10000000)") + "\n" +
         "  -synctime              " + _("Sync time with other nodes. Disable if time on your system is precise e.g. syncing with NTP (default: 1)") + "\n" +
         "  -cppolicy              " + _("Sync checkpoints policy (default: strict)") + "\n" +
         "  -banscore=<n>          " + _("Threshold for disconnecting misbehaving peers (default: 100)") + "\n" +
@@ -881,6 +884,16 @@ bool AppInit2(boost::thread_group& threadGroup)
         if (!ParseMoney(mapArgs["-reservebalance"], nReserveBalance))
         {
             InitError(_("Invalid amount for -reservebalance=<amount>"));
+            return false;
+        }
+    }
+
+    fStakeCombine = GetBoolArg("-stakecombine", false);
+    if (mapArgs.count("-stakecombinethreshold"))
+    {
+        if (!ParseMoney(mapArgs["-stakecombinethreshold"], nStakeCombineThreshold))
+        {
+            InitError(_("Invalid amount for -stakecombinethreshold=<amount>"));
             return false;
         }
     }

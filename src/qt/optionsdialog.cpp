@@ -9,6 +9,7 @@
 #include "net.h"
 #include "torcontrol.h"
 #include "util.h"
+#include "wallet.h"
 
 #include <QCheckBox>
 #include <QKeyEvent>
@@ -37,6 +38,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     fRestartWarningDisplayed_Lang(false),
     fProxyIpValid(true),
     fNetConfChanged(false),
+    fStakeCombineLoaded(false),
     fListenOnionLoaded(true)
 {
     ui->setupUi(this);
@@ -294,6 +296,12 @@ bool OptionsDialog::eventFilter(QObject *object, QEvent *event)
  */
 void OptionsDialog::setupNetConfWidgets()
 {
+    /* Main tab: combining coins in stakes */
+    stakeCombine = new QCheckBox(tr("&Combine coins when staking"), this);
+    stakeCombine->setToolTip(tr("When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable."));
+    ui->verticalLayout_Main->insertWidget(ui->verticalLayout_Main->count() - 1, stakeCombine);
+    connect(stakeCombine, SIGNAL(toggled(bool)), this, SLOT(netConfChanged()));
+
     QVBoxLayout *layout = ui->verticalLayout_Network;
     int nPos = layout->count() - 1; // before the vertical spacer
 
@@ -365,7 +373,13 @@ void OptionsDialog::setupNetConfWidgets()
 
 void OptionsDialog::loadNetConf()
 {
-    std::vector<std::string> v = ConfFile::GetValues("listenonion");
+    std::vector<std::string> v = ConfFile::GetValues("stakecombine");
+    fStakeCombineLoaded = v.empty() ? false : (atoi(v.back().c_str()) != 0);
+    stakeCombine->blockSignals(true);
+    stakeCombine->setChecked(fStakeCombineLoaded);
+    stakeCombine->blockSignals(false);
+
+    v = ConfFile::GetValues("listenonion");
     fListenOnionLoaded = v.empty() ? DEFAULT_LISTEN_ONION : (atoi(v.back().c_str()) != 0);
     v = ConfFile::GetValues("torcontrol");
     strTorControlLoaded = v.empty() ? QString() : QString::fromStdString(v.back());
@@ -443,6 +457,8 @@ bool OptionsDialog::saveNetConf()
     std::vector<std::string>& vNodes = mapValues["addnode"];
     foreach (const QString& strNode, listNodes)
         vNodes.push_back(strNode.toStdString());
+    if (stakeCombine->isChecked() != fStakeCombineLoaded || !ConfFile::GetValues("stakecombine").empty())
+        mapValues["stakecombine"].push_back(stakeCombine->isChecked() ? "1" : "0");
     if (listenOnion->isChecked() != fListenOnionLoaded || !ConfFile::GetValues("listenonion").empty())
         mapValues["listenonion"].push_back(listenOnion->isChecked() ? "1" : "0");
     if (strControl != strTorControlLoaded) {
@@ -456,6 +472,9 @@ bool OptionsDialog::saveNetConf()
         QMessageBox::critical(this, tr("Error"), tr("Cannot save the settings to netcoin.conf: %1").arg(QString::fromStdString(strError)));
         return false;
     }
+
+    /* takes effect right away */
+    fStakeCombine = stakeCombine->isChecked();
 
     /* addnode takes effect right away */
     {

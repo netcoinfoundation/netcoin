@@ -29,6 +29,8 @@
 extern bool fGlobalStakeForCharity;
 
 extern bool fWalletUnlockStakingOnly;
+extern bool fStakeCombine;
+extern int64_t nStakeCombineThreshold;
 extern bool fConfChange;
 class CAccountingEntry;
 class CCoinControl;

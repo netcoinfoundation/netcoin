@@ -6,6 +6,7 @@
  * The Bitcoin Developers 2011-2012
  */
 #include "bitcoingui.h"
+#include "splitcoinsdialog.h"
 #include "calcdialog.h"
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
@@ -328,6 +329,10 @@ void BitcoinGUI::createActions()
     connect(networkAction, SIGNAL(triggered()), this, SLOT(gotoNetworkPage()));
     connect(calcAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(calcAction, SIGNAL(triggered()), this, SLOT(calcClicked()));
+    splitCoinsAction = new QAction(QIcon(":/icons/send"), tr("Spli&t coins..."), this);
+    splitCoinsAction->setToolTip(tr("Split the balance into several coins, so that a stake does not lock all of it"));
+    connect(splitCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(splitCoinsAction, SIGNAL(triggered()), this, SLOT(splitCoinsClicked()));
 
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
@@ -434,6 +439,7 @@ void BitcoinGUI::createMenuBar()
     settings->addAction(optionsAction);
     settings->addSeparator();
     settings->addAction(calcAction);
+    settings->addAction(splitCoinsAction);
 
     /* zeewolf: Hot swappable wallet themes */
     if (themesList.count()>0)
@@ -1238,6 +1244,14 @@ void BitcoinGUI::stakeReportClicked()
 void BitcoinGUI::calcClicked()
 {
     calcDialog dlg;
+    dlg.exec();
+}
+
+void BitcoinGUI::splitCoinsClicked()
+{
+    if (!walletModel)
+        return;
+    SplitCoinsDialog dlg(walletModel, this);
     dlg.exec();
 }
 

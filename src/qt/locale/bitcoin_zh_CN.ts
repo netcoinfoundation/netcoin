@@ -320,17 +320,17 @@ This product includes software developed by the OpenSSL Project for use in the O
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../bitcoingui.cpp" line="+358"/>
+        <location filename="../bitcoingui.cpp" line="+363"/>
         <source>Sign &amp;message...</source>
         <translation>消息签名(&amp;M)...</translation>
     </message>
     <message>
-        <location line="+418"/>
+        <location line="+419"/>
         <source>Synchronizing with network...</source>
         <translation>正在与网络同步...</translation>
     </message>
     <message>
-        <location line="-510"/>
+        <location line="-515"/>
         <source>&amp;Overview</source>
         <translation>概况(&amp;O)</translation>
     </message>
@@ -355,7 +355,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>发送货币(&amp;S)</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+64"/>
         <source>E&amp;xit</source>
         <translation>退出(&amp;X)</translation>
     </message>
@@ -440,7 +440,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>验证消息(&amp;V)...</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-263"/>
         <source>Netcoin</source>
         <translation>熊猫币</translation>
     </message>
@@ -505,7 +505,17 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>打开 PIR 计算器</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
+        <source>Spli&amp;t coins...</source>
+        <translation>拆分币(&amp;T)...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split the balance into several coins, so that a stake does not lock all of it</source>
+        <translation>将余额拆分为多枚币，避免一次权益锁定全部余额</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;About Netcoin</source>
         <translation>关于熊猫币(&amp;A)</translation>
     </message>
@@ -555,7 +565,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>T&amp;hemes</source>
         <translation>主题(&amp;H)</translation>
     </message>
@@ -599,7 +609,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         </translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+727"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -609,7 +619,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-154"/>
+        <location line="-162"/>
         <source>Not staking because wallet is locked</source>
         <translation>未进行权益增值，因为钱包已锁定</translation>
     </message>
@@ -629,12 +639,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>未进行权益增值，因为钱包中没有成熟的熊猫币</translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-855"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>解锁钱包(&amp;U)</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+385"/>
         <source>Up to date</source>
         <translation>已是最新</translation>
     </message>
@@ -1482,7 +1492,7 @@ p, li { white-space: pre-wrap; }
         <translation>应用(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="+73"/>
+        <location filename="../optionsdialog.cpp" line="+75"/>
         <source>default</source>
         <translation>默认</translation>
     </message>
@@ -1504,7 +1514,17 @@ p, li { white-space: pre-wrap; }
         <translation>提供的代理服务器地址无效。</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+34"/>
+        <source>&amp;Combine coins when staking</source>
+        <translation>权益挖矿时合并币(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable.</source>
+        <translation>开启时，权益会合并同一地址的其他币，这些币在权益成熟（50 个区块）前都会被锁定。关闭时，只锁定找到权益的那枚币，其余余额仍可使用。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tor onion service</source>
         <translation>Tor 洋葱服务</translation>
     </message>
@@ -1554,7 +1574,7 @@ p, li { white-space: pre-wrap; }
         <translation>保存在 netcoin.conf（addnode=）中。新节点会立即连接；Tor 设置在重启 NetCoin 后生效。</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+65"/>
         <source>&quot;%1&quot; is not a valid node address.</source>
         <translation>“%1”不是有效的节点地址。</translation>
     </message>
@@ -1574,7 +1594,7 @@ p, li { white-space: pre-wrap; }
         <translation>Tor 洋葱服务已关闭。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -1584,7 +1604,7 @@ p, li { white-space: pre-wrap; }
         <translation>无法将设置保存到 netcoin.conf：%1</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+23"/>
         <source>Tor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2867,6 +2887,89 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>Message verified.</source>
         <translation>消息验证成功。</translation>
+    </message>
+</context>
+<context>
+    <name>SplitCoinsDialog</name>
+    <message>
+        <location filename="../splitcoinsdialog.cpp" line="+27"/>
+        <location line="+96"/>
+        <location line="+16"/>
+        <location line="+5"/>
+        <location line="+22"/>
+        <location line="+5"/>
+        <location line="+7"/>
+        <source>Split coins</source>
+        <translation>拆分币</translation>
+    </message>
+    <message>
+        <location line="-147"/>
+        <source>A stake locks the coin it uses, together with the reward, until it matures (50 blocks). If your whole balance is one coin, nothing can be sent during that time.
+
+This splits your spendable balance into several equal coins on new addresses of this wallet. A stake then locks only one of them, the others stay spendable and keep staking. The coins do not leave your wallet; only the network fee is paid.</source>
+        <translation>权益会锁定所用的币及奖励，直到成熟（50 个区块）。如果全部余额只有一枚币，这段时间内将无法发送任何款项。
+
+此功能会把可用余额拆分为若干等额的币，存入本钱包的新地址。这样一次权益只锁定其中一枚，其余仍可使用并继续参与权益挖矿。币不会离开您的钱包，只需支付网络手续费。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Number of &amp;coins:</source>
+        <translation>币的数量(&amp;C)：</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Split</source>
+        <translation>拆分(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Close</source>
+        <translation>关闭(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Spendable now: %1</source>
+        <translation>当前可用：%1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spendable coins in the wallet now: %1</source>
+        <translation>钱包中当前可用币数量：%1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Each coin: %1. The network fee is at most about %2; what is left over comes back as one more small coin.</source>
+        <translation>每枚币：%1。网络手续费最多约 %2；剩余部分将作为一枚小额币返回。</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The spendable balance is too small to split into this many coins.</source>
+        <translation>可用余额太少，无法拆分为这么多枚币。</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Split %1 into %2 coins of %3 on new addresses of this wallet?</source>
+        <translation>将 %1 拆分为 %2 枚各 %3 的币，存入本钱包的新地址？</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Could not create a new address.</source>
+        <translation>无法创建新地址。</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Done. The new coins can be used for staking and sending once the transaction is confirmed.</source>
+        <translation>完成。交易确认后，新币即可用于权益挖矿和发送。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>加上 %1 的交易手续费后，总额超过您的余额。</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error: Transaction creation failed.</source>
+        <translation>错误：创建交易失败。</translation>
     </message>
 </context>
 <context>

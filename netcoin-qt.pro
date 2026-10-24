@@ -241,6 +241,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/addresstablemodel.h \
     src/qt/optionsdialog.h \
     src/qt/conffile.h \
+    src/qt/splitcoinsdialog.h \
     src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
     src/qt/sendcoinsdialog.h \
@@ -334,6 +335,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/addresstablemodel.cpp \
     src/qt/optionsdialog.cpp \
     src/qt/conffile.cpp \
+    src/qt/splitcoinsdialog.cpp \
     src/qt/sendcoinsdialog.cpp \
     src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \

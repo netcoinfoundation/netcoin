@@ -320,17 +320,17 @@ This product includes software developed by the OpenSSL Project for use in the O
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../bitcoingui.cpp" line="+358"/>
+        <location filename="../bitcoingui.cpp" line="+363"/>
         <source>Sign &amp;message...</source>
         <translation>Podpisz wiado&amp;mość...</translation>
     </message>
     <message>
-        <location line="+418"/>
+        <location line="+419"/>
         <source>Synchronizing with network...</source>
         <translation>Synchronizacja z siecią...</translation>
     </message>
     <message>
-        <location line="-510"/>
+        <location line="-515"/>
         <source>&amp;Overview</source>
         <translation>P&amp;odsumowanie</translation>
     </message>
@@ -355,7 +355,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Wyślij monety</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+64"/>
         <source>E&amp;xit</source>
         <translation>&amp;Zakończ</translation>
     </message>
@@ -440,7 +440,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Zweryfikuj wiadomość...</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-263"/>
         <source>Netcoin</source>
         <translation>Netcoin</translation>
     </message>
@@ -505,7 +505,17 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Otwórz kalkulator PIR</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
+        <source>Spli&amp;t coins...</source>
+        <translation>Po&amp;dziel monety...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split the balance into several coins, so that a stake does not lock all of it</source>
+        <translation>Podziel saldo na kilka monet, żeby stake nie blokował całości</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;About Netcoin</source>
         <translation>&amp;O Netcoinie</translation>
     </message>
@@ -555,7 +565,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>P&amp;referencje</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>T&amp;hemes</source>
         <translation>&amp;Motywy</translation>
     </message>
@@ -601,7 +611,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         </translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+727"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -611,7 +621,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-154"/>
+        <location line="-162"/>
         <source>Not staking because wallet is locked</source>
         <translation>Brak stakingu, bo portfel jest zablokowany</translation>
     </message>
@@ -631,12 +641,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Brak stakingu, bo nie masz dojrzałych monet</translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-855"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>&amp;Odblokuj portfel...</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+385"/>
         <source>Up to date</source>
         <translation>Aktualny</translation>
     </message>
@@ -1323,7 +1333,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OptionsDialog</name>
     <message>
-        <location filename="../optionsdialog.cpp" line="+301"/>
+        <location filename="../optionsdialog.cpp" line="+300"/>
+        <source>&amp;Combine coins when staking</source>
+        <translation>Łą&amp;cz monety przy stakingu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable.</source>
+        <translation>Gdy włączone, stake dołącza też inne monety z tego samego adresu i wszystkie są zablokowane, aż stake dojrzeje (50 bloków). Gdy wyłączone, blokuje się tylko moneta, która znalazła stake, a reszta salda zostaje do wydania.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tor onion service</source>
         <translation>Usługa onion sieci Tor</translation>
     </message>
@@ -1373,7 +1393,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zapisywane w netcoin.conf (addnode=). Z nowymi węzłami portfel łączy się od razu; ustawienia Tora działają po ponownym uruchomieniu NetCoina.</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+65"/>
         <source>&quot;%1&quot; is not a valid node address.</source>
         <translation>„%1” nie jest poprawnym adresem węzła.</translation>
     </message>
@@ -1393,12 +1413,12 @@ p, li { white-space: pre-wrap; }
         <translation>Usługa onion Tora jest wyłączona.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Cannot save the settings to netcoin.conf: %1</source>
         <translation>Nie można zapisać ustawień w netcoin.conf: %1</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+23"/>
         <source>The Tor settings will take effect after restarting NetCoin.</source>
         <translation>Ustawienia Tora zaczną działać po ponownym uruchomieniu NetCoina.</translation>
     </message>
@@ -1408,7 +1428,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="-23"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
@@ -1593,7 +1613,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Zastosuj</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="-383"/>
+        <location filename="../optionsdialog.cpp" line="-397"/>
         <source>default</source>
         <translation>domyślny</translation>
     </message>
@@ -2896,6 +2916,89 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>Message verified.</source>
         <translation>Wiadomość zweryfikowana.</translation>
+    </message>
+</context>
+<context>
+    <name>SplitCoinsDialog</name>
+    <message>
+        <location filename="../splitcoinsdialog.cpp" line="+27"/>
+        <location line="+96"/>
+        <location line="+16"/>
+        <location line="+5"/>
+        <location line="+22"/>
+        <location line="+5"/>
+        <location line="+7"/>
+        <source>Split coins</source>
+        <translation>Podziel monety</translation>
+    </message>
+    <message>
+        <location line="-147"/>
+        <source>A stake locks the coin it uses, together with the reward, until it matures (50 blocks). If your whole balance is one coin, nothing can be sent during that time.
+
+This splits your spendable balance into several equal coins on new addresses of this wallet. A stake then locks only one of them, the others stay spendable and keep staking. The coins do not leave your wallet; only the network fee is paid.</source>
+        <translation>Stake blokuje użytą monetę razem z nagrodą, aż dojrzeje (50 bloków). Jeśli całe saldo to jedna moneta, przez ten czas nie da się nic wysłać.
+
+Ta funkcja dzieli saldo do wydania na kilka równych monet na nowych adresach tego portfela. Stake zablokuje wtedy tylko jedną z nich, a pozostałe zostaną do wydania i dalej będą stakować. Monety nie opuszczają portfela, płacisz tylko opłatę sieciową.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Number of &amp;coins:</source>
+        <translation>&amp;Liczba monet:</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Split</source>
+        <translation>&amp;Podziel</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Close</source>
+        <translation>&amp;Zamknij</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Spendable now: %1</source>
+        <translation>Teraz do wydania: %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spendable coins in the wallet now: %1</source>
+        <translation>Monet do wydania w portfelu: %1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Each coin: %1. The network fee is at most about %2; what is left over comes back as one more small coin.</source>
+        <translation>Każda moneta: %1. Opłata sieciowa wyniesie najwyżej około %2; to, co zostanie, wróci jako jeszcze jedna mała moneta.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The spendable balance is too small to split into this many coins.</source>
+        <translation>Saldo do wydania jest za małe, żeby podzielić je na tyle monet.</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Split %1 into %2 coins of %3 on new addresses of this wallet?</source>
+        <translation>Podzielić %1 na %2 monet po %3 na nowych adresach tego portfela?</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Could not create a new address.</source>
+        <translation>Nie udało się utworzyć nowego adresu.</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Done. The new coins can be used for staking and sending once the transaction is confirmed.</source>
+        <translation>Gotowe. Nowych monet można używać do stakingu i wysyłania, gdy transakcja zostanie potwierdzona.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>Po doliczeniu opłaty %1 suma przekracza saldo.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error: Transaction creation failed.</source>
+        <translation>Błąd: nie udało się utworzyć transakcji.</translation>
     </message>
 </context>
 <context>

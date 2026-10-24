@@ -45,6 +45,28 @@ re-validated the complete main chain, from the genesis block up to block
   keep the key pool, so a recovered encrypted wallet can start again.
 * Berkeley DB is now only needed to convert old wallets and is optional
   when building from source (`USE_BDB=0`).
+* **Staking no longer locks the whole balance.** A stake used to take in
+  up to 100 other coins of the same address, all of which were then locked
+  for the 50-block maturity. Now only the coin that found the stake is
+  used; the rest stays spendable and keeps staking. The old behaviour can
+  be switched back on (Options > Main > "Combine coins when staking", or
+  `stakecombine=1`). This is a wallet setting, not a consensus change.
+* **Settings > Split coins...** divides the spendable balance into several
+  equal coins on new addresses of the wallet, so that a stake locks only a
+  part of it.
+* `-reservebalance` is now listed in `--help` (it already existed, also as
+  "Reserve" in Options > Main).
+
+## Graphical wallet
+
+* Options > Network: list of nodes to always connect to (`addnode`), Tor
+  onion service on/off, Tor control port and the current `.onion`
+  address. Saved in `netcoin.conf`, so editing the file by hand is no
+  longer needed.
+* Translations: Polish, German, French, Spanish, Russian and Chinese
+  (simplified). Earlier versions contained translation files but never
+  included them, so the wallet was English only. Select the language in
+  Options > Display.
 
 ## Performance
 
@@ -86,6 +108,8 @@ re-validated the complete main chain, from the genesis block up to block
   parsing.
 * About 150 incorrect `printf` formats for 64-bit values.
 * The Qt wallet was linked with an executable stack.
+* `netcoind` could crash on Ctrl+C or `systemctl stop` (worker threads were
+  still running while the wallet was freed).
 
 ## Security and libraries
 
@@ -107,6 +131,10 @@ re-validated the complete main chain, from the genesis block up to block
   unaffected — they ignore the new messages and keep receiving addresses
   in the old format, without `.onion` v3 entries.
 * `externalip=`, `addnode=` and `connect=` accept v3 `.onion` addresses.
+* While the node has no connection it tries the DNS seed addresses first,
+  instead of thousands of long-gone addresses from an old `peers.dat`.
+* Addresses from the carrier-grade NAT range 100.64.0.0/10 are no longer
+  stored or relayed.
 * UPnP: support for miniupnpc 2.2.8+; logs when the router itself is
   behind carrier-grade NAT (CGNAT), where port mapping cannot help.
 

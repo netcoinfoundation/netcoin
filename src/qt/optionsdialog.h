@@ -68,6 +68,8 @@ private:
     bool fRestartWarningDisplayed_Lang;
     bool fProxyIpValid;
 
+    QCheckBox *stakeCombine;
+    bool fStakeCombineLoaded;
     QCheckBox *listenOnion;
     QLineEdit *torControl;
     QLabel *onionStatus;

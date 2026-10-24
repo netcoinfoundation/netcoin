@@ -320,17 +320,17 @@ This product includes software developed by the OpenSSL Project for use in the O
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../bitcoingui.cpp" line="+358"/>
+        <location filename="../bitcoingui.cpp" line="+363"/>
         <source>Sign &amp;message...</source>
         <translation>&amp;Подписать сообщение</translation>
     </message>
     <message>
-        <location line="+418"/>
+        <location line="+419"/>
         <source>Synchronizing with network...</source>
         <translation>Синхронизация с сетью...</translation>
     </message>
     <message>
-        <location line="-510"/>
+        <location line="-515"/>
         <source>&amp;Overview</source>
         <translation>О&amp;бзор</translation>
     </message>
@@ -355,7 +355,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Отп&amp;равка монет</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+64"/>
         <source>E&amp;xit</source>
         <translation>В&amp;ыход</translation>
     </message>
@@ -440,7 +440,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Проверить сообщение...</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-263"/>
         <source>Netcoin</source>
         <translation>Netcoin</translation>
     </message>
@@ -505,7 +505,17 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Открыть калькулятор PIR</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
+        <source>Spli&amp;t coins...</source>
+        <translation>Р&amp;азделить монеты...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split the balance into several coins, so that a stake does not lock all of it</source>
+        <translation>Разделить баланс на несколько монет, чтобы стейк не блокировал всё</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;About Netcoin</source>
         <translation>&amp;О Netcoin</translation>
     </message>
@@ -555,7 +565,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Настройки</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>T&amp;hemes</source>
         <translation>&amp;Темы</translation>
     </message>
@@ -601,7 +611,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         </translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+727"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -611,7 +621,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-154"/>
+        <location line="-162"/>
         <source>Not staking because wallet is locked</source>
         <translation>Не участвуем в доле, так как кошелёк заблокирован</translation>
     </message>
@@ -631,12 +641,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Не участвуем в доле, так как нет зрелых монет</translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-855"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>&amp;Разблокировать бумажник</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+385"/>
         <source>Up to date</source>
         <translation>Синхронизировано</translation>
     </message>
@@ -1503,7 +1513,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Применить</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="+73"/>
+        <location filename="../optionsdialog.cpp" line="+75"/>
         <source>default</source>
         <translation>по умолчанию</translation>
     </message>
@@ -1525,7 +1535,17 @@ p, li { white-space: pre-wrap; }
         <translation>Адрес прокси неверен.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+34"/>
+        <source>&amp;Combine coins when staking</source>
+        <translation>&amp;Объединять монеты при стейкинге</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable.</source>
+        <translation>Если включено, стейк забирает и другие монеты того же адреса, и все они блокируются до созревания стейка (50 блоков). Если выключено, блокируется только монета, нашедшая стейк, а остальной баланс остаётся доступным.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tor onion service</source>
         <translation>Onion-сервис Tor</translation>
     </message>
@@ -1575,7 +1595,7 @@ p, li { white-space: pre-wrap; }
         <translation>Сохраняется в netcoin.conf (addnode=). К новым узлам кошелёк подключается сразу; настройки Tor вступают в силу после перезапуска NetCoin.</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+65"/>
         <source>&quot;%1&quot; is not a valid node address.</source>
         <translation>«%1» — неверный адрес узла.</translation>
     </message>
@@ -1595,7 +1615,7 @@ p, li { white-space: pre-wrap; }
         <translation>Onion-сервис Tor выключен.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -1605,7 +1625,7 @@ p, li { white-space: pre-wrap; }
         <translation>Не удалось сохранить настройки в netcoin.conf: %1</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+23"/>
         <source>Tor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2896,6 +2916,89 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>Message verified.</source>
         <translation>Сообщение проверено.</translation>
+    </message>
+</context>
+<context>
+    <name>SplitCoinsDialog</name>
+    <message>
+        <location filename="../splitcoinsdialog.cpp" line="+27"/>
+        <location line="+96"/>
+        <location line="+16"/>
+        <location line="+5"/>
+        <location line="+22"/>
+        <location line="+5"/>
+        <location line="+7"/>
+        <source>Split coins</source>
+        <translation>Разделить монеты</translation>
+    </message>
+    <message>
+        <location line="-147"/>
+        <source>A stake locks the coin it uses, together with the reward, until it matures (50 blocks). If your whole balance is one coin, nothing can be sent during that time.
+
+This splits your spendable balance into several equal coins on new addresses of this wallet. A stake then locks only one of them, the others stay spendable and keep staking. The coins do not leave your wallet; only the network fee is paid.</source>
+        <translation>Стейк блокирует использованную монету вместе с наградой до созревания (50 блоков). Если весь баланс — одна монета, в это время ничего нельзя отправить.
+
+Эта функция делит доступный баланс на несколько равных монет на новых адресах этого кошелька. Тогда стейк блокирует только одну из них, а остальные остаются доступными и продолжают стейкать. Монеты не покидают кошелёк; оплачивается только комиссия сети.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Number of &amp;coins:</source>
+        <translation>&amp;Количество монет:</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Split</source>
+        <translation>&amp;Разделить</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Close</source>
+        <translation>&amp;Закрыть</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Spendable now: %1</source>
+        <translation>Доступно сейчас: %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spendable coins in the wallet now: %1</source>
+        <translation>Доступных монет в кошельке: %1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Each coin: %1. The network fee is at most about %2; what is left over comes back as one more small coin.</source>
+        <translation>Каждая монета: %1. Комиссия сети составит не более %2; остаток вернётся ещё одной небольшой монетой.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The spendable balance is too small to split into this many coins.</source>
+        <translation>Доступный баланс слишком мал, чтобы разделить его на столько монет.</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Split %1 into %2 coins of %3 on new addresses of this wallet?</source>
+        <translation>Разделить %1 на %2 монет по %3 на новых адресах этого кошелька?</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Could not create a new address.</source>
+        <translation>Не удалось создать новый адрес.</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Done. The new coins can be used for staking and sending once the transaction is confirmed.</source>
+        <translation>Готово. Новые монеты можно будет использовать для стейкинга и отправки после подтверждения транзакции.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>С учётом комиссии %1 сумма превышает баланс.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error: Transaction creation failed.</source>
+        <translation>Ошибка: не удалось создать транзакцию.</translation>
     </message>
 </context>
 <context>
