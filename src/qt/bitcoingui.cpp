@@ -405,7 +405,7 @@ void BitcoinGUI::createActions()
             signalMapper->setMapping(customActions[i], theme);
             connect(customActions[i], SIGNAL(triggered()), signalMapper, SLOT (map()));
         }
-        connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(changeTheme(QString)));
+        connect(signalMapper, SIGNAL(mappedString(QString)), this, SLOT(changeTheme(QString)));
     }
     /* /zeewolf: Hot swappable wallet themes */
 
