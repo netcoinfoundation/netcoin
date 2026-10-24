@@ -107,19 +107,23 @@ findtool() {
 if [ "$STATIC" = 1 ]; then
     QMAKE="$MINGW_PREFIX/qt6-static/bin/qmake"
     [ -x "$QMAKE" ] || QMAKE="$(find "$MINGW_PREFIX/qt6-static" -name 'qmake*.exe' -print -quit)"
+    # the static Qt's qmake does not find its mkspecs by itself
+    SPECDIR="$(find "$MINGW_PREFIX/qt6-static" -type d -name win32-g++ -print -quit)"
+    [ -n "$SPECDIR" ] && QMAKESPECARG="-spec $(cygpath -m "$SPECDIR")"
 else
     QMAKE="$(findtool qmake6 qmake-qt6 qmake)"
 fi
 [ -n "$QMAKE" ] && [ -x "$QMAKE" ] || { echo "qmake not found" >>"$LOG"; ls "$MINGW_PREFIX/bin" | grep -i -E "qmake|deployqt" >>"$LOG"; false; }
 WINDEPLOYQT="$(findtool windeployqt6 windeployqt-qt6 windeployqt)" || WINDEPLOYQT=""
 LRELEASE="$(findtool lrelease-qt6 lrelease)" || { echo "lrelease not found" >>"$LOG"; false; }
-log "qmake: $QMAKE  lrelease: $LRELEASE  windeployqt: ${WINDEPLOYQT:-none}"
+"$QMAKE" -query >>"$LOG" 2>&1 || true
+log "qmake: $QMAKE ${QMAKESPECARG:-}  lrelease: $LRELEASE  windeployqt: ${WINDEPLOYQT:-none}"
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
 QRARG="USE_QRCODE=$HAVE_QR"
 BDBARG=""
 [ "$HAVE_BDB" = 1 ] || BDBARG="USE_BDB=0"
-"$QMAKE" ../netcoin-qt.pro MSYS2=1 STATIC=$STATIC "LEVELDB_EXTRA_LIBS=$LEVELDB_EXTRA_LIBS" "BDB_LIB_SUFFIX=${BDB_LIB_SUFFIX:-}" \
+"$QMAKE" ${QMAKESPECARG:-} ../netcoin-qt.pro MSYS2=1 STATIC=$STATIC "LEVELDB_EXTRA_LIBS=$LEVELDB_EXTRA_LIBS" "BDB_LIB_SUFFIX=${BDB_LIB_SUFFIX:-}" \
     "QMAKE_LRELEASE=$(cygpath -m "$LRELEASE")" USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
 make -j"$JOBS" >>"$LOG" 2>&1
 
