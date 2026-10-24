@@ -435,7 +435,9 @@ void OptionsDialog::removeNode()
 void OptionsDialog::updateOnionStatus()
 {
     std::string strOnion = GetOnionServiceAddress();
-    if (!strOnion.empty())
+    if (!strOnion.empty() && IsTorNetworkDisabled())
+        onionStatus->setText(tr("Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click \"Connect\".").arg(QString::fromStdString(strOnion)));
+    else if (!strOnion.empty())
         onionStatus->setText(tr("This node is reachable as %1").arg(QString::fromStdString(strOnion)));
     else if (GetBoolArg("-listenonion", DEFAULT_LISTEN_ONION) && !fNoListen)
         onionStatus->setText(tr("No onion address yet: Tor is not running or not reachable (see debug.log)."));

@@ -1593,6 +1593,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor läuft, ist aber nicht mit dem Tor-Netzwerk verbunden, daher ist %1 nicht erreichbar. Klicken Sie im Tor Browser auf „Verbinden“.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>This node is reachable as %1</source>
         <translation>Dieser Knoten ist erreichbar als %1</translation>
     </message>

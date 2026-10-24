@@ -26,12 +26,21 @@ re-validated the complete main chain, from the genesis block up to block
 
 ## Platforms and downloads
 
-* Windows 10/11 64-bit: `netcoin-<version>-win64.zip` — graphical wallet
-  `netcoin.exe` and command-line node `netcoind.exe`.
+* Windows 10/11 64-bit: `netcoin-<version>-win64.zip` — `netcoin.exe`
+  (graphical wallet) and `netcoind.exe` (command-line node), each a single
+  self-contained file without DLLs.
 * Ubuntu 24.04 and 26.04 (x86_64): `netcoin-<version>-ubuntu-<release>-x86_64.tar.gz`.
-* Builds from source on Ubuntu 24.04 / 26.04 with the standard
-  distribution packages only (`doc/build-ubuntu-24.04.md`), and on
-  Windows with MSYS2 (`doc/build-windows.md`).
+* Fedora 44 and 45 (x86_64): `netcoin-<version>-fedora-<release>-x86_64.tar.gz`.
+* macOS 14 or newer on Apple Silicon: `netcoin-<version>-macos-arm64.dmg`
+  (`NetCoin.app`, with `netcoind` inside). Experimental: built and
+  start-tested automatically, but not yet tried by hand.
+* The programs are not signed with a paid certificate; Windows SmartScreen
+  and macOS Gatekeeper warn on the first start (see the README in each
+  package).
+* Builds from source with the standard packages on Ubuntu
+  (`doc/build-ubuntu-24.04.md`), Fedora (`doc/build-fedora.md`), macOS with
+  Homebrew (`doc/build-macos.md`) and Windows with MSYS2
+  (`doc/build-windows.md`).
 * Verify downloads with `SHA256SUMS.txt`.
 
 ## Wallet
@@ -135,14 +144,18 @@ re-validated the complete main chain, from the genesis block up to block
   instead of thousands of long-gone addresses from an old `peers.dat`.
 * Addresses from the carrier-grade NAT range 100.64.0.0/10 are no longer
   stored or relayed.
+* The wallet warns when Tor is running but not connected to the Tor
+  network (e.g. the Tor Browser waiting for "Connect"), because the
+  `.onion` address can then not be reached.
 * UPnP: support for miniupnpc 2.2.8+; logs when the router itself is
   behind carrier-grade NAT (CGNAT), where port mapping cannot help.
 
 ## Development
 
 * The unit tests compile again and all 75 pass.
-* GitHub Actions build and test every change on Ubuntu 24.04, Ubuntu
-  26.04 and Windows; release packages are built by the "Release" workflow,
+* GitHub Actions build and test every change on Ubuntu 24.04 and 26.04,
+  Fedora 44 and 45, macOS and Windows (including a start test of the
+  packaged macOS app); release packages are built by the "Release" workflow,
   which only the repository owner can start.
 
 ## Known limitations

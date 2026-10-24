@@ -20,4 +20,7 @@ void ThreadTorControl();
 /** The node's current .onion address (host:port), or empty if none */
 std::string GetOnionServiceAddress();
 
+/** True while Tor is running but its network is disabled (Tor Browser not connected) */
+bool IsTorNetworkDisabled();
+
 #endif // NETCOIN_TORCONTROL_H

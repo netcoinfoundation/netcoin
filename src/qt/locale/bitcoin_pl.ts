@@ -1399,6 +1399,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor działa, ale nie jest połączony z siecią Tor, więc %1 jest nieosiągalny. W Tor Browserze kliknij „Połącz”.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>This node is reachable as %1</source>
         <translation>Ten węzeł jest osiągalny jako %1</translation>
     </message>
@@ -1613,7 +1618,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Zastosuj</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="-397"/>
+        <location filename="../optionsdialog.cpp" line="-399"/>
         <source>default</source>
         <translation>domyślny</translation>
     </message>

@@ -59,7 +59,6 @@ UI_DIR = build
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
     # Mac: compile for maximum compatibility (10.6, 64-bit)
-    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET=10.6
     !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
@@ -126,51 +125,36 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
 
+# macOS: libraries from Homebrew (see doc/build-macos.md). The prefixes of
+# the keg-only formulae can be overridden on the qmake command line.
 macx: {
-
-    isEmpty(DEPSDIR) {
-
-        check_dir = /usr/local/Cellar
-        exists($$check_dir) {
-            DEPSDIR = /usr/local
-        }
-
-        !exists($$check_dir) {
-            DEPSDIR = /opt/local
-        }
-    }
-
-    isEmpty(BOOST_LIB_PATH) {
-        BOOST_LIB_PATH = $$DEPSDIR/lib
-    }
-
-    isEmpty(BOOST_INCLUDE_PATH) {
-        BOOST_INCLUDE_PATH = $$DEPSDIR/include
-    }
-
-    isEmpty(BDB_LIB_PATH) {
-        BDB_LIB_PATH = $$DEPSDIR/lib
-    }
-
-    isEmpty(BDB_INCLUDE_PATH) {
-        BDB_INCLUDE_PATH = $$DEPSDIR/include
-    }
+    isEmpty(BREW_PREFIX):BREW_PREFIX = $$system(brew --prefix)
+    isEmpty(OPENSSL_PREFIX):OPENSSL_PREFIX = $$system(brew --prefix openssl@3)
+    isEmpty(SQLITE_PREFIX):SQLITE_PREFIX = $$system(brew --prefix sqlite)
+    isEmpty(BDB_PREFIX):BDB_PREFIX = $$system(brew --prefix berkeley-db)
+    isEmpty(QRENCODE_PREFIX):QRENCODE_PREFIX = $$system(brew --prefix qrencode)
+    isEmpty(BOOST_INCLUDE_PATH):BOOST_INCLUDE_PATH = $$BREW_PREFIX/include
+    isEmpty(BOOST_LIB_PATH):BOOST_LIB_PATH = $$BREW_PREFIX/lib
+    isEmpty(BDB_INCLUDE_PATH):BDB_INCLUDE_PATH = $$BDB_PREFIX/include
+    isEmpty(BDB_LIB_PATH):BDB_LIB_PATH = $$BDB_PREFIX/lib
+    isEmpty(OPENSSL_INCLUDE_PATH):OPENSSL_INCLUDE_PATH = $$OPENSSL_PREFIX/include
+    isEmpty(OPENSSL_LIB_PATH):OPENSSL_LIB_PATH = $$OPENSSL_PREFIX/lib
+    INCLUDEPATH += $$SQLITE_PREFIX/include
+    LIBS += -L$$SQLITE_PREFIX/lib
+    isEmpty(QRENCODE_INCLUDE_PATH):QRENCODE_INCLUDE_PATH = $$QRENCODE_PREFIX/include
+    isEmpty(QRENCODE_LIB_PATH):QRENCODE_LIB_PATH = $$QRENCODE_PREFIX/lib
+    BOOST_LIB_SUFFIX =
+    BDB_LIB_SUFFIX =
+    USE_SYSTEM_LEVELDB = 1
 
     HEADERS += src/qt/macdockiconhandler.h src/qt/macnotificationhandler.h
     OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm src/qt/macnotificationhandler.mm
-    LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices \
-        $$BDB_LIB_PATH/libdb_cxx.a \
-        $$BOOST_LIB_PATH/libboost_system-mt.a \
-        $$BOOST_LIB_PATH/libboost_filesystem-mt.a \
-        $$BOOST_LIB_PATH/libboost_program_options-mt.a \
-        $$BOOST_LIB_PATH/libboost_thread-mt.a \
-        $$BOOST_LIB_PATH/libboost_chrono-mt.a
+    LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices
     DEFINES += MAC_OSX MSG_NOSIGNAL=0
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     ICON = src/mac/artwork/NetCoin.icns
-    QMAKE_INFO_PLIST=src/mac/Info.plist
-    # osx 10.9 has changed the stdlib default to libc++. To prevent some link error, you may need to use libstdc++
-   !macx:QMAKE_CXXFLAGS += -stdlib=libstdc++
-    macx:QMAKE_CXXFLAGS += -stdlib=libc++
+    QMAKE_INFO_PLIST = src/mac/Info.plist
+    isEmpty(QMAKE_MACOSX_DEPLOYMENT_TARGET_SET):QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.0
     QMAKE_CFLAGS_THREAD += -pthread
     QMAKE_CXXFLAGS_THREAD += -pthread
 }
@@ -205,6 +189,19 @@ contains(USE_SYSTEM_LEVELDB, 1) {
     QMAKE_EXTRA_TARGETS += genleveldb
     # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
     QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+}
+
+# macOS: Homebrew's LevelDB is built without RTTI, so the file with a class
+# derived from a LevelDB class (CBatchScanner) is compiled with -fno-rtti
+macx:contains(USE_SYSTEM_LEVELDB, 1) {
+    SOURCES -= src/txdb-leveldb.cpp
+    NORTTI_SOURCES = src/txdb-leveldb.cpp
+    nortti.input = NORTTI_SOURCES
+    nortti.output = $$OBJECTS_DIR/${QMAKE_FILE_BASE}.o
+    nortti.commands = $(CXX) -c $(CXXFLAGS) -fno-rtti $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
+    nortti.dependency_type = TYPE_C
+    nortti.variable_out = OBJECTS
+    QMAKE_EXTRA_COMPILERS += nortti
 }
 
 # regenerate src/build.h
@@ -467,7 +464,6 @@ OTHER_FILES += \
 
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
-    macx:BOOST_LIB_SUFFIX = -mt
     windows:BOOST_LIB_SUFFIX = -mt
 }
 
@@ -477,23 +473,18 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = /opt/local/lib/db48
 }
 
 isEmpty(BDB_LIB_SUFFIX) {
-    macx:BDB_LIB_SUFFIX = -4.8
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = /opt/local/include/db48
 }
 
 isEmpty(BOOST_LIB_PATH) {
-    macx:BOOST_LIB_PATH = /opt/local/lib
 }
 
 isEmpty(BOOST_INCLUDE_PATH) {
-    macx:BOOST_INCLUDE_PATH = /opt/local/include
 }
 
 windows:DEFINES += WIN32
@@ -539,3 +530,10 @@ contains(RELEASE, 1) {
 }
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
+
+# MSYS2 static build (qmake from the qt5-static package): one self-contained
+# netcoin.exe. use: qmake MSYS2=1 STATIC=1 [LEVELDB_EXTRA_LIBS="-lsnappy -lcrc32c"]
+win32:contains(MSYS2, 1):contains(STATIC, 1) {
+    QMAKE_LFLAGS += -static
+    LIBS += $$LEVELDB_EXTRA_LIBS -lcrypt32 -lbcrypt -lz
+}

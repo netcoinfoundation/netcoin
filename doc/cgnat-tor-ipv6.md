@@ -47,7 +47,11 @@ cookie: `sudo usermod -aG debian-tor $USER` (log in again afterwards).
 ### Windows
 
 Run the Tor Browser (it provides a control port on 9151) or the Tor
-Expert Bundle, and add to `netcoin.conf`:
+Expert Bundle. In the Tor Browser click **Connect** and switch on
+**Always connect automatically**: until it is connected, its Tor runs with
+the network disabled, and the `.onion` address is created but cannot be
+reached (the wallet then warns about it). Keep the Tor Browser open while
+the wallet runs. Add to `netcoin.conf` (or set it in Options > Network):
 
 ```
 torcontrol=127.0.0.1:9151

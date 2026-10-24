@@ -4,7 +4,20 @@ NetCoin for Windows (64-bit)
 netcoin.exe   - the graphical wallet
 netcoind.exe  - the headless node / RPC server (command line)
 
-Keep all files of this folder together; the .dll files are required.
+Both programs are self-contained; no other files are needed. Put them in
+any folder (not in the data directory below).
+
+First start: "Windows protected your PC"
+----------------------------------------
+The program is not signed with a paid code-signing certificate, so
+Microsoft Defender SmartScreen warns about it. Click "More info" and then
+"Run anyway" (once). Check the download against SHA256SUMS.txt from the
+release page first, e.g. in PowerShell:
+
+    Get-FileHash .\netcoin-<version>-win64.zip
+
+If the zip was downloaded with a browser, you can also right-click it ->
+Properties -> tick "Unblock" before extracting.
 
 Data directory: %APPDATA%\NetCoin (the same as the old 3.0.0 client).
 

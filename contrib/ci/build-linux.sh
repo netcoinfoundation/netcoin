@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Builds netcoind and netcoin (Qt wallet) on Ubuntu and packages them as
-# dist/netcoin-<ver>-<distro>-x86_64.tar.gz. Used by the GitHub workflows.
+# Builds netcoind and netcoin (Qt wallet) on Ubuntu or Fedora and packages
+# them as dist/netcoin-<ver>-<distro>-x86_64.tar.gz. Used by the GitHub
+# workflows. Set USE_BDB=0 to build without Berkeley DB.
 set -euo pipefail
 
 NCVER="${1:-dev}"
 JOBS="$(nproc)"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-DISTRO="ubuntu-$(. /etc/os-release && echo "$VERSION_ID")"
+DISTRO="$(. /etc/os-release && echo "$ID-$VERSION_ID")"
+USE_BDB="${USE_BDB:-1}"
+if command -v qmake-qt5 >/dev/null; then QMAKE=qmake-qt5; else QMAKE="qmake -qt=5"; fi
 LOG="$ROOT/build-linux.log"
 : > "$LOG"
 fail() {
@@ -22,12 +25,12 @@ trap fail ERR
 exec > >(tee -a "$LOG") 2>&1
 
 cd "$ROOT/src"
-make -f makefile.unix -j"$JOBS" netcoind test_netcoin
+make -f makefile.unix -j"$JOBS" USE_BDB="$USE_BDB" netcoind test_netcoin
 ./test_netcoin
 
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
-qmake -qt=5 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+$QMAKE ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 USE_BDB="$USE_BDB" CONFIG+=release
 make -j"$JOBS"
 
 NAME="netcoin-$NCVER-$DISTRO-x86_64"
@@ -36,13 +39,21 @@ rm -rf "$DIST"
 mkdir -p "$DIST"
 cp "$ROOT/src/netcoind" "$ROOT/build-qt/netcoin" "$DIST/"
 strip "$DIST/netcoind" "$DIST/netcoin"
-cp "$ROOT/COPYING" "$ROOT/contrib/ci/README-linux.txt" "$DIST/"
+case "$DISTRO" in
+    fedora-*) cp "$ROOT/contrib/ci/README-fedora.txt" "$DIST/README.txt" ;;
+    *)        cp "$ROOT/contrib/ci/README-linux.txt" "$DIST/" ;;
+esac
+cp "$ROOT/COPYING" "$DIST/"
 # record which packages provide the shared libraries (for the README)
 for f in "$DIST/netcoind" "$DIST/netcoin"; do
     ldd "$f" | awk '/=>/{print $3}' | while read -r l; do
-        dpkg -S "$l" 2>/dev/null || dpkg -S "/usr$l" 2>/dev/null || true
+        if command -v dpkg >/dev/null; then
+            dpkg -S "$l" 2>/dev/null || dpkg -S "/usr$l" 2>/dev/null || true
+        else
+            rpm -qf --qf '%{NAME}\n' "$l" 2>/dev/null || true
+        fi
     done | cut -d: -f1
-done | sort -u | grep -v -E '^(libc6|libgcc-s1|libstdc\+\+6)$' > "$DIST/runtime-packages.txt" || true
+done | sort -u | grep -v -E '^(libc6|libgcc-s1|libstdc\+\+6|glibc|libgcc|libstdc\+\+)$' > "$DIST/runtime-packages.txt" || true
 cd "$ROOT/dist"
 tar -czf "$NAME.tar.gz" "$NAME"
 ls -la "$ROOT/dist"

@@ -288,6 +288,32 @@ CService AddOnion(TorConnection& conn)
 
 boost::mutex csOnionAddress;
 std::string strOnionAddress;
+bool fTorNetworkDisabled = false;
+
+/** Tor Browser starts its Tor with the network disabled until "Connect" is
+    clicked; an onion service created then is never published */
+bool QueryNetworkDisabled(TorConnection& conn)
+{
+    std::vector<std::string> v = conn.Command("GETCONF DisableNetwork");
+    for (const std::string& line : v)
+        if (line.find("DisableNetwork=1") != std::string::npos)
+            return true;
+    return false;
+}
+
+void SetTorNetworkDisabled(bool fDisabled)
+{
+    {
+        boost::lock_guard<boost::mutex> lock(csOnionAddress);
+        if (fTorNetworkDisabled == fDisabled)
+            return;
+        fTorNetworkDisabled = fDisabled;
+    }
+    if (fDisabled)
+        printf("tor: WARNING: Tor is running but not connected to the Tor network, so the .onion address cannot be reached (Tor Browser: click \"Connect\")\n");
+    else
+        printf("tor: Tor is connected to the Tor network\n");
+}
 
 void SetOnionServiceAddress(const std::string& str)
 {
@@ -301,6 +327,12 @@ std::string GetOnionServiceAddress()
 {
     boost::lock_guard<boost::mutex> lock(csOnionAddress);
     return strOnionAddress;
+}
+
+bool IsTorNetworkDisabled()
+{
+    boost::lock_guard<boost::mutex> lock(csOnionAddress);
+    return fTorNetworkDisabled;
 }
 
 void ThreadTorControl()
@@ -323,10 +355,12 @@ void ThreadTorControl()
             fLoggedFailure = false;
 
             // The onion service exists as long as this control connection
-            // is open. Just wait (and drain asynchronous events) until Tor
-            // closes it or we are shut down.
-            while (true)
-                conn.ReadLine();
+            // is open. Check every 30 s that Tor is connected to the network;
+            // a closed connection ends the loop with an exception.
+            while (true) {
+                SetTorNetworkDisabled(QueryNetworkDisabled(conn));
+                MilliSleep(30 * 1000);
+            }
         }
         catch (boost::thread_interrupted&) {
             throw;
@@ -340,6 +374,7 @@ void ThreadTorControl()
             RemoveLocal(addrOnion);
             SetOnionServiceAddress("");
         }
+        SetTorNetworkDisabled(false);
         MilliSleep(60 * 1000);
     }
 }

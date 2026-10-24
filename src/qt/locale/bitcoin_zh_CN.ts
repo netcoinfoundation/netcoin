@@ -1580,6 +1580,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor 正在运行但未连接到 Tor 网络，因此无法访问 %1。请在 Tor 浏览器中点击“连接”。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>This node is reachable as %1</source>
         <translation>此节点可通过 %1 访问</translation>
     </message>

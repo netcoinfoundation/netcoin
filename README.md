@@ -9,7 +9,7 @@
 
 Before starting ensure you have the correct [dependancys (22/01/2019)](doc/dependancys.txt) installed to compile the netcoin wallet for your platform. These can be found from the links provided in the above file or below during system specific setups. Only use the links and steps outlined above if your system does not carry dependancy packages such as ubuntu and homebrew or if you are familiar with editing the makefiles/.pro to reflect your system paths and building dependencies from scratch. However if you wish to learn this process see [dependancy build instructions](doc/build-deps.txt).
 
-**Downloads:** Windows and Ubuntu binaries are on the [Releases](https://github.com/pwarszawski/netcoin/releases) page ([Windows notes](doc/build-windows.md)).
+**Downloads:** Windows, Ubuntu, Fedora and macOS binaries are on the [Releases](https://github.com/pwarszawski/netcoin/releases) page. Building from source: [Ubuntu](doc/build-ubuntu-24.04.md), [Fedora](doc/build-fedora.md), [macOS](doc/build-macos.md), [Windows](doc/build-windows.md).
 
 **Ubuntu 24.04 and newer:** this branch builds with the stock distribution packages (OpenSSL 3, Boost 1.83, SQLite 3, LevelDB 1.23, Qt 5.15); the wallet is stored in SQLite and old Berkeley DB wallets are converted automatically. See [building on Ubuntu 24.04](doc/build-ubuntu-24.04.md). Behind CGNAT? See [Tor / IPv6 notes](doc/cgnat-tor-ipv6.md). Want to help the network? [Run a public node](doc/run-a-node.md).
 

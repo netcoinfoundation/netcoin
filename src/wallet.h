@@ -921,7 +921,6 @@ public:
 
 private:
     std::vector<char> _ssExtra;
-    int64_t nWeight;
 };
 
 #endif

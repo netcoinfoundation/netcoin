@@ -32,7 +32,7 @@ LIBS = \
    -l crypto
 
 ifeq (${USE_BDB}, 1)
-	LIBS += -l db_cxx
+	LIBS += -l db_cxx$(BDB_LIB_SUFFIX)
 	DEFS += -DENABLE_BDB_MIGRATION
 endif
 
@@ -41,13 +41,25 @@ ifneq (${USE_UPNP}, -)
 	DEFS += -DUSE_UPNP=$(USE_UPNP)
 endif
 
+# STATIC=1: link all libraries statically (one self-contained .exe);
+# LEVELDB_EXTRA_LIBS: libraries a static LevelDB needs (e.g. -lsnappy -lcrc32c)
+TESTLINK = -DBOOST_TEST_DYN_LINK
+ifeq (${STATIC}, 1)
+	TESTLINK =
+	LIBS += $(LEVELDB_EXTRA_LIBS)
+	DEFS += -DBOOST_THREAD_USE_LIB -DMINIUPNP_STATICLIB
+endif
+
 LIBS += -l ws2_32 -l mswsock -l iphlpapi -l shlwapi -l ole32 -l oleaut32 -l uuid \
-        -l gdi32 -l user32 -l advapi32 -l shell32 -l crypt32 -l z
+        -l gdi32 -l user32 -l advapi32 -l shell32 -l crypt32 -l bcrypt -l z
 
 xCXXFLAGS = -std=c++17 -O2 -mthreads -Wall -Wextra -Wformat -Wformat-security \
             -Wno-unused-parameter -Wno-deprecated-copy $(DEFS) $(CXXFLAGS)
 xLDFLAGS = -mthreads -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va \
            -static-libgcc -static-libstdc++ $(LDFLAGS)
+ifeq (${STATIC}, 1)
+	xLDFLAGS += -static
+endif
 
 OBJS= \
     obj/kernel.o \
@@ -111,7 +123,7 @@ TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
 obj-test/%.o: test/%.cpp
 	@mkdir -p obj-test
-	$(CXX) -c -DTEST_DATA_DIR=$(abspath test/data) -DBOOST_TEST_DYN_LINK $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	$(CXX) -c -DTEST_DATA_DIR=$(abspath test/data) $(TESTLINK) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 
 test_netcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS))
 	$(CXX) $(xCXXFLAGS) -o $@ $^ -l boost_unit_test_framework$(BOOST_LIB_SUFFIX) $(xLDFLAGS) $(LIBS)

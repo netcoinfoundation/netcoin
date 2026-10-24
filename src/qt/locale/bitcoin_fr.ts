@@ -1614,6 +1614,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor fonctionne mais n’est pas connecté au réseau Tor, %1 est donc injoignable. Dans le Tor Browser, cliquez sur « Se connecter ».</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>This node is reachable as %1</source>
         <translation>Ce nœud est accessible à l’adresse %1</translation>
     </message>
