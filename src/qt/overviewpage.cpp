@@ -459,7 +459,6 @@ if (!ui->diffplotframe->isHidden()){
 
     // Start at the end and walk backwards
     int i = numLookBack-1;
-    int x = xEnd;
 
     // This should be a noop if the size is already 2000
     vX.resize(numLookBack);
@@ -486,7 +485,6 @@ if (!ui->diffplotframe->isHidden()){
 
         itr = GetLastBlockIndex(itr->pprev, fProofOfStake);
         i--;
-        x--;
     }
 
     if(fDebug) { printf("Plot: Drawing plot\n"); }

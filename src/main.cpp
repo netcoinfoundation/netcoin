@@ -1672,8 +1672,6 @@ unsigned int GetNextTrust_DigiShield(const CBlockIndex* pindexLast, bool fProofO
 
 //NEW DIGISHIELD START
 static const int64_t nTargetTimespanRe = 1*60; // 60 Seconds
-static const int64_t nTargetSpacingRe = 1*60; // 60 seconds
-static const int64_t nIntervalRe = nTargetTimespanRe / nTargetSpacingRe; // 1 block
 
 static const int64_t nMaxAdjustDown = 40; // 40% adjustment down
 static const int64_t nMaxAdjustUp = 20; // 20% adjustment up
@@ -2939,25 +2937,25 @@ bool CBlock::AcceptBlock()
     if (IsProofOfWork() && nHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && nHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
         return DoS(100, error("AcceptBlock() : reject proof-of-work at height %d", nHeight));
     // This will allow only 1 address to generate coins to give back to exchange after a Double Spend Attack
-        if (nHeight >= (TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)
-            && nHeight <= ((TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)+9) )
-        {
-            if(!IsProofOfStake())
-               return error("AcceptBlock() : Only 1 address can mine this block err 1 ");
-            CBitcoinAddress DblSpendAddressFix,outAddress;
-            CBitcoinAddress HEISTSPEND,hsoutAddress;
-            CTxDestination address;
-             DblSpendAddressFix=  (TestNet() ? REC_ADDY_T : REC_ADDY);
+    if (nHeight >= (TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)
+        && nHeight <= ((TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)+9) )
+    {
+        if(!IsProofOfStake())
+           return error("AcceptBlock() : Only 1 address can mine this block err 1 ");
+        CBitcoinAddress DblSpendAddressFix,outAddress;
+        CBitcoinAddress HEISTSPEND,hsoutAddress;
+        CTxDestination address;
+         DblSpendAddressFix=  (TestNet() ? REC_ADDY_T : REC_ADDY);
 
 
-            const CTxOut& txout = vtx[1].vout[1];
-            ExtractDestination(txout.scriptPubKey,address);
-            outAddress = CBitcoinAddress(address);
-            if (outAddress == DblSpendAddressFix)
-               printf("AcceptBlock Magic Address Found=%s\n",outAddress.ToString().c_str());
-            else
-                return DoS(100,error("AcceptBlock() : Only 1 address can mine this block err 2 \n%s\n%s", outAddress.ToString().c_str(), DblSpendAddressFix.ToString().c_str()));
-        }
+        const CTxOut& txout = vtx[1].vout[1];
+        ExtractDestination(txout.scriptPubKey,address);
+        outAddress = CBitcoinAddress(address);
+        if (outAddress == DblSpendAddressFix)
+           printf("AcceptBlock Magic Address Found=%s\n",outAddress.ToString().c_str());
+        else
+            return DoS(100,error("AcceptBlock() : Only 1 address can mine this block err 2 \n%s\n%s", outAddress.ToString().c_str(), DblSpendAddressFix.ToString().c_str()));
+    }
 
 
     // Check proof of work
