@@ -50,7 +50,7 @@ jobs:
           apt-get update
           apt-get install -y git build-essential pkg-config \
             libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
-            libleveldb-dev libminiupnpc-dev qtbase5-dev qttools5-dev-tools libqrencode-dev
+            libleveldb-dev libminiupnpc-dev qt6-base-dev qt6-tools-dev-tools qt6-l10n-tools libqrencode-dev
       - uses: actions/checkout@v5
       - run: bash contrib/ci/build-linux.sh "$VERSION"
       - uses: actions/upload-artifact@v5
@@ -74,7 +74,7 @@ jobs:
         run: |
           dnf install -y git gcc-c++ make findutils which tar gzip glibc-common \
             boost-devel openssl-devel sqlite-devel leveldb-devel miniupnpc-devel zlib-devel \
-            qt5-qtbase-devel qt5-linguist qrencode-devel
+            qt6-qtbase-devel qt6-linguist qrencode-devel
           if dnf install -y libdb-cxx-devel; then echo "USE_BDB=1" >> "$GITHUB_ENV"; else echo "USE_BDB=0" >> "$GITHUB_ENV"; fi
       - uses: actions/checkout@v5
       - run: bash contrib/ci/build-linux.sh "$VERSION"
@@ -89,7 +89,7 @@ jobs:
     runs-on: macos-14
     steps:
       - name: Install dependencies
-        run: brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt@5 qrencode
+        run: brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt qrencode
       - uses: actions/checkout@v5
       - run: bash contrib/ci/build-macos.sh "$VERSION"
       - uses: actions/upload-artifact@v5

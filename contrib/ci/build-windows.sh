@@ -28,8 +28,8 @@ fail() {
 trap fail ERR
 
 log "installing packages"
-REQUIRED="toolchain boost openssl sqlite3 leveldb miniupnpc zlib qt5-base qt5-tools"
-[ "$STATIC" = 1 ] && REQUIRED="$REQUIRED qt5-static"
+REQUIRED="toolchain boost openssl sqlite3 leveldb miniupnpc zlib qt6-base qt6-tools"
+[ "$STATIC" = 1 ] && REQUIRED="$REQUIRED qt6-static"
 OPTIONAL="db qrencode libqrencode"
 # the MSYS2 mirrors are sometimes slow; retry
 for attempt in 1 2 3 4; do
@@ -95,24 +95,24 @@ make -f makefile.mingw -j"$JOBS" "${MAKEARGS[@]}" test_netcoin.exe >>"$LOG" 2>&1
 ./test_netcoin.exe >>"$LOG" 2>&1
 
 log "building netcoin.exe (Qt wallet)"
-# MSYS2 names the Qt 5 tools with a -qt5 suffix (Qt 6 owns the plain names)
+# MSYS2 names the Qt 6 tools without a suffix (or with -qt6)
 findtool() {
     for t in "$@"; do
-        for c in "$t" "$MINGW_PREFIX/bin/$t" "$MINGW_PREFIX/qt5/bin/$t" "$MINGW_PREFIX/lib/qt5/bin/$t"; do
+        for c in "$t" "$MINGW_PREFIX/bin/$t" "$MINGW_PREFIX/qt6/bin/$t" "$MINGW_PREFIX/lib/qt6/bin/$t" "$MINGW_PREFIX/share/qt6/bin/$t"; do
             if command -v "$c" >/dev/null 2>&1; then command -v "$c"; return 0; fi
         done
     done
     return 1
 }
 if [ "$STATIC" = 1 ]; then
-    QMAKE="$MINGW_PREFIX/qt5-static/bin/qmake"
-    [ -x "$QMAKE" ] || QMAKE="$(find "$MINGW_PREFIX/qt5-static" -name 'qmake*.exe' -print -quit)"
+    QMAKE="$MINGW_PREFIX/qt6-static/bin/qmake"
+    [ -x "$QMAKE" ] || QMAKE="$(find "$MINGW_PREFIX/qt6-static" -name 'qmake*.exe' -print -quit)"
 else
-    QMAKE="$(findtool qmake-qt5 qmake)"
+    QMAKE="$(findtool qmake6 qmake-qt6 qmake)"
 fi
 [ -n "$QMAKE" ] && [ -x "$QMAKE" ] || { echo "qmake not found" >>"$LOG"; ls "$MINGW_PREFIX/bin" | grep -i -E "qmake|deployqt" >>"$LOG"; false; }
-WINDEPLOYQT="$(findtool windeployqt-qt5 windeployqt)" || WINDEPLOYQT=""
-LRELEASE="$(findtool lrelease-qt5 lrelease)" || { echo "lrelease not found" >>"$LOG"; false; }
+WINDEPLOYQT="$(findtool windeployqt6 windeployqt-qt6 windeployqt)" || WINDEPLOYQT=""
+LRELEASE="$(findtool lrelease-qt6 lrelease)" || { echo "lrelease not found" >>"$LOG"; false; }
 log "qmake: $QMAKE  lrelease: $LRELEASE  windeployqt: ${WINDEPLOYQT:-none}"
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
@@ -143,7 +143,7 @@ else
         --no-compiler-runtime "$DIST/netcoin.exe" >>"$LOG" 2>&1 || true
     # the Qt platform plugin is required for the wallet window to open
     if [ ! -f "$DIST/platforms/qwindows.dll" ]; then
-        for d in "$MINGW_PREFIX/share/qt5/plugins" "$MINGW_PREFIX/lib/qt5/plugins"; do
+        for d in "$MINGW_PREFIX/share/qt6/plugins" "$MINGW_PREFIX/lib/qt6/plugins"; do
             if [ -f "$d/platforms/qwindows.dll" ]; then
                 mkdir -p "$DIST/platforms" "$DIST/styles"
                 cp "$d/platforms/qwindows.dll" "$DIST/platforms/"

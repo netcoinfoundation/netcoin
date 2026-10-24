@@ -8,7 +8,7 @@ NCVER="${1:-dev}"
 JOBS="$(sysctl -n hw.ncpu)"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 ARCH="$(uname -m)"
-QT5="$(brew --prefix qt@5)"
+QT="$(brew --prefix qt)"
 LOG="$ROOT/build-macos.log"
 : > "$LOG"
 fail() {
@@ -28,7 +28,7 @@ make -f makefile.osx -j"$JOBS" netcoind test_netcoin
 
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
-"$QT5/bin/qmake" ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+"$QT/bin/qmake" ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
 make -j"$JOBS"
 
 NAME="netcoin-$NCVER-macos-$ARCH"
@@ -39,18 +39,7 @@ cp -R netcoin.app "$DIST/NetCoin.app"
 APP="$DIST/NetCoin.app"
 cp "$ROOT/src/netcoind" "$APP/Contents/MacOS/"
 # copy Qt and all Homebrew libraries into the bundle and point the binaries at them
-"$QT5/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite
-# the "minimal" platform plugin (for the automatic start test below and for
-# running without a display); its Qt references must point into the bundle
-mkdir -p "$APP/Contents/PlugIns/platforms"
-OFFSCREEN="$APP/Contents/PlugIns/platforms/libqminimal.dylib"
-cp -L "$QT5/plugins/platforms/libqminimal.dylib" "$OFFSCREEN"; chmod u+w "$OFFSCREEN"
-install_name_tool -id "@executable_path/../PlugIns/platforms/libqminimal.dylib" "$OFFSCREEN" 2>/dev/null
-otool -L "$OFFSCREEN"
-for dep in $(otool -L "$OFFSCREEN" | awk 'NR>1{print $1}' | grep -E '^(@rpath|/opt/homebrew|/usr/local)/.*\.framework/' || true); do
-    fwpath="${dep#@rpath/}"; fwpath="${fwpath##*/lib/}"
-    install_name_tool -change "$dep" "@executable_path/../Frameworks/$fwpath" "$OFFSCREEN" 2>/dev/null
-done
+"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite
 # macdeployqt misses libraries that the bundled ones load via @loader_path or
 # @rpath (e.g. boost_filesystem -> boost_atomic): copy those until complete
 BREWLIB="$(brew --prefix)/lib"

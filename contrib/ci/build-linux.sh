@@ -9,7 +9,8 @@ JOBS="$(nproc)"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DISTRO="$(. /etc/os-release && echo "$ID-$VERSION_ID")"
 USE_BDB="${USE_BDB:-1}"
-if command -v qmake-qt5 >/dev/null; then QMAKE=qmake-qt5; else QMAKE="qmake -qt=5"; fi
+# Qt 6 (qmake6 on Ubuntu and Fedora)
+if command -v qmake6 >/dev/null; then QMAKE=qmake6; elif command -v qmake-qt6 >/dev/null; then QMAKE=qmake-qt6; else QMAKE="qmake -qt=6"; fi
 LOG="$ROOT/build-linux.log"
 : > "$LOG"
 fail() {
