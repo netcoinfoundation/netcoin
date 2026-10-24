@@ -109,14 +109,24 @@ if [ "$STATIC" = 1 ]; then
     [ -x "$QMAKE" ] || QMAKE="$(find "$MINGW_PREFIX/qt6-static" -name 'qmake*.exe' -print -quit)"
     # the static Qt's qmake does not find its mkspecs by itself
     SPECDIR="$(find "$MINGW_PREFIX/qt6-static" -type d -name win32-g++ -print -quit)"
-    [ -n "$SPECDIR" ] && QMAKESPECARG="-spec $(cygpath -m "$SPECDIR")"
+    if [ -n "$SPECDIR" ]; then
+        # its built-in paths point to the prefix, but the mkspecs live below
+        # share/qt6: tell qmake where they are with a qt.conf
+        ARCHDATA="$(dirname "$(dirname "$SPECDIR")")"
+        QTCONF="$ROOT/build-qt-qt.conf"
+        printf '[Paths]\nPrefix=%s\nArchData=%s\nData=%s\nHostData=%s\nHostPrefix=%s\n' \
+            "$(cygpath -m "$MINGW_PREFIX/qt6-static")" "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$ARCHDATA")" \
+            "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$MINGW_PREFIX/qt6-static")" > "$QTCONF"
+        cat "$QTCONF" >>"$LOG"
+        QMAKESPECARG="-qtconf $(cygpath -m "$QTCONF")"
+    fi
 else
     QMAKE="$(findtool qmake6 qmake-qt6 qmake)"
 fi
 [ -n "$QMAKE" ] && [ -x "$QMAKE" ] || { echo "qmake not found" >>"$LOG"; ls "$MINGW_PREFIX/bin" | grep -i -E "qmake|deployqt" >>"$LOG"; false; }
 WINDEPLOYQT="$(findtool windeployqt6 windeployqt-qt6 windeployqt)" || WINDEPLOYQT=""
 LRELEASE="$(findtool lrelease-qt6 lrelease)" || { echo "lrelease not found" >>"$LOG"; false; }
-"$QMAKE" -query >>"$LOG" 2>&1 || true
+"$QMAKE" ${QMAKESPECARG:-} -query >>"$LOG" 2>&1 || true
 log "qmake: $QMAKE ${QMAKESPECARG:-}  lrelease: $LRELEASE  windeployqt: ${WINDEPLOYQT:-none}"
 mkdir -p "$ROOT/build-qt"
 cd "$ROOT/build-qt"
