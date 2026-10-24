@@ -39,14 +39,18 @@ cp -R netcoin.app "$DIST/NetCoin.app"
 APP="$DIST/NetCoin.app"
 cp "$ROOT/src/netcoind" "$APP/Contents/MacOS/"
 # copy Qt and all Homebrew libraries into the bundle and point the binaries at them
-"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite
+"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite || true
 # macdeployqt misses libraries that the bundled ones load via @loader_path or
 # @rpath (e.g. boost_filesystem -> boost_atomic): copy those until complete
 BREWLIB="$(brew --prefix)/lib"
 FW="$APP/Contents/Frameworks"
 for pass in 1 2 3 4 5; do
     added=0
-    for f in "$FW"/*.dylib "$APP/Contents/MacOS/"* "$APP/Contents/PlugIns"/*/*.dylib; do
+    FWBINS=""
+    for fw in "$FW"/*.framework; do
+        [ -f "$fw/Versions/Current/$(basename "$fw" .framework)" ] && FWBINS="$FWBINS $fw/Versions/Current/$(basename "$fw" .framework)"
+    done
+    for f in "$FW"/*.dylib "$APP/Contents/MacOS/"* "$APP/Contents/PlugIns"/*/*.dylib $FWBINS; do
         for dep in $(otool -L "$f" | awk 'NR>1{print $1}' | grep -E '^(@loader_path|@rpath|/opt/homebrew|/usr/local)/' | grep -v '\.framework/' || true); do
             name="$(basename "$dep")"
             # otool -L also lists a library's own install name
@@ -69,7 +73,7 @@ for pass in 1 2 3 4 5; do
 done
 echo "== checking the bundle"
 # nothing may still refer to Homebrew
-if otool -L "$APP/Contents/MacOS/"* "$FW/"*.dylib | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
+if otool -L "$APP/Contents/MacOS/"* "$FW/"*.dylib $FWBINS "$APP/Contents/PlugIns"/*/*.dylib | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
     echo "error: the bundle still links to Homebrew libraries"; false
 fi
 # macdeployqt invalidates the signatures; Apple Silicon needs at least an ad-hoc one
