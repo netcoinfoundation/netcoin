@@ -20,7 +20,7 @@ fail() {
     # make the end of the log visible as an annotation in the Actions UI
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
         local msg
-        msg="$( (grep -E 'error:|Error [0-9]|undefined reference|cannot find|No such file|multiple definition|\.dll => |still needs' "$LOG" | grep -v 'target not found' | cut -c1-240 | tail -15; echo '--- last lines ---'; grep -v -E '^(g\+\+|gcc|[[:space:]]*[0-9]* \||[[:space:]]+\||\.\./src/.*(required from|note:|warning:))' "$LOG" | tail -15 | cut -c1-240) | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
+        msg="$( (grep -E 'error:|Error [0-9]|undefined reference|cannot find|No such file|multiple definition|\.dll => |still needs|^QT_INSTALL_(PREFIX|BINS|ARCHDATA|DATA)|^QMAKE_(MKSPECS|SPEC|XSPEC)' "$LOG" | grep -v 'target not found' | cut -c1-240 | tail -15; echo '--- last lines ---'; grep -v -E '^(g\+\+|gcc|[[:space:]]*[0-9]* \||[[:space:]]+\||\.\./src/.*(required from|note:|warning:))' "$LOG" | tail -15 | cut -c1-240) | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
         echo "::error title=Windows build failed::${msg:0:60000}"
     fi
     exit 1

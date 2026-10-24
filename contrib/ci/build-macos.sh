@@ -38,10 +38,11 @@ mkdir -p "$DIST"
 cp -R netcoin.app "$DIST/NetCoin.app"
 APP="$DIST/NetCoin.app"
 cp "$ROOT/src/netcoind" "$APP/Contents/MacOS/"
-# copy Qt and all Homebrew libraries into the bundle and point the binaries at them
-"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite || true
-# macdeployqt misses libraries that the bundled ones load via @loader_path or
-# @rpath (e.g. boost_filesystem -> boost_atomic): copy those until complete
+# Copies libraries that macdeployqt cannot resolve (loaded via @loader_path or
+# @rpath, e.g. boost_filesystem -> boost_atomic) and points the binaries at
+# the bundled copies. Run before macdeployqt (so that it does not fail on
+# them) and after it.
+bundle_libs() {
 BREWLIB="$(brew --prefix)/lib"
 FW="$APP/Contents/Frameworks"
 for pass in 1 2 3 4 5; do
@@ -64,6 +65,7 @@ for pass in 1 2 3 4 5; do
                 added=1
             fi
             case "$f" in
+                "$FW"/*.framework/*) install_name_tool -change "$dep" "@executable_path/../Frameworks/$name" "$f" 2>/dev/null ;;
                 "$FW"/*) install_name_tool -change "$dep" "@loader_path/$name" "$f" 2>/dev/null ;;
                 *)       install_name_tool -change "$dep" "@executable_path/../Frameworks/$name" "$f" 2>/dev/null ;;
             esac
@@ -71,6 +73,14 @@ for pass in 1 2 3 4 5; do
     done
     [ "$added" = 0 ] && break
 done
+}
+BREWLIB="$(brew --prefix)/lib"
+FW="$APP/Contents/Frameworks"
+mkdir -p "$FW"
+bundle_libs
+# copy Qt and all Homebrew libraries into the bundle and point the binaries at them
+"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite || true
+bundle_libs
 echo "== checking the bundle"
 # nothing may still refer to Homebrew
 if otool -L "$APP/Contents/MacOS/"* "$FW/"*.dylib $FWBINS "$APP/Contents/PlugIns"/*/*.dylib | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
