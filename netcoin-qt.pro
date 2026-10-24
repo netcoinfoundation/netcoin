@@ -531,9 +531,12 @@ contains(RELEASE, 1) {
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
 
-# MSYS2 static build (qmake from the qt5-static package): one self-contained
+# MSYS2 static build (qmake from the qt6-static package): one self-contained
 # netcoin.exe. use: qmake MSYS2=1 STATIC=1 [LEVELDB_EXTRA_LIBS="-lsnappy -lcrc32c"]
 win32:contains(MSYS2, 1):contains(STATIC, 1) {
     QMAKE_LFLAGS += -static
+    # only the image format plugins the wallet uses (the others, e.g. TIFF and
+    # WebP, would need more static libraries)
+    QTPLUGIN.imageformats = qico qgif
     LIBS += $$LEVELDB_EXTRA_LIBS -lcrypt32 -lbcrypt -lz
 }
