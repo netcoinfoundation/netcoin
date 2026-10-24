@@ -8,7 +8,7 @@ Install the Xcode command line tools (`xcode-select --install`) and
 [Homebrew](https://brew.sh), then:
 
 ```sh
-brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt@5 qrencode
+brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt qrencode
 ```
 
 `berkeley-db` is only needed to convert wallet files of NetCoin 3.0.0 and
@@ -28,7 +28,7 @@ make -f makefile.osx test_netcoin && ./test_netcoin
 ```sh
 cd netcoin
 mkdir build-qt && cd build-qt
-"$(brew --prefix qt@5)/bin/qmake" ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+"$(brew --prefix qt)/bin/qmake" ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
 make -j"$(sysctl -n hw.ncpu)"
 open netcoin.app
 ```

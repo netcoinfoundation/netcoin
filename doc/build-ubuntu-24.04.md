@@ -13,7 +13,7 @@ names below are the same on both.
 | Berkeley DB   | `libdb5.3++-dev` (optional) | 5.3     |
 | LevelDB       | `libleveldb-dev`            | 1.23    |
 | miniupnpc     | `libminiupnpc-dev`          | 2.2     |
-| Qt (GUI only) | `qtbase5-dev`               | 5.15    |
+| Qt (GUI only) | `qt6-base-dev`              | 6.4     |
 | libqrencode   | `libqrencode-dev` (GUI)     | 4.1     |
 
 ## 1. Install the dependencies
@@ -23,7 +23,7 @@ sudo apt update
 sudo apt install build-essential pkg-config git \
     libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev libleveldb-dev libminiupnpc-dev
 # only for the graphical wallet:
-sudo apt install qtbase5-dev qttools5-dev-tools libqrencode-dev
+sudo apt install qt6-base-dev qt6-tools-dev-tools qt6-l10n-tools libqrencode-dev
 ```
 
 ## 2. Headless daemon (`netcoind`)
@@ -56,9 +56,12 @@ make -f makefile.unix -j"$(nproc)" test_netcoin
 ```sh
 cd netcoin
 mkdir build-qt && cd build-qt
-qmake -qt=5 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+qmake6 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
 make -j"$(nproc)"
 ```
+
+Qt 5.15 still works: install `qtbase5-dev qttools5-dev-tools` and run
+`qmake -qt=5` instead.
 
 ## 4. Configuration
 

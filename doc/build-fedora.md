@@ -11,7 +11,7 @@ sudo dnf install git gcc-c++ make \
 # optional, only to convert wallet files of NetCoin 3.0.0 and older:
 sudo dnf install libdb-cxx-devel
 # only for the graphical wallet:
-sudo dnf install qt5-qtbase-devel qt5-linguist qrencode-devel
+sudo dnf install qt6-qtbase-devel qt6-linguist qrencode-devel
 ```
 
 ## 2. Headless daemon (`netcoind`)
@@ -38,7 +38,7 @@ make -f makefile.unix -j"$(nproc)" test_netcoin
 ```sh
 cd netcoin
 mkdir build-qt && cd build-qt
-qmake-qt5 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
+qmake6 ../netcoin-qt.pro USE_UPNP=1 USE_QRCODE=1 CONFIG+=release
 make -j"$(nproc)"
 ./netcoin
 ```

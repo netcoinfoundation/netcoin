@@ -54,7 +54,10 @@ for f in "$DIST/netcoind" "$DIST/netcoin"; do
             rpm -qf --qf '%{NAME}\n' "$l" 2>/dev/null || true
         fi
     done | cut -d: -f1
-done | sort -u | grep -v -E '^(libc6|libgcc-s1|libstdc\+\+6|glibc|libgcc|libstdc\+\+)$' > "$DIST/runtime-packages.txt" || true
+done | { cat
+    # the platform plugin (xcb) is loaded at run time, so ldd does not show it
+    if command -v dpkg >/dev/null; then dpkg -S libqxcb.so 2>/dev/null | cut -d: -f1; fi
+} | sort -u | grep -v -E '^(libc6|libgcc-s1|libstdc\+\+6|glibc|libgcc|libstdc\+\+)$' > "$DIST/runtime-packages.txt" || true
 cd "$ROOT/dist"
 tar -czf "$NAME.tar.gz" "$NAME"
 ls -la "$ROOT/dist"

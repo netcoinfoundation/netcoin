@@ -127,7 +127,7 @@ re-validated the complete main chain, from the genesis block up to block
   default cipher list.
 * Key generation checks the result of the random number generator.
 * Boost 1.83 – 1.92, LevelDB 1.23 (system library by default), miniupnpc
-  up to 2.3, Qt 5.15, C++17; works with GCC 13 – 16.
+  up to 2.3, Qt 6 (Qt 5.15 still works), C++17; works with GCC 13 – 16.
 * Checked with AddressSanitizer, UndefinedBehaviorSanitizer and cppcheck.
 
 ## Network
