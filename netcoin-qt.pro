@@ -538,5 +538,7 @@ win32:contains(MSYS2, 1):contains(STATIC, 1) {
     # only the image format plugins the wallet uses (the others, e.g. TIFF and
     # WebP, would need more static libraries)
     QTPLUGIN.imageformats = qico qgif
+    # after the Qt libraries on the link line
+    QMAKE_LIBS += $$QT_EXTRA_LIBS
     LIBS += $$LEVELDB_EXTRA_LIBS -lcrypt32 -lbcrypt -lz
 }

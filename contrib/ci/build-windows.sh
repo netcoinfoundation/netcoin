@@ -20,7 +20,7 @@ fail() {
     # make the end of the log visible as an annotation in the Actions UI
     if [ -n "${GITHUB_ACTIONS:-}" ]; then
         local msg
-        msg="$( (grep -E 'error:|Error [0-9]|undefined reference|cannot find|No such file|multiple definition|\.dll => |still needs|^QT_INSTALL_(PREFIX|BINS|ARCHDATA|DATA)|^QMAKE_(MKSPECS|SPEC|XSPEC)' "$LOG" | grep -v 'target not found' | cut -c1-240 | tail -15; echo '--- last lines ---'; grep -v -E '^(g\+\+|gcc|[[:space:]]*[0-9]* \||[[:space:]]+\||\.\./src/.*(required from|note:|warning:))' "$LOG" | tail -15 | cut -c1-240) | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
+        msg="$( (echo '--- undefined symbols ---'; grep -o "undefined reference to \`[^']*'" "$LOG" | sort | uniq -c | sort -rn | head -25; grep -o 'lib[A-Za-z0-9_+-]*\.a([^)]*)' "$LOG" | sort | uniq -c | sort -rn | head -8; echo '---'; grep -E 'error:|Error [0-9]|undefined reference|cannot find|No such file|multiple definition|\.dll => |still needs|^QT_INSTALL_(PREFIX|BINS|ARCHDATA|DATA)|^QMAKE_(MKSPECS|SPEC|XSPEC)' "$LOG" | grep -v 'target not found' | cut -c1-240 | tail -15; echo '--- last lines ---'; grep -v -E '^(g\+\+|gcc|[[:space:]]*[0-9]* \||[[:space:]]+\||\.\./src/.*(required from|note:|warning:))' "$LOG" | tail -15 | cut -c1-240) | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"
         echo "::error title=Windows build failed::${msg:0:60000}"
     fi
     exit 1
@@ -147,7 +147,18 @@ cd "$ROOT/build-qt"
 QRARG="USE_QRCODE=$HAVE_QR"
 BDBARG=""
 [ "$HAVE_BDB" = 1 ] || BDBARG="USE_BDB=0"
-"$QMAKE" ${QMAKESPECARG:-} ../netcoin-qt.pro MSYS2=1 STATIC=$STATIC "LEVELDB_EXTRA_LIBS=$LEVELDB_EXTRA_LIBS" "BDB_LIB_SUFFIX=${BDB_LIB_SUFFIX:-}" \
+# libraries that the static Qt's own dependencies (HarfBuzz, FreeType, PNG)
+# need but that are not in its .prl files
+QT_EXTRA_LIBS=""
+if [ "$STATIC" = 1 ]; then
+    QT_EXTRA_LIBS="$(pkg-config --static --libs-only-l harfbuzz freetype2 libpng 2>/dev/null | tr '\n' ' ')"
+    for l in graphite2 bz2 brotlidec brotlicommon png16 z; do
+        [ -f "$MINGW_PREFIX/lib/lib$l.a" ] && QT_EXTRA_LIBS="$QT_EXTRA_LIBS -l$l"
+    done
+    QT_EXTRA_LIBS="$QT_EXTRA_LIBS -lusp10 -lrpcrt4 -ldwrite -lgdi32"
+    log "extra libraries for the static Qt: $QT_EXTRA_LIBS"
+fi
+"$QMAKE" ${QMAKESPECARG:-} ../netcoin-qt.pro MSYS2=1 "QT_EXTRA_LIBS=$QT_EXTRA_LIBS" STATIC=$STATIC "LEVELDB_EXTRA_LIBS=$LEVELDB_EXTRA_LIBS" "BDB_LIB_SUFFIX=${BDB_LIB_SUFFIX:-}" \
     "QMAKE_LRELEASE=$(cygpath -m "$LRELEASE")" USE_UPNP=1 $QRARG $BDBARG CONFIG+=release >>"$LOG" 2>&1
 make -j"$JOBS" >>"$LOG" 2>&1
 
