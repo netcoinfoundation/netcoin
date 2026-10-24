@@ -104,9 +104,11 @@ for pass in 1 2 3; do
             [ -d "$src" ] || src="$(find -L "$(brew --prefix)/opt/" -maxdepth 3 -type d -name "$fwname" -print -quit)"
             [ -n "$src" ] && [ -d "$src" ] || { echo "error: $fwname (needed by $f) not found"; false; }
             echo "adding $fwname (needed by $(basename "$f"))"
-            cp -R -L "$src" "$FW/"; chmod -R u+w "$FW/$fwname"; rm -rf "$FW/$fwname/Headers" "$FW/$fwname/Versions/"*/Headers
-            fwbin="$FW/$fwname/Versions/Current/$(basename "$fwname" .framework)"
-            install_name_tool -id "@rpath/$fwname/Versions/A/$(basename "$fwname" .framework)" "$fwbin" 2>/dev/null
+            # ditto keeps the framework's internal symlinks (Versions/Current)
+            ditto "$(cd "$src" && pwd -P)" "$FW/$fwname"; chmod -R u+w "$FW/$fwname"
+            rm -rf "$FW/$fwname/Headers" "$FW/$fwname/Versions/"*/Headers
+            fwbin="$FW/$fwname/Versions/A/$(basename "$fwname" .framework)"
+            install_name_tool -id "@rpath/$fwname/Versions/A/$(basename "$fwname" .framework)" "$fwbin"
         done
     done
 done
@@ -118,6 +120,16 @@ for f in $(find "$APP/Contents/PlugIns" "$FW" -name '*.dylib') $(for fw in "$FW"
     done
 done
 bundle_libs
+# install names (ids) of bundled libraries that still point to Homebrew
+for f in $(find "$FW" "$APP/Contents/PlugIns" -type f \( -name '*.dylib' -o -perm -u+x \)); do
+    id="$(otool -D "$f" 2>/dev/null | sed -n 2p)"
+    case "$id" in
+        /opt/*|/usr/local/*) case "$id" in
+            *.framework/*) install_name_tool -id "@rpath/${id#*/lib/}" "$f" ;;
+            *)             install_name_tool -id "@executable_path/../Frameworks/$(basename "$id")" "$f" ;;
+        esac ;;
+    esac
+done
 echo "== checking the bundle"
 # nothing may still refer to Homebrew
 if otool -L "$APP/Contents/MacOS/"* $(find "$FW" "$APP/Contents/PlugIns" -name '*.dylib') $FWBINS | grep -E '^[[:space:]]*/(opt|usr/local)/|:$' | grep -B1 -E '^[[:space:]]*/(opt|usr/local)/'; then
