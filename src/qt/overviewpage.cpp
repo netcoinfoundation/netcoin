@@ -545,7 +545,6 @@ pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     if(nHeight > heightPrevious && !IsInitialBlockDownload())
     {
         ui->heightBox->setText("<b><font color=\"green\">" + height + "</font></b>");
-        static int64_t lastUpdate = 0;
         // Double Check to make sure we don't try to update the plot when it is disabled
 
     }
@@ -673,7 +672,7 @@ pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume,ncheckpointHeight);
 }
 
-void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume,int ncheckpointHeight)
+void OverviewPage::updatePrevious(int nHeight, int nMinWeight, uint64_t nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume,int ncheckpointHeight)
 {
     heightPrevious = nHeight;
     stakeminPrevious = nMinWeight;

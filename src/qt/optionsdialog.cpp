@@ -36,8 +36,8 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     fRestartWarningDisplayed_Proxy(false),
     fRestartWarningDisplayed_Lang(false),
     fProxyIpValid(true),
-    fNetConfChanged(false),
     fStakeCombineLoaded(false),
+    fNetConfChanged(false),
     fListenOnionLoaded(true)
 {
     ui->setupUi(this);

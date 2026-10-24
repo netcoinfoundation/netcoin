@@ -51,7 +51,7 @@ public:
     int connectionPrevious;
     int volumePrevious;
     int stakeminPrevious;
-    int stakemaxPrevious;
+    uint64_t stakemaxPrevious = 0;
     int numLookBack;
     int checkpointPrevious;
     QString stakePrevious;
@@ -67,7 +67,7 @@ public slots:
     void setStatistics(ClientModel *modelStatistics);
     void lockWalletToggle();
     void updateStatistics();
-    void updatePrevious(int, int, int, double, double, double, double, QString, int, int,int);
+    void updatePrevious(int, int, uint64_t, double, double, double, double, QString, int, int,int);
 
 
 signals:

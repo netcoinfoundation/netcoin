@@ -705,7 +705,7 @@ void CAddrMan::GetAddr_(std::vector<CAddress> &vAddr)
     // gather a list of random nodes, skipping those of low quality
     for (unsigned int n = 0; n < vRandom.size(); n++)
     {
-        if (vAddr.size() >= nNodes)
+        if (vAddr.size() >= (size_t)nNodes)
             break;
 
         int nRndPos = GetRandInt(vRandom.size() - n) + n;
