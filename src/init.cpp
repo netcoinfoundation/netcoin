@@ -135,33 +135,6 @@ void Shutdown()
         if (pwalletMain)
             pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
- /*   {
-        fShutdown = true;
-        nTransactionsUpdated++;
-        StopRPCThreads();
-        bitdb.Flush(false);
-        StopNode();
-        bitdb.Flush(true);
-        boost::filesystem::remove(GetPidFile());
-        UnregisterWallet(pwalletMain);
-        delete pwalletMain;
-        NewThread(ExitTimeout, NULL);
-        MilliSleep(50);
-        printf("Netcoin exited\n\n");
-        // fExit = true;
-#ifndef QT_GUI
-        // ensure non-UI client gets exited here, but let Bitcoin-Qt reach 'return 0;' in bitcoin.cpp
-        exit(0);
-#endif
-    }
- /*   else
-    {
-        while (!fExit)
-            MilliSleep(500);
-        MilliSleep(100);
-        ExitThread(0);
-    }
- */
     bitdb.Flush(true);
     boost::filesystem::remove(GetPidFile());
     UnregisterWallet(pwalletMain);

@@ -114,49 +114,6 @@ extern enum Checkpoints::CPMode CheckpointsMode;
 
 // These functions dispatch to one or all registered wallets
 
-/*
-void RegisterWallet(CWallet* pwalletIn)
-{
-    {
-        LOCK(cs_setpwalletRegistered);
-        setpwalletRegistered.insert(pwalletIn);
-    }
-}
-
-void UnregisterWallet(CWallet* pwalletIn)
-{
-    {
-        LOCK(cs_setpwalletRegistered);
-        setpwalletRegistered.erase(pwalletIn);
-    }
-}
-
-// check whether the passed transaction is from us
-bool static IsFromMe(CTransaction& tx)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        if (pwallet->IsFromMe(tx))
-            return true;
-    return false;
-}
-
-/*
-// get the wallet transaction with the given hash (if it exists)
-bool static GetTransaction(const uint256& hashTx, CWalletTx& wtx)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        if (pwallet->GetTransaction(hashTx,wtx))
-            return true;
-    return false;
-}
-*
-
-// erases transaction with the given hash from all wallets
-void static EraseFromWallets(uint256 hash)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        pwallet->EraseFromWallet(hash);
-  */
 
 namespace {
 struct CMainSignals {
@@ -1147,23 +1104,6 @@ int CMerkleTx::GetBlocksToMaturity() const
     return max(0, (nMaturity+20) - GetDepthInMainChain());
 }
 
-/*
-bool CMerkleTx::AcceptToMemoryPool(CTxDB& txdb)
-{
- /*   if (fClient)
-    {
-        if (!IsInMainChain() && !ClientConnectInputs())
-            return false;
-        return CTransaction::AcceptToMemoryPool(txdb, fCheckInputs);
-    }
-    else
-    {
-        return CTransaction::AcceptToMemoryPool(txdb, fCheckInputs);
-    }
- *
-    return CTransaction::AcceptToMemoryPool(txdb);
-}
-*/
 
 bool CMerkleTx::AcceptToMemoryPool(bool fLimitFree)
 {
