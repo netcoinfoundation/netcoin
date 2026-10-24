@@ -1818,7 +1818,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 {
                     if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : invalid key for kernel type=%d\n", whichType);
-                        break; // keys mismatch
+                    break; // keys mismatch
                     }
 
                     scriptPubKeyOut = scriptPubKeyKernel;

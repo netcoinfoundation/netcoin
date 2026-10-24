@@ -27,6 +27,12 @@
  * online backup system.
  */
 
+/* the SHA256_* functions are deprecated in OpenSSL 3 but still provided;
+   the C++ code uses the same setting (makefiles / netcoin-qt.pro) */
+#ifndef OPENSSL_API_COMPAT
+#define OPENSSL_API_COMPAT 0x10100000L
+#endif
+
 #include "scrypt.h"
 #include <stdlib.h>
 #include <stdint.h>
