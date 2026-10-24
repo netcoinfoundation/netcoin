@@ -71,7 +71,7 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
-        if(qVariantCanConvert<QColor>(value))
+        if(value.canConvert<QColor>())
         {
             foreground = qvariant_cast<QColor>(value);
         }
@@ -459,7 +459,6 @@ if (!ui->diffplotframe->isHidden()){
 
     // Start at the end and walk backwards
     int i = numLookBack-1;
-    int x = xEnd;
 
     // This should be a noop if the size is already 2000
     vX.resize(numLookBack);
@@ -486,7 +485,6 @@ if (!ui->diffplotframe->isHidden()){
 
         itr = GetLastBlockIndex(itr->pprev, fProofOfStake);
         i--;
-        x--;
     }
 
     if(fDebug) { printf("Plot: Drawing plot\n"); }
@@ -497,10 +495,9 @@ if (!ui->diffplotframe->isHidden()){
     ui->diffplot->xAxis->setRange((double)xStart, (double)xEnd);
     ui->diffplot->yAxis->setRange(0, diffMax+(diffMax/10));
 
-    ui->diffplot->xAxis->setAutoSubTicks(false);
-    ui->diffplot->yAxis->setAutoSubTicks(false);
-    ui->diffplot->xAxis->setSubTickCount(0);
-    ui->diffplot->yAxis->setSubTickCount(0);
+    ui->diffplot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);
+    ui->diffplot->xAxis->setSubTicks(false);
+    ui->diffplot->yAxis->setSubTicks(false);
     ui->diffplot->xAxis->setLabelColor("#0381ff");
  ui->diffplot->yAxis->setLabelColor("#0381ff");
  ui->diffplot->xAxis->setTickLabelColor("#0381ff");
@@ -546,7 +543,6 @@ pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     if(nHeight > heightPrevious && !IsInitialBlockDownload())
     {
         ui->heightBox->setText("<b><font color=\"green\">" + height + "</font></b>");
-        static int64_t lastUpdate = 0;
         // Double Check to make sure we don't try to update the plot when it is disabled
 
     }
@@ -674,7 +670,7 @@ pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     updatePrevious(nHeight, nMinWeight, nNetworkWeight, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume,ncheckpointHeight);
 }
 
-void OverviewPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume,int ncheckpointHeight)
+void OverviewPage::updatePrevious(int nHeight, int nMinWeight, uint64_t nNetworkWeight, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume,int ncheckpointHeight)
 {
     heightPrevious = nHeight;
     stakeminPrevious = nMinWeight;

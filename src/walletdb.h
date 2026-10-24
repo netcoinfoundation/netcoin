@@ -272,5 +272,7 @@ public:
 };
 
 bool BackupWallet(const CWallet& wallet, const std::string& strDest);
+/** Convert a legacy Berkeley DB wallet file to SQLite (no-op for other files) */
+bool MigrateBerkeleyWallet(const std::string& strFile, std::string& strErr);
 
 #endif // BITCOIN_WALLETDB_H

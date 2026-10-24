@@ -114,49 +114,6 @@ extern enum Checkpoints::CPMode CheckpointsMode;
 
 // These functions dispatch to one or all registered wallets
 
-/*
-void RegisterWallet(CWallet* pwalletIn)
-{
-    {
-        LOCK(cs_setpwalletRegistered);
-        setpwalletRegistered.insert(pwalletIn);
-    }
-}
-
-void UnregisterWallet(CWallet* pwalletIn)
-{
-    {
-        LOCK(cs_setpwalletRegistered);
-        setpwalletRegistered.erase(pwalletIn);
-    }
-}
-
-// check whether the passed transaction is from us
-bool static IsFromMe(CTransaction& tx)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        if (pwallet->IsFromMe(tx))
-            return true;
-    return false;
-}
-
-/*
-// get the wallet transaction with the given hash (if it exists)
-bool static GetTransaction(const uint256& hashTx, CWalletTx& wtx)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        if (pwallet->GetTransaction(hashTx,wtx))
-            return true;
-    return false;
-}
-*
-
-// erases transaction with the given hash from all wallets
-void static EraseFromWallets(uint256 hash)
-{
-    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered)
-        pwallet->EraseFromWallet(hash);
-  */
 
 namespace {
 struct CMainSignals {
@@ -601,8 +558,12 @@ bool AreInputsStandard(const CTransaction& tx, const MapPrevTx& mapInputs)
             {
                 // Any other Script with less than 15 sigops OK:
                 unsigned int sigops = subscript.GetSigOpCount(true);
-                // ... extra data left on the stack after execution is OK, too:
-                return (sigops <= MAX_P2SH_SIGOPS);
+                if (sigops > MAX_P2SH_SIGOPS)
+                    return false;
+                // ... extra data left on the stack after execution is OK, too.
+                // Note: this used to 'return' here, which skipped the checks of
+                // all remaining inputs of the transaction.
+                continue;
             }
         }
 
@@ -1143,23 +1104,6 @@ int CMerkleTx::GetBlocksToMaturity() const
     return max(0, (nMaturity+20) - GetDepthInMainChain());
 }
 
-/*
-bool CMerkleTx::AcceptToMemoryPool(CTxDB& txdb)
-{
- /*   if (fClient)
-    {
-        if (!IsInMainChain() && !ClientConnectInputs())
-            return false;
-        return CTransaction::AcceptToMemoryPool(txdb, fCheckInputs);
-    }
-    else
-    {
-        return CTransaction::AcceptToMemoryPool(txdb, fCheckInputs);
-    }
- *
-    return CTransaction::AcceptToMemoryPool(txdb);
-}
-*/
 
 bool CMerkleTx::AcceptToMemoryPool(bool fLimitFree)
 {
@@ -1728,8 +1672,6 @@ unsigned int GetNextTrust_DigiShield(const CBlockIndex* pindexLast, bool fProofO
 
 //NEW DIGISHIELD START
 static const int64_t nTargetTimespanRe = 1*60; // 60 Seconds
-static const int64_t nTargetSpacingRe = 1*60; // 60 seconds
-static const int64_t nIntervalRe = nTargetTimespanRe / nTargetSpacingRe; // 1 block
 
 static const int64_t nMaxAdjustDown = 40; // 40% adjustment down
 static const int64_t nMaxAdjustUp = 20; // 20% adjustment up
@@ -1760,7 +1702,7 @@ static unsigned int GetNextWorkRequiredV2(const CBlockIndex* pindexLast, bool fP
        // Limit adjustment step
        int64_t nActualTimespan = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
 
-       printf(" nActualTimespan = %d before bounds\n", nActualTimespan);
+       printf(" nActualTimespan = %" PRI64d " before bounds\n", nActualTimespan);
        if (nActualTimespan < nMinActualTimespan)
        nActualTimespan = nMinActualTimespan;
        if (nActualTimespan > nMaxActualTimespan)
@@ -1818,10 +1760,11 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
-
     if (pindexLast == NULL)
-        return bnTargetLimit.GetCompact(); // genesis block
+        return Params().ProofOfWorkLimit().GetCompact(); // genesis block
+
+    // (pindexLast used to be dereferenced here before the NULL check above)
+    CBigNum bnTargetLimit = !fProofOfStake ? Params().ProofOfWorkLimit() : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
 
     const CBlockIndex* pindexPrev = GetLastBlockIndex(pindexLast, fProofOfStake);
     if (pindexPrev->pprev == NULL)
@@ -2994,25 +2937,25 @@ bool CBlock::AcceptBlock()
     if (IsProofOfWork() && nHeight > (TestNet() ? BLOCK_HEIGHT_FINALPOW_TESTNET : BLOCK_HEIGHT_FINALPOW) && nHeight < (TestNet() ? BLOCK_HEIGHT_REPOW_TESTNET : BLOCK_HEIGHT_REPOW))
         return DoS(100, error("AcceptBlock() : reject proof-of-work at height %d", nHeight));
     // This will allow only 1 address to generate coins to give back to exchange after a Double Spend Attack
-        if (nHeight >= (TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)
-            && nHeight <= ((TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)+9) )
-        {
-            if(!IsProofOfStake())
-               return error("AcceptBlock() : Only 1 address can mine this block err 1 ");
-            CBitcoinAddress DblSpendAddressFix,outAddress;
-            CBitcoinAddress HEISTSPEND,hsoutAddress;
-            CTxDestination address;
-             DblSpendAddressFix=  (TestNet() ? REC_ADDY_T : REC_ADDY);
+    if (nHeight >= (TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)
+        && nHeight <= ((TestNet() ? RECOVER_DBLSP_HEIGHT_TESTNET : RECOVER_DBLSP_HEIGHT)+9) )
+    {
+        if(!IsProofOfStake())
+           return error("AcceptBlock() : Only 1 address can mine this block err 1 ");
+        CBitcoinAddress DblSpendAddressFix,outAddress;
+        CBitcoinAddress HEISTSPEND,hsoutAddress;
+        CTxDestination address;
+         DblSpendAddressFix=  (TestNet() ? REC_ADDY_T : REC_ADDY);
 
 
-            const CTxOut& txout = vtx[1].vout[1];
-            ExtractDestination(txout.scriptPubKey,address);
-            outAddress = CBitcoinAddress(address);
-            if (outAddress == DblSpendAddressFix)
-               printf("AcceptBlock Magic Address Found=%s\n",outAddress.ToString().c_str());
-            else
-                return DoS(100,error("AcceptBlock() : Only 1 address can mine this block err 2 \n%s\n%s", outAddress.ToString().c_str(), DblSpendAddressFix.ToString().c_str()));
-        }
+        const CTxOut& txout = vtx[1].vout[1];
+        ExtractDestination(txout.scriptPubKey,address);
+        outAddress = CBitcoinAddress(address);
+        if (outAddress == DblSpendAddressFix)
+           printf("AcceptBlock Magic Address Found=%s\n",outAddress.ToString().c_str());
+        else
+            return DoS(100,error("AcceptBlock() : Only 1 address can mine this block err 2 \n%s\n%s", outAddress.ToString().c_str(), DblSpendAddressFix.ToString().c_str()));
+    }
 
 
     // Check proof of work
@@ -3155,7 +3098,13 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // ppcoin: check proof-of-stake
     // Limited duplicity on stake: prevents block flood attack
     // Duplicate stake allowed only when there is orphan child block
-    if (pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
+    // Not applied to blocks from a local source (pfrom == NULL: -loadblock /
+    // bootstrap import or our own staking): a block file contains a stale
+    // fork block before the main-chain block that reuses the same stake, and
+    // the main-chain block's children only come later in the file, so the
+    // import used to stop there and leave the rest of the chain orphaned.
+    // This is a DoS protection only; the block is still fully validated.
+    if (pfrom && pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
         return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
 
     // Block signature can be malleated in such a way that it increases block size up to maximum allowed by protocol
@@ -3423,7 +3372,7 @@ bool CBlock::CheckBlockSignature() const
 
 bool CheckDiskSpace(uint64_t nAdditionalBytes)
 {
-    uint64_t nFreeBytesAvailable = filesystem::space(GetDataDir()).available;
+    uint64_t nFreeBytesAvailable = boost::filesystem::space(GetDataDir()).available;
 
     // Check for nMinDiskSpace bytes (currently 50MB)
     if (nFreeBytesAvailable < nMinDiskSpace + nAdditionalBytes)
@@ -3439,7 +3388,7 @@ bool CheckDiskSpace(uint64_t nAdditionalBytes)
     return true;
 }
 
-static filesystem::path BlockFilePath(unsigned int nFile)
+static boost::filesystem::path BlockFilePath(unsigned int nFile)
 {
     string strBlockFn = strprintf("blk%04u.dat", nFile);
     return GetDataDir() / strBlockFn;
@@ -4069,6 +4018,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         //    AddTimeData(pfrom->addr, nTime);
 
         // Change version
+        // BIP155: we understand addrv2 (Tor v3 addresses). Must be sent
+        // before verack; older nodes ignore the unknown message.
+        pfrom->PushMessage("sendaddrv2");
         pfrom->PushMessage("verack");
         // pfrom->vSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
         pfrom->ssSend.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
@@ -4078,7 +4030,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             // Advertise our address
             if (!fNoListen && !IsInitialBlockDownload())
             {
-                CAddress addr = GetLocalAddress(&pfrom->addr);
+                // addrv2 support is only known after "sendaddrv2", so a Tor
+                // v3 address is advertised on "verack" instead
+                CAddress addr = GetLocalAddress(&pfrom->addr, true);
                 if (addr.IsRoutable())
                 {
                     pfrom->PushAddress(addr);
@@ -4159,13 +4113,33 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     {
         // pfrom->vRecv.SetVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
         pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
+
+        // Advertise our onion address to outbound peers that support addrv2
+        if (!pfrom->fInbound && pfrom->fWantsAddrV2 && !fNoListen && !IsInitialBlockDownload())
+        {
+            CAddress addr = GetLocalAddress(&pfrom->addr);
+            if (!addr.IsAddrV1Compatible() && addr.IsRoutable())
+                pfrom->PushAddress(addr);
+        }
     }
 
 
-    else if (strCommand == "addr")
+    else if (strCommand == "sendaddrv2")
+    {
+        pfrom->fWantsAddrV2 = true;
+    }
+
+
+    else if (strCommand == "addr" || strCommand == "addrv2")
     {
         vector<CAddress> vAddr;
-        vRecv >> vAddr;
+        if (strCommand == "addrv2") {
+            CAddrV2Vector wrap(vAddr);
+            vRecv >> wrap;
+        } else
+            vRecv >> vAddr;
+        if (fDebugNet)
+            printf("received %s with %" PRIszu " addresses from %s\n", strCommand.c_str(), vAddr.size(), pfrom->addr.ToString().c_str());
 
         // Don't want addr from older versions unless seeding
         if (pfrom->nVersion < CADDR_TIME_VERSION && addrman.size() > 1000)
@@ -4790,11 +4764,27 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     // Update the last seen time for this node's address
     if (pfrom->fNetworkNode)
-        if (strCommand == "version" || strCommand == "addr" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
+        if (strCommand == "version" || strCommand == "addr" || strCommand == "addrv2" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
             AddressCurrentlyConnected(pfrom->addr);
 
 
     return true;
+}
+
+// addr (old format) or addrv2 (BIP155), depending on what the peer supports
+static void PushAddrMessage(CNode* pto, std::vector<CAddress>& vAddr)
+{
+    if (pto->fWantsAddrV2) {
+        CAddrV2Vector wrap(vAddr);
+        pto->PushMessage("addrv2", wrap);
+    } else {
+        std::vector<CAddress> vOld;
+        BOOST_FOREACH(const CAddress& addr, vAddr)
+            if (addr.IsAddrV1Compatible())
+                vOld.push_back(addr);
+        if (!vOld.empty())
+            pto->PushMessage("addr", vOld);
+    }
 }
 
 bool ProcessMessages(CNode* pfrom)
@@ -5100,14 +5090,14 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                     // receiver rejects addr messages larger than 1000
                     if (vAddr.size() >= 1000)
                     {
-                        pto->PushMessage("addr", vAddr);
+                        PushAddrMessage(pto, vAddr);
                         vAddr.clear();
                     }
                 }
             }
             pto->vAddrToSend.clear();
             if (!vAddr.empty())
-                pto->PushMessage("addr", vAddr);
+                PushAddrMessage(pto, vAddr);
         }
 
 

@@ -1,0 +1,160 @@
+name: Release
+
+# Builds the Linux (Ubuntu, Fedora), macOS and Windows binaries and publishes them as a GitHub
+# Release. Runs only when the repository owner asks for it:
+#   - Actions tab -> "Release" -> "Run workflow" (enter a version, e.g. v3.0.1), or
+#   - pushing a tag v* (git tag v3.0.1 && git push origin v3.0.1).
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version / tag name, e.g. v3.0.1"
+        required: true
+      prerelease:
+        description: "Mark as pre-release (test build)"
+        type: boolean
+        default: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  VERSION: ${{ github.event.inputs.version || github.ref_name }}
+
+jobs:
+  check:
+    name: Only the owner may release
+    runs-on: ubuntu-24.04
+    if: github.actor == github.repository_owner
+    steps:
+      - run: echo "Release ${VERSION} requested by ${{ github.actor }}"
+
+  linux:
+    needs: check
+    strategy:
+      matrix:
+        image: ["ubuntu:24.04", "ubuntu:26.04"]
+    name: Linux (${{ matrix.image }})
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y git build-essential pkg-config \
+            libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
+            libleveldb-dev libminiupnpc-dev qt6-base-dev qt6-tools-dev-tools qt6-l10n-tools libqrencode-dev
+      - uses: actions/checkout@v5
+      - run: bash contrib/ci/build-linux.sh "$VERSION"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: release-${{ strategy.job-index }}
+          path: dist/*.tar.gz
+
+  fedora:
+    needs: check
+    strategy:
+      matrix:
+        release: ["44", "45"]
+    name: Fedora ${{ matrix.release }}
+    runs-on: ubuntu-24.04
+    container: fedora:${{ matrix.release }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y git gcc-c++ make findutils which tar gzip glibc-common \
+            boost-devel openssl-devel sqlite-devel leveldb-devel miniupnpc-devel zlib-devel \
+            qt6-qtbase-devel qt6-linguist qrencode-devel
+          if dnf install -y libdb-cxx-devel; then echo "USE_BDB=1" >> "$GITHUB_ENV"; else echo "USE_BDB=0" >> "$GITHUB_ENV"; fi
+      - uses: actions/checkout@v5
+      - run: bash contrib/ci/build-linux.sh "$VERSION"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: release-fedora-${{ matrix.release }}
+          path: dist/*.tar.gz
+
+  macos:
+    needs: check
+    name: macOS
+    runs-on: macos-14
+    steps:
+      - name: Install dependencies
+        run: brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt qrencode
+      - uses: actions/checkout@v5
+      - run: bash contrib/ci/build-macos.sh "$VERSION"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: release-macos
+          path: dist/*.dmg
+
+  windows:
+    needs: check
+    name: Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: zip
+      - uses: actions/checkout@v5
+      - run: bash contrib/ci/build-windows.sh "$VERSION"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: release-win64
+          path: dist/*.zip
+
+  publish:
+    needs: [linux, fedora, macos, windows]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Checksums
+        run: cd assets && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PRERELEASE: ${{ github.event.inputs.prerelease || 'false' }}
+        run: |
+          FLAGS="--target ${GITHUB_SHA}"
+          # tags like v3.1.0-rc1 are always pre-releases
+          case "$VERSION" in *-*) PRERELEASE=true;; esac
+          [ "$PRERELEASE" = "true" ] && FLAGS="$FLAGS --prerelease"
+          # release notes: doc/release-notes-<x.y.z>.md (v3.1.0-rc1 -> 3.1.0)
+          BASE="${VERSION#v}"; BASE="${BASE%%-*}"
+          NOTES="doc/release-notes-$BASE.md"
+          if [ ! -f "$NOTES" ]; then
+            NOTES="$RUNNER_TEMP/notes.md"
+            echo "Binaries for Windows 10/11 (64-bit), Ubuntu 24.04 / 26.04, Fedora 44 / 45 (x86_64) and macOS 14+ (Apple Silicon). Check the files against SHA256SUMS.txt." > "$NOTES"
+          fi
+          echo "version=$VERSION flags=$FLAGS notes=$NOTES"; ls -la assets
+          set +e
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            OUT="$(gh release upload "$VERSION" assets/* --clobber 2>&1)"
+          else
+            OUT="$(gh release create "$VERSION" assets/* $FLAGS --title "NetCoin $VERSION" --notes-file "$NOTES" 2>&1)"
+          fi
+          RC=$?
+          echo "$OUT"
+          if [ $RC -ne 0 ]; then
+            echo "::error title=Publishing the release failed::$(echo "$OUT" | tail -20 | sed ':a;N;$!ba;s/\n/%0A/g')"
+            exit $RC
+          fi

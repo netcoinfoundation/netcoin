@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "addresstablemodel.h"
 #include "guiutil.h"
 #include "walletmodel.h"
@@ -69,16 +70,16 @@ public:
                                   QString::fromStdString(address.ToString())));
             }
         }
-        // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
-        qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
+        // std::lower_bound() and std::upper_bound() require our cachedAddressTable list to be sorted in asc order
+        std::sort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
     }
 
     void updateEntry(const QString &address, const QString &label, bool isMine, int status)
     {
         // Find address / label in model
-        QList<AddressTableEntry>::iterator lower = qLowerBound(
+        QList<AddressTableEntry>::iterator lower = std::lower_bound(
             cachedAddressTable.begin(), cachedAddressTable.end(), address, AddressTableEntryLessThan());
-        QList<AddressTableEntry>::iterator upper = qUpperBound(
+        QList<AddressTableEntry>::iterator upper = std::upper_bound(
             cachedAddressTable.begin(), cachedAddressTable.end(), address, AddressTableEntryLessThan());
         int lowerIndex = (lower - cachedAddressTable.begin());
         int upperIndex = (upper - cachedAddressTable.begin());
@@ -284,7 +285,7 @@ QVariant AddressTableModel::headerData(int section, Qt::Orientation orientation,
 Qt::ItemFlags AddressTableModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
     AddressTableEntry *rec = static_cast<AddressTableEntry*>(index.internalPointer());
 
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;

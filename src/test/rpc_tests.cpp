@@ -25,8 +25,8 @@ createArgs(int nRequired, const char* address1=NULL, const char* address2=NULL)
 // This can be removed this when addmultisigaddress is enabled on main net:
 struct TestNetFixture
 {
-    TestNetFixture() { fTestNet = true; }
-    ~TestNetFixture() { fTestNet = false; }
+    TestNetFixture() { SelectParams(CChainParams::TESTNET); }
+    ~TestNetFixture() { SelectParams(CChainParams::MAIN); }
 };
 
 BOOST_FIXTURE_TEST_CASE(rpc_addmultisig, TestNetFixture)

@@ -27,6 +27,11 @@ using namespace std;
 unsigned int nStakeSplitAge = 0; // If you find a POS block with coins aged less than this, it assumes you are staking well over the nStakeCombineThreshold and are finding blocks too quickly (
 // ( probably have a very high value compared to the network). It will split the payout back to you into two blocks, to give other people a better chance to stake.
 int64_t nStakeCombineThreshold = 10000000 * COIN;   //When appending coins to submit as a POS block, no further coins are added if this total is achieved
+// Whether a stake may take in more coins of the same address than the one
+// that found the kernel (-stakecombine). Combined coins are locked for the
+// whole coinstake maturity, so by default only the kernel coin is used and
+// the rest of the balance stays spendable.
+bool fStakeCombine = false;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -1343,7 +1348,9 @@ bool CWallet::SelectCoinsMinConf(int64_t nTargetValue, int nConfMine, int nConfT
     vector<pair<int64_t, pair<const CWalletTx*,unsigned int> > > vValue;
     int64_t nTotalLower = 0;
 
-    random_shuffle(vCoins.begin(), vCoins.end(), GetRandInt);
+    // Fisher-Yates shuffle (std::random_shuffle was removed in C++17)
+    for (int i = (int)vCoins.size() - 1; i > 0; --i)
+        std::swap(vCoins[i], vCoins[GetRandInt(i + 1)]);
 
     BOOST_FOREACH(COutput output, vCoins)
     {
@@ -1579,7 +1586,9 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64_t> >& vecSend, 
 
                         // Reserve a new key pair from key pool
                         CPubKey vchPubKey;
-                        assert(reservekey.GetReservedKey(vchPubKey)); // should never fail, as we just unlocked
+                        bool fReserved = reservekey.GetReservedKey(vchPubKey); // should never fail, as we just unlocked
+                        assert(fReserved); // (call kept outside assert() so it also runs with NDEBUG)
+                        (void)fReserved;
 
                         scriptChange.SetDestination(vchPubKey.GetID());
                     }
@@ -1809,7 +1818,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 {
                     if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : invalid key for kernel type=%d\n", whichType);
-                        break; // keys mismatch
+                    break; // keys mismatch
                     }
 
                     scriptPubKeyOut = scriptPubKeyKernel;
@@ -1857,6 +1866,9 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
 
             int64_t nTimeWeight = GetWeight((int64_t)blockTmp.nTime, (int64_t)nTxTime);
 
+            // Only the kernel coin unless combining is switched on
+            if (!fStakeCombine)
+                break;
             // Stop adding more inputs if already too many inputs
             if (txNew.vin.size() >= 100)
                 break;

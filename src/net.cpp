@@ -91,6 +91,28 @@ CCriticalSection cs_vAddedNodes;
 
 static CSemaphore *semOutbound = NULL;
 
+// Addresses resolved from the DNS seeds. While the node has no outbound
+// connection these are tried first: peers.dat of an old installation can
+// hold thousands of addresses of nodes that are long gone, and trying them
+// one by one (5 s timeout each) can take a very long time before a working
+// seed is picked at random.
+static std::map<CService, int64_t> mapSeedLastTry;
+static CCriticalSection cs_mapSeedLastTry;
+
+static bool GetSeedToTry(CAddress& addrOut)
+{
+    LOCK(cs_mapSeedLastTry);
+    int64_t nNow = GetTime();
+    for (std::map<CService, int64_t>::iterator it = mapSeedLastTry.begin(); it != mapSeedLastTry.end(); ++it) {
+        if (nNow - it->second < 60 || IsLimited(it->first))
+            continue;
+        it->second = nNow;
+        addrOut = CAddress(it->first);
+        return true;
+    }
+    return false;
+}
+
 // Signals for message handling
 static CNodeSignals g_signals;
 CNodeSignals& GetNodeSignals() { return g_signals; }
@@ -120,7 +142,9 @@ void CNode::PushGetBlocks(CBlockIndex* pindexBegin, uint256 hashEnd)
 */
 
 // find 'best' local address for a particular peer
-bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
+// fAddrV1Only: skip addresses that cannot be sent in the old address format
+// (Tor v3), e.g. for the version message or for peers without addrv2
+bool GetLocal(CService& addr, const CNetAddr *paddrPeer, bool fAddrV1Only)
 {
     if (fNoListen)
         return false;
@@ -131,6 +155,8 @@ bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
         LOCK(cs_mapLocalHost);
         for (map<CNetAddr, LocalServiceInfo>::iterator it = mapLocalHost.begin(); it != mapLocalHost.end(); it++)
         {
+            if (fAddrV1Only && !(*it).first.IsAddrV1Compatible())
+                continue;
             int nScore = (*it).second.nScore;
             int nReachability = (*it).first.GetReachabilityFrom(paddrPeer);
             if (nReachability > nBestReachability || (nReachability == nBestReachability && nScore > nBestScore))
@@ -148,12 +174,12 @@ bool GetLocal(CService& addr, const CNetAddr *paddrPeer)
 // Otherwise, return the unroutable 0.0.0.0 but filled in with
 // the normal parameters, since the IP may be changed to a useful
 // one by discovery.
-CAddress GetLocalAddress(const CNetAddr *paddrPeer)
+CAddress GetLocalAddress(const CNetAddr *paddrPeer, bool fAddrV1Only)
 {
     // CAddress ret(CService("0.0.0.0",0),0);
     CAddress ret(CService("0.0.0.0",GetListenPort()),0);
     CService addr;
-    if (GetLocal(addr, paddrPeer))
+    if (GetLocal(addr, paddrPeer, fAddrV1Only))
     {
         ret = CAddress(addr);
         // ret.nServices = nLocalServices;
@@ -242,7 +268,7 @@ void AdvertizeLocal(CNode *pnode)
     if (!fNoListen && pnode->fSuccessfullyConnected)
     {
         // if (pnode->fSuccessfullyConnected)
-        CAddress addrLocal = GetLocalAddress(&pnode->addr);
+        CAddress addrLocal = GetLocalAddress(&pnode->addr, !pnode->fWantsAddrV2);
         // If discovery is enabled, sometimes give our peer the address it
         // tells us that it sees us as in case it has a better idea of our
         // address than we do.
@@ -300,6 +326,14 @@ bool AddLocal(const CService& addr, int nScore)
 
     // AdvertizeLocal();
 
+    return true;
+}
+
+bool RemoveLocal(const CService& addr)
+{
+    LOCK(cs_mapLocalHost);
+    printf("RemoveLocal(%s)\n", addr.ToString().c_str());
+    mapLocalHost.erase(addr);
     return true;
 }
 
@@ -618,7 +652,8 @@ void CNode::PushVersion()
     /// when NTP implemented, change to just nTime = GetAdjustedTime()
     int64_t nTime = (fInbound ? GetAdjustedTime() : GetTime());
     CAddress addrYou = (addr.IsRoutable() && !IsProxy(addr) ? addr : CAddress(CService("0.0.0.0",0)));
-    CAddress addrMe = GetLocalAddress(&addr);
+    // the version message always uses the old address format
+    CAddress addrMe = GetLocalAddress(&addr, true);
     RAND_bytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
     printf("send version message: version %d, blocks=%d, us=%s, them=%s, peer=%s\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString().c_str(), addrYou.ToString().c_str(), addr.ToString().c_str());
     PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,
@@ -1321,7 +1356,17 @@ void ThreadMapPort2(void* parg)
     struct IGDdatas data;
     int r;
 
+#if MINIUPNPC_API_VERSION >= 18
+    // miniupnpc 2.2.8+: also returns the router's WAN address; r == 2 means
+    // the router itself only has a private address (e.g. behind CGNAT), so
+    // a port mapping would be useless
+    char wanaddr[64] = {};
+    r = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr), wanaddr, sizeof(wanaddr));
+    if (r == 2)
+        printf("UPnP: router has a private WAN address (%s), probably behind CGNAT; port mapping skipped\n", wanaddr);
+#else
     r = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
+#endif
     if (r == 1)
     {
         if (fDiscover) {
@@ -1342,36 +1387,6 @@ void ThreadMapPort2(void* parg)
         }
 
         string strDesc = "NetCoin " + FormatFullVersion();
-   /*
-#ifndef UPNPDISCOVER_SUCCESS
-        /* miniupnpc 1.5 *
-        r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
-                            port.c_str(), port.c_str(), lanaddr, strDesc.c_str(), "TCP", 0);
-#else
-        /* miniupnpc 1.6 *
-        r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
-                            port.c_str(), port.c_str(), lanaddr, strDesc.c_str(), "TCP", 0, "0");
-#endif
-
-        if(r!=UPNPCOMMAND_SUCCESS)
-            printf("AddPortMapping(%s, %s, %s) failed with code %d (%s)\n",
-                port.c_str(), port.c_str(), lanaddr, r, strupnperror(r));
-        else
-            printf("UPnP Port Mapping successful.\n");
-        int i = 1;
-        while (true)
-        {
-            if (fShutdown || !fUseUPnP)
-            {
-                r = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, port.c_str(), "TCP", 0);
-                printf("UPNP_DeletePortMapping() returned : %d\n", r);
-                freeUPNPDevlist(devlist); devlist = 0;
-                FreeUPNPUrls(&urls);
-                return;
-            }
-            if (i % 600 == 0) // Refresh every 20 minutes
-            {
-  */
         try {
           while (true) {
 #ifndef UPNPDISCOVER_SUCCESS
@@ -1521,15 +1536,18 @@ void ThreadDNSAddressSeed2(void* parg)
                 // vector<CNetAddr> vaddr;
                 vector<CNetAddr> vIPs;
                 vector<CAddress> vAdd;
-                // if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
-                if (LookupHost(seed.host.c_str(), vIPs))
+                // Seeds may be given as "host:port" (e.g. a node on a
+                // non-default port); LookupHost alone cannot parse that and
+                // the port used to be ignored.
+                int nSeedPort = Params().GetDefaultPort();
+                std::string strSeedHost;
+                SplitHostPort(seed.host, nSeedPort, strSeedHost);
+                if (LookupHost(strSeedHost.c_str(), vIPs))
                 {
-                    // BOOST_FOREACH(CNetAddr& ip, vaddr)
                     BOOST_FOREACH(CNetAddr& ip, vIPs)
                     {
                         int nOneDay = 24*3600;
-                        // CAddress addr = CAddress(CService(ip, GetDefaultPort()));
-                        CAddress addr = CAddress(CService(ip, Params().GetDefaultPort()));
+                        CAddress addr = CAddress(CService(ip, nSeedPort));
                         addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
                         vAdd.push_back(addr);
                         found++;
@@ -1537,6 +1555,11 @@ void ThreadDNSAddressSeed2(void* parg)
                 }
                 // addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
                 addrman.Add(vAdd, CNetAddr(seed.name, true));
+                {
+                    LOCK(cs_mapSeedLastTry);
+                    BOOST_FOREACH(const CAddress& a, vAdd)
+                        mapSeedLastTry.insert(std::make_pair((CService)a, (int64_t)0));
+                }
             }
         }
     }
@@ -1777,6 +1800,15 @@ void ThreadOpenConnections()
                     setConnected.insert(pnode->addr.GetGroup());
                     nOutbound++;
                 }
+            }
+        }
+
+        // No connection yet: try the DNS seed addresses before random old ones
+        if (nOutbound == 0) {
+            CAddress addrSeed;
+            if (GetSeedToTry(addrSeed)) {
+                OpenNetworkConnection(addrSeed, &grant);
+                continue;
             }
         }
 
@@ -2404,33 +2436,6 @@ bool StopNode()
     if (semOutbound)
         for (int i=0; i<MAX_OUTBOUND_CONNECTIONS; i++)
             semOutbound->post();
- /*   do
-    {
-        int nThreadsRunning = 0;
-        for (int n = 0; n < THREAD_MAX; n++)
-            nThreadsRunning += vnThreadsRunning[n];
-        if (nThreadsRunning == 0)
-            break;
-        if (GetTime() - nStart > 20)
-            break;
-        MilliSleep(20);
-    } while(true);
- /*   if (vnThreadsRunning[THREAD_SOCKETHANDLER] > 0) printf("ThreadSocketHandler still running\n");
-    if (vnThreadsRunning[THREAD_OPENCONNECTIONS] > 0) printf("ThreadOpenConnections still running\n");
-    if (vnThreadsRunning[THREAD_MESSAGEHANDLER] > 0) printf("ThreadMessageHandler still running\n");
-    if (vnThreadsRunning[THREAD_MINER] > 0) printf("ThreadBitcoinMiner still running\n");
-    if (vnThreadsRunning[THREAD_RPCLISTENER] > 0) printf("ThreadRPCListener still running\n");
-    if (vnThreadsRunning[THREAD_RPCHANDLER] > 0) printf("ThreadsRPCServer still running\n");
-#ifdef USE_UPNP
-    if (vnThreadsRunning[THREAD_UPNP] > 0) printf("ThreadMapPort still running\n");
-#endif
-    if (vnThreadsRunning[THREAD_DNSSEED] > 0) printf("ThreadDNSAddressSeed still running\n");
-    if (vnThreadsRunning[THREAD_ADDEDCONNECTIONS] > 0) printf("ThreadOpenAddedConnections still running\n");
-    if (vnThreadsRunning[THREAD_DUMPADDRESS] > 0) printf("ThreadDumpAddresses still running\n");
-    if (vnThreadsRunning[THREAD_STAKE_MINER] > 0) printf("ThreadStakeMiner still running\n");
-    while (vnThreadsRunning[THREAD_MESSAGEHANDLER] > 0 || vnThreadsRunning[THREAD_RPCHANDLER] > 0)
-        MilliSleep(20);
- */
     DumpAddresses();
     return true;
 }

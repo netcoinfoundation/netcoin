@@ -107,6 +107,7 @@ private:
     QAction *openRPCConsoleAction;
     QAction *charityAction;
     QAction *calcAction;
+    QAction *splitCoinsAction;
     QAction *stakeReportAction;
 
     QSystemTrayIcon *trayIcon;
@@ -194,6 +195,8 @@ private slots:
     void aboutClicked();
     /** Show Stake Calculator Dialog */
     void calcClicked();
+    /** Split the balance into several coins */
+    void splitCoinsClicked();
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);

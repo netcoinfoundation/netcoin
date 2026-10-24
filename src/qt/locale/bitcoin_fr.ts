@@ -1,38 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr">
+<TS version="2.1" language="fr">
 <context>
     <name>AboutDialog</name>
-    <message>
-        <source>About Netcoin</source>
-        <translation>Au sujet de Netcoin</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Netcoin&lt;/b&gt; version</source>
-        <translation>Version de &lt;b&gt;Netcoin&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Copyright © 2009-2014 The Bitcoin developers
-Copyright © 2012-2014 The NovaCoin developers
-Copyright © 2014 The Netcoin developers</source>
-        <translation>Copyright © 2009-2014 Les développeurs Bitcoin
-Copyright © 2012-2014 Les développeurs NovaCoin
-Copyright © 2014 Les développeurs Netcoin</translation>
-    </message>
-    <message>
-        <source>
-This is experimental software.
-
-Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
-This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by Eric Young (eay@cryptsoft.com) and UPnP software written by Thomas Bernard.</source>
-        <translation>
- Ce logiciel est expérimental.
-
- Distribué sous licence logicielle MIT/X11, voir le fichier COPYING joint ou http://www.opensource.org/licenses/mit-license.php.
-
- Ce produit comprend des logiciels développés par le projet OpenSSL afin d&apos;être utilisés dans la boîte à outils OpenSSL (http://www.openssl.org/), un logiciel de chiffrement écrit par Eric Young (eay@cryptsoft.com), et un logiciel UPnP développé par Thomas Bernard.</translation>
-    </message>
     <message>
         <location filename="../forms/aboutdialog.ui" line="+14"/>
         <source>About NetCoin</source>
@@ -84,25 +54,9 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Répertoire d&apos;adresses</translation>
     </message>
     <message>
-        <source>Double-click to edit address or label</source>
-        <translation>Double cliquer afin de modifier l&apos;adresse ou l&apos;étiquette</translation>
-    </message>
-    <message>
-        <source>Create a new address</source>
-        <translation>Créer une nouvelle adresse</translation>
-    </message>
-    <message>
-        <source>Copy the currently selected address to the system clipboard</source>
-        <translation>Copier l&apos;adresse sélectionnée vers le presse-papier système</translation>
-    </message>
-    <message>
-        <location line="+116"/>
+        <location line="+98"/>
         <source>&amp;New Address</source>
         <translation>&amp;Nouvelle adresse</translation>
-    </message>
-    <message>
-        <source>These are your Netcoin addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you.</source>
-        <translation>Ce sont vos adresses pour recevoir vos paiements. Vous pouvez utiliser une adresse différente pour chaque réception afin d&apos;identifier facilement le payeur.</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -160,21 +114,9 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation></translation>
     </message>
     <message>
-        <source>Sign a message to prove you own a Netcoin address</source>
-        <translation>Signer un message afin de valider l&apos;identité de votre adresse Netcoin</translation>
-    </message>
-    <message>
         <location line="-39"/>
         <source>Sign &amp;Message</source>
         <translation>Signer le &amp;message</translation>
-    </message>
-    <message>
-        <source>Delete the currently selected address from the list</source>
-        <translation>Effacer l&apos;adresse actuellement sélectionnée de la liste</translation>
-    </message>
-    <message>
-        <source>Verify a message to ensure it was signed with a specified Netcoin address</source>
-        <translation>Vérifier un message pour s&apos;assurer qu&apos;il vient d&apos;un adresse Netcoin spécifique</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -263,16 +205,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Sert à désactiver les transactions sortantes si votre compte de système d&apos;exploitation est compromis. Ne procure pas de réelle sécurité.</translation>
     </message>
     <message>
-        <source>Serves to disable the trivial sendmoney when OS account compromised. Provides no real security.</source>
-        <translation>Sert à désactiver les transactions sortantes si votre compte de système d&apos;exploitation est compromis. Ne procure pas de réelle sécurité.</translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>For staking only</source>
         <translation>Pour &quot;staking&quot; seulement</translation>
     </message>
     <message>
-        <location filename="../askpassphrasedialog.cpp" line="+35"/>
+        <location filename="../askpassphrasedialog.cpp" line="+37"/>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;10 or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
         <translation>Saisir la nouvelle phrase de passe pour le portefeuille. &lt;br/&gt;Veuillez utiliser une phrase de passe de &lt;b&gt;10 caractères aléatoires ou plus&lt;/b&gt;, ou de &lt;b&gt;huit mots ou plus&lt;/b&gt;.</translation>
     </message>
@@ -312,7 +250,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Saisir l’ancienne phrase de passe pour le portefeuille ainsi que la nouvelle.</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+49"/>
         <source>Confirm wallet encryption</source>
         <translation>Confirmer le chiffrement du portefeuille</translation>
     </message>
@@ -393,23 +331,19 @@ This product includes software developed by the OpenSSL Project for use in the O
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../bitcoingui.cpp" line="+348"/>
+        <location filename="../bitcoingui.cpp" line="+363"/>
         <source>Sign &amp;message...</source>
         <translation>Signer le &amp;message...</translation>
     </message>
     <message>
-        <location line="+292"/>
+        <location line="+419"/>
         <source>Synchronizing with network...</source>
         <translation>Synchronisation avec le réseau en cours…</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-515"/>
         <source>&amp;Overview</source>
         <translation>&amp;Vue d&apos;ensemble</translation>
-    </message>
-    <message>
-        <source>Show general overview of wallet</source>
-        <translation>Afficher une vue d’ensemble du portefeuille</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -417,17 +351,9 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Transactions</translation>
     </message>
     <message>
-        <source>Browse transaction history</source>
-        <translation>Parcourir l&apos;historique des transactions</translation>
-    </message>
-    <message>
         <location line="+6"/>
         <source>&amp;Address Book</source>
         <translation>&amp;Carnet d&apos;adresses</translation>
-    </message>
-    <message>
-        <source>Edit the list of stored addresses and labels</source>
-        <translation>Éditer la liste d&apos;adresses et étiquettes</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -435,16 +361,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Recevoir des monnaies</translation>
     </message>
     <message>
-        <source>Show the list of addresses for receiving payments</source>
-        <translation>Montrer la liste d&apos;adresses de réception de paiements</translation>
-    </message>
-    <message>
         <location line="-6"/>
         <source>&amp;Send coins</source>
         <translation>&amp;Envoyer des monnaies</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+64"/>
         <source>E&amp;xit</source>
         <translation>Q&amp;uitter</translation>
     </message>
@@ -488,36 +410,15 @@ This product includes software developed by the OpenSSL Project for use in the O
         <source>&amp;Change Passphrase...</source>
         <translation>&amp;Changer la phrase de passe...</translation>
     </message>
-    <message numerus="yes">
-        <location line="+301"/>
-        <source>~%n block(s) remaining</source>
-        <translation>
-            <numerusform>~%n blocks restants</numerusform>
-            <numerusform>~%n blocs restants</numerusform>
-        </translation>
-    </message>
     <message>
-        <location line="+6"/>
-        <source>Downloaded %1 of %2 blocks of transaction history (%3% done).</source>
-        <translation>Téléchargement des blocks de l&apos;historique des transactions : 1% sur 2% (%3% effectués).</translation>
-    </message>
-    <message>
-        <location line="-298"/>
+        <location line="+11"/>
         <source>&amp;Export...</source>
         <translation>&amp;Exporter...</translation>
     </message>
     <message>
-        <source>Send coins to a Netcoin address</source>
-        <translation>Envoyer des monnaies vers une adresse Netcoin</translation>
-    </message>
-    <message>
-        <location line="-17"/>
+        <location line="-19"/>
         <source>Modify configuration options for Netcoin</source>
         <translation>Modification des options de configuration de Netcoin</translation>
-    </message>
-    <message>
-        <source>Export the data in the current tab to a file</source>
-        <translation>Export des données de l&apos;onglet courant vers un fichier</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -535,7 +436,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Modifier la phrase de passe utilisée pour le chiffrement du portefeuille</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>&amp;Debug window</source>
         <translation>&amp;Fenêtre de débogage</translation>
     </message>
@@ -545,12 +446,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Ouvrir la console de débogage et de diagnostic</translation>
     </message>
     <message>
-        <location line="-6"/>
+        <location line="-8"/>
         <source>&amp;Verify message...</source>
         <translation>&amp;Vérifier un message...</translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="-263"/>
         <source>Netcoin</source>
         <translation>Netcoin</translation>
     </message>
@@ -560,7 +461,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Portefeuille</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+168"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/overviewTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -587,7 +488,7 @@ This product includes software developed by the OpenSSL Project for use in the O
     <message>
         <location line="+5"/>
         <source>&amp;Services</source>
-        <translation></translation>
+        <translation>&amp;Services</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -597,7 +498,7 @@ This product includes software developed by the OpenSSL Project for use in the O
     <message>
         <location line="+5"/>
         <source>&amp;Staking</source>
-        <translation></translation>
+        <translation>&amp;Staking</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -615,7 +516,17 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Ouvrir PIR Calculatrice</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
+        <source>Spli&amp;t coins...</source>
+        <translation>&amp;Diviser les pièces...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split the balance into several coins, so that a stake does not lock all of it</source>
+        <translation>Diviser le solde en plusieurs pièces pour qu’un stake ne bloque pas tout</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;About Netcoin</source>
         <translation>&amp;Au sujet de Netcoin</translation>
     </message>
@@ -640,12 +551,22 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>Verrouiller le portefeuille</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+3"/>
+        <source>Show stake report</source>
+        <translation>Afficher le rapport de staking</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open the Stake Report Box</source>
+        <translation>Ouvrir la fenêtre du rapport de staking</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/exportTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+54"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -655,7 +576,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Paramètres</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>T&amp;hemes</source>
         <translation>T&amp;hèmes</translation>
     </message>
@@ -665,7 +586,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+7"/>
+        <source>Information</source>
+        <translation>Informations</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tabs toolbar</source>
         <translation>Barre d&apos;onglets</translation>
     </message>
@@ -682,7 +608,7 @@ This product includes software developed by the OpenSSL Project for use in the O
     </message>
     <message>
         <location line="+0"/>
-        <location line="+61"/>
+        <location line="+66"/>
         <source>Netcoin client</source>
         <translation>Client Netcoin</translation>
     </message>
@@ -695,12 +621,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         </translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Downloaded %1 blocks of transaction history.</source>
-        <translation>Téléchargement de blocs de l&apos;historique de transactions : 1% blocks.</translation>
-    </message>
-    <message>
-        <location line="+304"/>
+        <location line="+408"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/encryptedUnlockedTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
@@ -710,7 +631,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation></translation>
     </message>
     <message>
-        <location line="+269"/>
+        <location line="+308"/>
         <source>.</source>
         <translation></translation>
     </message>
@@ -720,11 +641,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation></translation>
     </message>
     <message>
-        <source>Staking.&lt;br&gt;Your weight is %1&lt;br&gt;Network weight is %2&lt;br&gt;Expected time to earn reward is %3</source>
-        <translation>Staking.&lt;br&gt;Votre poids est de  %1&lt;br&gt;Le poids du réseau est de %2&lt;br&gt;Temps estimé avant récompense %3</translation>
-    </message>
-    <message>
-        <location line="-142"/>
+        <location line="-162"/>
         <source>Not staking because wallet is locked</source>
         <translation>Pas de staking car votre portefeuille est verouillé</translation>
     </message>
@@ -743,68 +660,24 @@ This product includes software developed by the OpenSSL Project for use in the O
         <source>Not staking because you don&apos;t have mature coins</source>
         <translation>Pas de staking car vos monnaies ne sont pas encore matures</translation>
     </message>
-    <message numerus="yes">
-        <location line="-426"/>
-        <source>%n second(s) ago</source>
-        <translation>
-            <numerusform>il y a %n seconde</numerusform>
-            <numerusform>il y a %n secondes</numerusform>
-        </translation>
-    </message>
     <message>
-        <source>About Netcoin card</source>
-        <translation>Au sujet de la carte Netcoin</translation>
-    </message>
-    <message>
-        <source>Show information about Netcoin card</source>
-        <translation>Informations sur la carte Netcoin</translation>
-    </message>
-    <message>
-        <location line="-336"/>
+        <location line="-855"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>&amp;Déverrouiller le portefeuille...</translation>
     </message>
-    <message numerus="yes">
-        <location line="+340"/>
-        <source>%n minute(s) ago</source>
-        <translation>
-            <numerusform>il y a %n minute</numerusform>
-            <numerusform>il y a %n minutes</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location line="+4"/>
-        <source>%n hour(s) ago</source>
-        <translation>
-            <numerusform>il y a %n heure</numerusform>
-            <numerusform>il y a %n heures</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location line="+4"/>
-        <source>%n day(s) ago</source>
-        <translation>
-            <numerusform>il y a %n jour</numerusform>
-            <numerusform>il y a %n jours</numerusform>
-        </translation>
-    </message>
     <message>
-        <location line="+6"/>
+        <location line="+385"/>
         <source>Up to date</source>
         <translation>À jour</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+46"/>
+        <location line="+2"/>
         <source>Catching up...</source>
         <translation>Rattrapage en cours…</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Last received block was generated %1.</source>
-        <translation>Le dernier block reçu à été généré %1.</translation>
-    </message>
-    <message>
-        <location line="+62"/>
+        <location line="+76"/>
         <source>This transaction is over the size limit.  You can still send it for a fee of %1, which goes to the nodes that process your transaction and helps to support the network.  Do you want to pay the fee?</source>
         <translation>Cette transaction dépasse la limite autorisée. Vous pouvez tout de même effectuer cette opération, moyennant %1 de frais, qui seront envoyés aux noeuds qui valideront cette transaction, et dont l&apos;objectif vise à supporter le réseau. Souhaitez-vous payer ces frais ?</translation>
     </message>
@@ -835,10 +708,10 @@ Amount: %2
 Type: %3
 Address: %4
 </source>
-        <translation>Date : %1
-Montant : %2
-Type : %3
-Adresse : %4
+        <translation>Date&#xa0;: %1
+Montant&#xa0;: %2
+Type&#xa0;: %3
+Adresse&#xa0;: %4
 </translation>
     </message>
     <message>
@@ -852,14 +725,6 @@ Adresse : %4
         <location line="+15"/>
         <source>URI can not be parsed! This can be caused by an invalid Netcoin address or malformed URI parameters.</source>
         <translation>L&apos;adresse du portefeuille Netcoin n&apos;as pas pu être correctement identifiée, car invalide ou malformée.</translation>
-    </message>
-    <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
-        <translation>Le portefeuille est &lt;b&gt;chiffré&lt;/b&gt; et est actuellement &lt;b&gt;déverrouillé&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
-        <translation>Le portefeuille est &lt;b&gt;chiffré&lt;/b&gt; et actuellement &lt;b&gt;verrouillé&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -882,7 +747,7 @@ Adresse : %4
         <translation>Une erreur a été rencontrée lors de la  sauvegarde du portefeuille vers la nouvelle destination.</translation>
     </message>
     <message numerus="yes">
-        <location line="+76"/>
+        <location line="+95"/>
         <source>%n second(s)</source>
         <translation>
             <numerusform>%n seconde</numerusform>
@@ -898,23 +763,67 @@ Adresse : %4
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+4"/>
+        <location line="-426"/>
+        <location line="+430"/>
         <source>%n hour(s)</source>
         <translation>
             <numerusform>%n heure</numerusform>
             <numerusform>%n heures</numerusform>
         </translation>
     </message>
+    <message>
+        <location line="-454"/>
+        <source>Processed %1 blocks of transaction history.</source>
+        <translation>%1 blocs de l’historique des transactions traités.</translation>
+    </message>
     <message numerus="yes">
-        <location line="+4"/>
+        <location line="+29"/>
+        <location line="+429"/>
         <source>%n day(s)</source>
         <translation>
             <numerusform>%n jour</numerusform>
             <numerusform>%n jours</numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <location line="-425"/>
+        <location line="+7"/>
+        <source>%n week(s)</source>
+        <translation>
+            <numerusform>%n semaine</numerusform>
+            <numerusform>%n semaines</numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+4"/>
+        <location line="+0"/>
+        <source>%1 and %2</source>
+        <translation>%1 et %2</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>%n year(s)</source>
+        <translation>
+            <numerusform>%n an</numerusform>
+            <numerusform>%n ans</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 behind</source>
+        <translation>%1 de retard</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Last received block was generated %1 ago.</source>
+        <translation>Le dernier bloc reçu a été généré il y a %1.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Transactions after this will not yet be visible.</source>
+        <translation>Les transactions postérieures ne sont pas encore visibles.</translation>
+    </message>
+    <message>
+        <location line="+395"/>
         <source>Staking.&lt;br&gt;Your weight: %1&lt;br&gt;Network weight: %2&lt;br&gt;Expected time to earn reward: %3</source>
         <translation>Staking.&lt;br&gt;Votre poids:  %1&lt;br&gt;Poids du réseau:  %2&lt;br&gt;Temps estimé avant récompense: %3</translation>
     </message>
@@ -924,7 +833,7 @@ Adresse : %4
         <translation>Pas de staking</translation>
     </message>
     <message>
-        <location filename="../bitcoin.cpp" line="+110"/>
+        <location filename="../bitcoin.cpp" line="+114"/>
         <source>A fatal error occurred. Netcoin can no longer continue safely and will quit.</source>
         <translation>Une erreur fatale a été rencontrée. L&apos;application Netcoin ne peut plus être s&apos;exécuter de façon correcte et doit se terminer.</translation>
     </message>
@@ -932,7 +841,7 @@ Adresse : %4
 <context>
     <name>ClientModel</name>
     <message>
-        <location filename="../clientmodel.cpp" line="+90"/>
+        <location filename="../clientmodel.cpp" line="+101"/>
         <source>Network Alert</source>
         <translation>Alerte réseau</translation>
     </message>
@@ -963,7 +872,7 @@ Adresse : %4
     <message>
         <location line="+42"/>
         <source>Amount:</source>
-        <translation>Montant :</translation>
+        <translation>Montant&#xa0;:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1270,7 +1179,7 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     <message>
         <location line="+76"/>
         <source>The entered address &quot;%1&quot; is already in the address book.</source>
-        <translation>L’adresse fournie « %1 » est déjà présente dans le carnet d&apos;adresses.</translation>
+        <translation>L’adresse fournie «&#xa0;%1&#xa0;» est déjà présente dans le carnet d&apos;adresses.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -1342,7 +1251,7 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
     <message>
         <location line="+1"/>
         <source>Set language, for example &quot;de_DE&quot; (default: system locale)</source>
-        <translation>Définir la langue, par exemple « fr_FR » (par défaut : la langue du système)</translation>
+        <translation>Définir la langue, par exemple «&#xa0;fr_FR&#xa0;» (par défaut&#xa0;: la langue du système)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1368,27 +1277,27 @@ Cela implique que des frais à hauteur d&apos;au moins %2 seront nécessaires.</
         <translation>Bienvenue à Netcoin-Qt.</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+63"/>
         <source>As this is the first time the program is launched, you can choose where Netcoin-Qt will store its data.</source>
         <translation>Comme cela est la première fois que le programme est lancé, vous pouvez choisir la location où Netcoin-Qt sauvegarde des données.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-17"/>
         <source>Netcoin-Qt will download and store a copy of the NetCoin block chain. At least 1 GB of data will be stored in this directory, and it will grow over time.</source>
         <translation>Netcoin-Qt va télécharger et sauvegarder une copie de la chaîne de blocs Netcoin. Au minimum 1 Go de données seront sauvegardées dans ce répertoire, et la chaîne de blocs va grossir au fil du temps.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-23"/>
         <source>Use the default data directory</source>
         <translation>Utilisez le répertoire de données par défaut</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+33"/>
         <source>Use a custom data directory:</source>
         <translation>Utlisez un répertoire de données personnalisée:</translation>
     </message>
     <message>
-        <location filename="../intro.cpp" line="+100"/>
+        <location filename="../intro.cpp" line="+101"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
@@ -1467,23 +1376,9 @@ p, li { white-space: pre-wrap; }
         <translation>Réserve</translation>
     </message>
     <message>
-        <source>Automatically start Netcoin after logging in to the system.</source>
-        <translation>Démarrage automatique du client Netcoin lors de la connexion au système.</translation>
-    </message>
-    <message>
         <location line="+34"/>
         <source>&amp;Start Netcoin on system login</source>
         <translation>&amp;Démarrage du client Netcoin à la connexion au système</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Detach block and address databases at shutdown. This means they can be moved to another data directory, but it slows down shutdown. The wallet is always detached.</source>
-        <translation>Détacher la base des block et adresses à la fermeture. Vous pourrez les utiliser dans un autre dossier mais cela ralenti la fermeture. Le portefeuille est lui toujours détaché.</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Detach databases at shutdown</source>
-        <translation>&amp;Détacher la base de données lors de la fermeture du logiciel</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1491,25 +1386,17 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Réseau</translation>
     </message>
     <message>
-        <source>Automatically open the Netcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Ouverture automatique du port client de Netcoin sur le routeur. Ceci ne fonctionne que dans le cas où le support UPnP sur votre routeur existe et est actif.</translation>
-    </message>
-    <message>
         <location line="+9"/>
         <source>Map port using &amp;UPnP</source>
         <translation>Mapper le port avec l&apos;&amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Netcoin network through a SOCKS proxy (e.g. when connecting through Tor).</source>
-        <translation>Connexion au réseau Netcoin à travers un proxy SOCKS (e.g. Connexion via le réseau Tor).</translation>
-    </message>
-    <message>
-        <location line="-43"/>
+        <location line="-33"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically start Netcoin after logging in to the system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Démarrer automatiquement NetCoin après l&apos;indentification au système.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+30"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically open the Netcoin client port on the router. This only works when your router supports UPnP and it is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ouvre automatiquement le port du client NetCoin sur le router. Ceci fonctionne uniquement quand votre router supporte le protocole UPnP et que ce dernier est activé.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1526,7 +1413,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Proxy &amp;IP:</source>
-        <translation>&amp;IP du serveur Proxy mandataire :</translation>
+        <translation>&amp;IP du serveur Proxy mandataire&#xa0;:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1546,7 +1433,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>SOCKS &amp;Version:</source>
-        <translation>&amp;Version SOCKS :</translation>
+        <translation>&amp;Version SOCKS&#xa0;:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1586,7 +1473,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+8"/>
         <source>User Interface &amp;language:</source>
-        <translation>&amp;Langue de l&apos;interface utilisateur :</translation>
+        <translation>&amp;Langue de l&apos;interface utilisateur&#xa0;:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1599,10 +1486,6 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Montrer ou non les adresses NetCoin dans la liste des transactions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>The user interface language can be set here. This setting will take effect after restarting Netcoin.</source>
-        <translation>La langue d&apos;interface de l&apos;utilisateur peut être définie ici. Les modification seront prises en compte après redémarrage de l&apos;application Netcoin.</translation>
-    </message>
-    <message>
         <location line="-22"/>
         <source>&amp;Unit to show amounts in:</source>
         <translation>&amp;Unité d&apos;affichage des montants:</translation>
@@ -1611,10 +1494,6 @@ p, li { white-space: pre-wrap; }
         <location line="+13"/>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
         <translation>Choisissez la sous-unité par défaut pour l&apos;affichage dans l&apos;interface et lors de l&apos;envoi de pièces.</translation>
-    </message>
-    <message>
-        <source>Whether to show Netcoin addresses in the transaction list or not.</source>
-        <translation>Afficher les adresses Netcoin au sein de la liste de transactions.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1647,12 +1526,12 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Appliquer</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="+55"/>
+        <location filename="../optionsdialog.cpp" line="+75"/>
         <source>default</source>
         <translation>par défaut</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+153"/>
         <location line="+9"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
@@ -1668,6 +1547,111 @@ p, li { white-space: pre-wrap; }
         <source>The supplied proxy address is invalid.</source>
         <translation>L&apos;adresse de serveur mandataire -proxy- fournie est invalide.</translation>
     </message>
+    <message>
+        <location line="+34"/>
+        <source>&amp;Combine coins when staking</source>
+        <translation>&amp;Regrouper les pièces lors du staking</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable.</source>
+        <translation>Activé, un stake inclut aussi d’autres pièces de la même adresse, qui restent toutes bloquées jusqu’à sa maturité (50 blocs). Désactivé, seule la pièce qui a trouvé le stake est bloquée et le reste du solde reste disponible.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Tor onion service</source>
+        <translation>Service onion Tor</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Make this node reachable through &amp;Tor (works behind NAT and CGNAT)</source>
+        <translation>Rendre ce nœud accessible via &amp;Tor (fonctionne derrière un NAT et un CGNAT)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Creates a .onion address for this node while Tor is running. Other NetCoin 3.1+ nodes can then connect to you even if your router does not allow incoming connections.</source>
+        <translation>Crée une adresse .onion pour ce nœud tant que Tor fonctionne. Les autres nœuds NetCoin 3.1+ peuvent alors se connecter à vous, même si votre routeur n’accepte pas les connexions entrantes.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Tor &amp;control port:</source>
+        <translation>Port de &amp;contrôle Tor :</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Tor Browser: 127.0.0.1:9151 (keep it open), Tor service: 127.0.0.1:9051</source>
+        <translation>Tor Browser : 127.0.0.1:9151 (le laisser ouvert), service Tor : 127.0.0.1:9051</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Always connect to these nodes</source>
+        <translation>Toujours se connecter à ces nœuds</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>IP address, host name or .onion, optionally with :port</source>
+        <translation>Adresse IP, nom d’hôte ou .onion, éventuellement avec :port</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Add</source>
+        <translation>&amp;Ajouter</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Remove</source>
+        <translation>&amp;Supprimer</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Saved in netcoin.conf (addnode=). New nodes are connected right away; Tor settings take effect after restarting NetCoin.</source>
+        <translation>Enregistré dans netcoin.conf (addnode=). Les nouveaux nœuds sont connectés immédiatement ; les réglages Tor prennent effet après le redémarrage de NetCoin.</translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>&quot;%1&quot; is not a valid node address.</source>
+        <translation>« %1 » n’est pas une adresse de nœud valide.</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor fonctionne mais n’est pas connecté au réseau Tor, %1 est donc injoignable. Dans le Tor Browser, cliquez sur « Se connecter ».</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>This node is reachable as %1</source>
+        <translation>Ce nœud est accessible à l’adresse %1</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No onion address yet: Tor is not running or not reachable (see debug.log).</source>
+        <translation>Pas encore d’adresse onion : Tor ne fonctionne pas ou est inaccessible (voir debug.log).</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Tor onion service is switched off.</source>
+        <translation>Le service onion Tor est désactivé.</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cannot save the settings to netcoin.conf: %1</source>
+        <translation>Impossible d’enregistrer les réglages dans netcoin.conf : %1</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Tor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The Tor settings will take effect after restarting NetCoin.</source>
+        <translation>Les réglages Tor prendront effet après le redémarrage de NetCoin.</translation>
+    </message>
 </context>
 <context>
     <name>OverviewPage</name>
@@ -1677,43 +1661,45 @@ p, li { white-space: pre-wrap; }
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+59"/>
-        <source>Stake for Education</source>
-        <translation>Stake pour la charité</translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+692"/>
         <source>Wallet Breakdown</source>
         <translation>Statistiques du portefeuille</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+68"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/spendableTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location line="+32"/>
-        <location line="+32"/>
-        <location line="+32"/>
-        <location line="+32"/>
-        <source>0 NET</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-115"/>
+        <location line="+53"/>
         <source>Maturing Stake:</source>
         <translation>Stake en maturation:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-81"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/maturingTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+6"/>
+        <location line="+28"/>
+        <source>0 </source>
+        <translation type="unfinished">0 </translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unconfirmedTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
+    </message>
+    <message>
+        <location line="+123"/>
+        <source>checkpoint block</source>
+        <translation>bloc de point de contrôle</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Interest earned:</source>
+        <translation>Intérêts gagnés :</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1721,22 +1707,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+48"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Total Interest earned:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Total des intérêts gagnés:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 NET&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+24"/>
+        <location line="-827"/>
         <source>Unlock</source>
         <translation>Déverouiller</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+106"/>
         <source>POS Statistics</source>
         <translation>Statistiques du POS</translation>
     </message>
@@ -1746,159 +1722,173 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>POW Statistics</source>
-        <translation>Statistiques du POW</translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+347"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Bloc actuel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;00000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location line="+106"/>
+        <location line="-45"/>
+        <location line="+64"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;250&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-96"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW difficulty&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Difficulté POW&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-218"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0.0002&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+74"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Net Hashrate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Taux de hash du réseau&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+16"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 MH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Last block time&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Date du dernier bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-455"/>
+        <source>10</source>
+        <translation type="unfinished">10</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>100</source>
+        <translation type="unfinished">100</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>1000</source>
+        <translation type="unfinished">1000</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>all (HEAVY)</source>
+        <translation>tous (LENT)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>pow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>disable chart</source>
+        <translation>masquer le graphique</translation>
+    </message>
+    <message>
+        <location line="+63"/>
+        <source>S4C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+251"/>
+        <source>Network Statistics</source>
+        <translation>Statistiques du réseau</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>0.0000</source>
+        <translation type="unfinished">0.0000</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>PoS difficulty</source>
+        <translation>Difficulté PoS</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pow difficulty&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Difficulté PoW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 KH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Connections&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Connexions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+16"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Total Coin Volume&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Volume total de coin&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+77"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW Block Reward&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Récompense par bloc POW&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="-320"/>
         <source>Recent Transactions</source>
         <translation>Transactions récentes</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+15"/>
         <source>(Out of Sync)</source>
         <translation>(Désynchronisé)</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+53"/>
         <source>Number of Transactions:</source>
         <translation>Nombre de transactions:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
+        <location line="+404"/>
+        <location line="+41"/>
+        <location line="+60"/>
+        <location line="+64"/>
+        <location line="+25"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Netcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>Les informations affichées peuvent être obsolètes. Votre portefeuille se synchronise automatiquement avec le réseau Netcoin mais ce processus n&apos;est pas encore terminé.</translation>
-    </message>
-    <message>
-        <source>Stake:</source>
-        <translation>Stake:</translation>
-    </message>
-    <message>
-        <location line="-418"/>
+        <location line="-57"/>
         <source>Unconfirmed:</source>
         <translation>Non confirmé:</translation>
     </message>
     <message>
-        <source>Wallet</source>
-        <translation>Portefeuille</translation>
-    </message>
-    <message>
-        <location line="-64"/>
+        <location line="+76"/>
         <source>Spendable:</source>
         <translation>Disponible pour dépense:</translation>
     </message>
     <message>
-        <source>Your current spendable balance</source>
-        <translation>Votre solde actuel pouvant être dépensé</translation>
-    </message>
-    <message>
-        <location line="+96"/>
+        <location line="-130"/>
         <source>Immature:</source>
         <translation>Immature:</translation>
     </message>
     <message>
-        <source>Mined balance that has not yet matured</source>
-        <translation>Le solde généré n&apos;est pas encore mature</translation>
-    </message>
-    <message>
-        <location line="+35"/>
+        <location line="-16"/>
         <source>Total:</source>
         <translation>Total:</translation>
     </message>
     <message>
-        <source>Your current total balance</source>
-        <translation>Votre solde total actuel</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Recent transactions&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Transactions récentes&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Total of transactions that have yet to be confirmed, and do not yet count toward the current balance</source>
-        <translation>Montant total des transactions nécessitant confirmation, et ne figurant pas encore dans le solde actuel</translation>
-    </message>
-    <message>
-        <source>Total of coins that was staked, and do not yet count toward the current balance</source>
-        <translation>Montant total des transactions en &quot;staking&quot; et ne figurant pas encore dans le solde actuel</translation>
-    </message>
-    <message>
-        <location filename="../overviewpage.cpp" line="+152"/>
+        <location filename="../overviewpage.cpp" line="+159"/>
         <source>out of sync</source>
         <translation>désynchronisé</translation>
     </message>
     <message numerus="yes">
-        <location line="+60"/>
+        <location line="+85"/>
         <source>%n second(s)</source>
         <translation>
             <numerusform>%n seconde</numerusform>
@@ -2034,31 +2024,29 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RPCConsole</name>
     <message>
-        <location filename="../forms/rpcconsole.ui" line="+43"/>
+        <location filename="../forms/rpcconsole.ui" line="+136"/>
         <source>Client name</source>
         <translation>Nom du client</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-83"/>
         <location line="+23"/>
-        <location line="+26"/>
+        <location line="+16"/>
+        <location line="+54"/>
         <location line="+23"/>
+        <location line="+16"/>
+        <location line="+40"/>
         <location line="+23"/>
-        <location line="+30"/>
-        <location line="+47"/>
-        <location line="+28"/>
-        <location line="+23"/>
-        <location filename="../rpcconsole.cpp" line="+358"/>
         <source>N/A</source>
         <translation>N.D</translation>
     </message>
     <message>
-        <location line="-210"/>
+        <location line="-126"/>
         <source>Client version</source>
         <translation>Version du client</translation>
     </message>
     <message>
-        <location line="-39"/>
+        <location line="-95"/>
         <source>&amp;Information</source>
         <translation>&amp;Informations</translation>
     </message>
@@ -2068,17 +2056,17 @@ p, li { white-space: pre-wrap; }
         <translation>Fenêtre de débuggage</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+145"/>
         <source>NetCoin Core</source>
         <translation>Coeur NetCoin</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="-54"/>
         <source>Using OpenSSL version</source>
         <translation>Version d&apos;OpenSSL utilisée</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="-62"/>
         <source>Startup time</source>
         <translation>Heure de démarrage</translation>
     </message>
@@ -2088,32 +2076,27 @@ p, li { white-space: pre-wrap; }
         <translation>Réseau</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+63"/>
         <source>Number of connections</source>
         <translation>Nombre de connexions</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+69"/>
         <source>On testnet</source>
         <translation>Sur testnet</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-162"/>
         <source>Block chain</source>
         <translation>Chaîne de blocs</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+179"/>
         <source>Current number of blocks</source>
         <translation>Nombre actuel de blocs</translation>
     </message>
     <message>
         <location line="+23"/>
-        <source>Estimated total blocks</source>
-        <translation>Nombre total de blocs estimé</translation>
-    </message>
-    <message>
-        <location line="+28"/>
         <source>Last block time</source>
         <translation>Horodatage du dernier bloc</translation>
     </message>
@@ -2138,48 +2121,32 @@ p, li { white-space: pre-wrap; }
         <translation>Montre le message d&apos;aide de NetCoin-Qt qui donne la liste des options NetCoin possible en ligne de commande.</translation>
     </message>
     <message>
-        <source>Show the Netcoin-Qt help message to get a list with possible Netcoin command-line options.</source>
-        <translation>Afficher le message d&apos;aide Netcoin-Qt afin d&apos;obtenir la liste des options de de L&apos;outil en ligne de commande Netcoin.</translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>&amp;Show</source>
         <translation>&amp;Afficher</translation>
     </message>
     <message>
-        <location line="+142"/>
+        <location line="+155"/>
         <source>&amp;Console</source>
         <translation>&amp;Console</translation>
     </message>
     <message>
-        <location line="-477"/>
+        <location line="-462"/>
         <source>Build date</source>
         <translation>Date de compilation</translation>
     </message>
     <message>
-        <source>Netcoin - Debug window</source>
-        <translation>Netcoin - Fenêtre de déboggage</translation>
-    </message>
-    <message>
-        <source>Netcoin Core</source>
-        <translation>Netcoin Core</translation>
-    </message>
-    <message>
-        <location line="+305"/>
+        <location line="+277"/>
         <source>Debug log file</source>
         <translation>Journal de débogage</translation>
     </message>
     <message>
-        <source>Open the Netcoin debug log file from the current data directory. This can take a few seconds for large log files.</source>
-        <translation>Ouvrir le fichier journal de debug Netcoin au sein du répertoire courant. Cette opération peut prendre quelques secondes dans le cas de fichiers journaux volumineux.</translation>
-    </message>
-    <message>
-        <location line="+224"/>
+        <location line="+237"/>
         <source>Clear console</source>
         <translation>Nettoyer la console</translation>
     </message>
     <message>
-        <location filename="../rpcconsole.cpp" line="-33"/>
+        <location filename="../rpcconsole.cpp" line="+328"/>
         <source>Welcome to the Netcoin RPC console.</source>
         <translation>Bienvenue sur la console RPC de Netcoin.</translation>
     </message>
@@ -2209,7 +2176,7 @@ p, li { white-space: pre-wrap; }
         <translation>Envoyer des monnaies</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+50"/>
         <source>Coin Control Features</source>
         <translation>Fonctions de contrôle des monnaies</translation>
     </message>
@@ -2244,7 +2211,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-19"/>
         <source>Change:</source>
-        <translation></translation>
+        <translation>Monnaie :</translation>
     </message>
     <message>
         <location line="+363"/>
@@ -2283,10 +2250,6 @@ p, li { white-space: pre-wrap; }
         <translation>Montant:</translation>
     </message>
     <message>
-        <source>0.00 NET</source>
-        <translation>123.456 NET {0.00 ?}</translation>
-    </message>
-    <message>
         <location line="+41"/>
         <source>Priority:</source>
         <translation>Priorité:</translation>
@@ -2317,26 +2280,14 @@ p, li { white-space: pre-wrap; }
         <translation>Après frais:</translation>
     </message>
     <message>
-        <source>Change</source>
-        <translation></translation>
-    </message>
-    <message>
         <location line="-690"/>
         <source>custom change address</source>
         <translation>adresse de change personnalisée</translation>
     </message>
     <message>
-        <source>Send to multiple recipients at once</source>
-        <translation>Envoyer à plusieurs destinataires à la fois</translation>
-    </message>
-    <message>
         <location line="+1097"/>
         <source>Add &amp;Recipient</source>
         <translation>Ajouter un &amp;Destinataire</translation>
-    </message>
-    <message>
-        <source>Remove all transaction fields</source>
-        <translation>Réinitialiser tous les champs liés à la transaction</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2349,21 +2300,9 @@ p, li { white-space: pre-wrap; }
         <translation>Solde:</translation>
     </message>
     <message>
-        <source>123.456 NET</source>
-        <translation>123.456 NET</translation>
-    </message>
-    <message>
-        <source>Confirm the send action</source>
-        <translation>Confirmer l’action d&apos;envoi</translation>
-    </message>
-    <message>
         <location line="+282"/>
         <source>S&amp;end</source>
         <translation>E&amp;nvoyer</translation>
-    </message>
-    <message>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>Entrer une adresse Netcoin (par ex: PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
     </message>
     <message>
         <location filename="../sendcoinsdialog.cpp" line="-160"/>
@@ -2409,10 +2348,6 @@ p, li { white-space: pre-wrap; }
         <location line="+86"/>
         <source>&lt;b&gt;%1&lt;/b&gt; to %2 (%3)</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; à %2 (%3)</translation>
-    </message>
-    <message>
-        <source>Confirm send coins</source>
-        <translation>Confirmer l’envoi des pièces</translation>
     </message>
     <message>
         <location line="-109"/>
@@ -2535,15 +2470,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../forms/sendcoinsentry.ui" line="+89"/>
         <source>&amp;Label:</source>
-        <translation>&amp;Étiquette :</translation>
-    </message>
-    <message>
-        <source>The address to send the payment to  (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>Adresse destinataire du paiement (ex: PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <source>Choose address from address book</source>
-        <translation>Choisir une adresse du carnet d&apos;adresse</translation>
+        <translation>&amp;Étiquette&#xa0;:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -2551,21 +2478,9 @@ p, li { white-space: pre-wrap; }
         <translation>Alt+A</translation>
     </message>
     <message>
-        <source>Paste address from clipboard</source>
-        <translation>Coller l&apos;adresse depuis le presse-papier</translation>
-    </message>
-    <message>
         <location line="-20"/>
         <source>Alt+P</source>
         <translation>Alt+P</translation>
-    </message>
-    <message>
-        <source>Remove this recipient</source>
-        <translation>Supprimer ce destinataire</translation>
-    </message>
-    <message>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>Entrer une adresse Netcoin (ex: PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
     </message>
 </context>
 <context>
@@ -2576,317 +2491,52 @@ p, li { white-space: pre-wrap; }
         <translation>Répertoire d&apos;adresses</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+94"/>
         <source>exchanges</source>
         <translation>échanges</translation>
     </message>
     <message>
-        <location line="+78"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;You can never have too many Netcoins!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Vous ne pouvez jamais avoir trop de Netcoins!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+34"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Exchange owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If&lt;/span&gt;&lt;span&gt; you would like to add Netcoins to your exchange please get in touch at support@netcoinfoundation.org.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Propriétaire de l&apos;échange ?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If&lt;/span&gt;&lt;span&gt;vous voulez ajouter Netcoins à votre échange, merci de nous en informer par mail : support@netcoinfoundation.org &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+46"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/cryptsyBtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/cryptsyLtcTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bterCnyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+81"/>
-        <source>Shops</source>
-        <translation>Commerce</translation>
-    </message>
-    <message>
-        <location line="+74"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/SpendNetcoins.png&quot;/&gt;&lt;br/&gt;&lt;span&gt;Make sure you have the latest client as more stores will be added.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/SpendNetcoins.png&quot;/&gt;&lt;br/&gt;&lt;span&gt;Assurez-vous que vous avez le dernier client car plus de commerces seront ajoutés.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+71"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unbAuctionsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/planetWomanTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/btcIntroTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/essentialOilsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+118"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/proxyshTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/aboveAllHousePlansTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/azariusTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+56"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bitstickersTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+66"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/amazeTreatsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/uTopTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/progMegastoreTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/tuffwrapsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+206"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/retroTowersTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/bitezzeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+92"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/wrolTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/stakingMachineTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/grKreationsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/wateridoTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+141"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/getpryptoTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/meplus1Tooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/influxStrategiesTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/oVPNTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/gekkotelTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Are you a store owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If you would like to accept Netcoins at your store or service then please get in touch at support@netcoinfoundation.org You will be added to the wallet and websites upon the next update.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Êtes-vous le propriétaire d&apos;un commerce?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Si vous voulez accepter Netcoins dans votre commerce ou service, alors merci de nous en informer par mail : support@netcoinfoundation.org . Vous serez ajouté au portefeuille et aux sites internet au cours de la prochaine mise à jour.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Charities</source>
-        <translation>Organismes de bienfaisance</translation>
-    </message>
-    <message>
-        <location line="+73"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/GiveToCharity.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Why not give a little to charity?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/GiveToCharity.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Pourquoi de pas faire une petite donnation aux organismes de bienfaisance?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/songsOfLoveTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+96"/>
+        <location line="+1457"/>
         <source>Development</source>
         <translation>Developpement</translation>
     </message>
     <message>
-        <location line="+171"/>
-        <source>Wallet Design</source>
-        <translation>Design du wallet</translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;TARGET &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;100,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;CIBLE &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;100,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;We&apos;ve made a nice start on the wallet design, but that doesn&apos;t have to be the end. We can make further improvements. If you would like to see some more designs let us know by sending to the address below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Nous avez réaliser un bon départ avec le design du portefeuille, mais ceci ne doit pas être la fin. Nous encore l&apos;améliorer. Si vous souhaitez voir plus de design, faites-le nous savoir en envoyant quelques coins à l&apos;adresse ci-dessous.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+464"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffaa00;&quot;&gt;nAoL1YrdooDS4HgZez4gHn1s4MVxMab4gQ&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+26"/>
+        <location line="+821"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/Development.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+149"/>
-        <source>Android App</source>
-        <translation>Application Android</translation>
-    </message>
-    <message>
-        <location line="+59"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;TARGET &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;200,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;CIBLE &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;200,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;How would you like to see an Android Wallet developed for Netcoin? It&apos;s about time Netcoin got a little more mobile! If you agree with this then let us know by sending some coins to the address below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Combien désirez-vous voir un portefeuille Android développer pour Netcoin ? C&apos;est le moment pour Netcoin de devenir un peu plus mobile! Si vous êtes d&apos;accord avec cela alors faites-le nous savoir en envoyant quelques coins à l&apos;adresse ci-dessous&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+472"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffaa00;&quot;&gt;nPD4TZMxa2g1wrw5dUyQLNVqBDnCHYYEDn&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+157"/>
-        <source>Anonymity</source>
-        <translation>Anonymat</translation>
-    </message>
-    <message>
-        <location line="+56"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;TARGET &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;300,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;CIBLE &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:#ffa500;&quot;&gt;300,000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+132"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Anonymity is a big concern for people today and it isn&apos;t surprising when the powers that be are becoming more and more nosey and intrusive. We have zerocoin in our code right now, it is just laying dormant for now, we&apos;ll look deeper into this area and do some testing and switch it on.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;L&apos;anonymat est aujourd&apos;hui une préoccupation important et ce n&apos;est pas une surprise quand les puissances deviennent de plus en plus intrusives et curieuses. Nous avons zerocoin dans notre code actuel. Il est juste resté en dormance jusqu&apos;à aujourd&apos;hui, nous allons regarder plus en profondeur dans ce domaine et effectuer des test et switcher dessus.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+467"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffaa00;&quot;&gt;nPeqsr7BeDgzpEuDo99HMWFrszVkCxvraM&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+23"/>
+        <location line="-714"/>
         <source>Check Progress</source>
         <translation>Vérifier la progression</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <source>Gambling 18+</source>
-        <translation>Jeux d&apos;argent 18+</translation>
-    </message>
-    <message>
-        <location line="+73"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/FancyaFlutter.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/diceFortuneTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+63"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/lotteryTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+77"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;These areas are 18+ only, by clicking the links you agree that you&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;are over the age of 18. Please gamble responsibly!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Cette zone est pour les + de 18 ans seulement. En cliquant sur les liens, vous confirmez que vous avez &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;plus de 18 ans. S&apos;il vous plait pariez avec responsabilité!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+734"/>
         <source>Useful Links</source>
         <translation>Liens utiles</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+316"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Here are some other links you may find useful.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Vous trouverez ici quelques liens que vous pourriez trouver utile.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="-117"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/forumTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+63"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/explorerTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+63"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/paperWalletTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+83"/>
+        <location line="+139"/>
         <source>Block Explorer</source>
         <translation>Exploreur de bloc</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+632"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Netcoin Block Explorer &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Exploreur de bloc Netcoin &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="-570"/>
         <source>Blocks</source>
         <translation>Blocs</translation>
     </message>
@@ -2897,73 +2547,157 @@ p, li { white-space: pre-wrap; }
         <translation>Chercher</translation>
     </message>
     <message>
-        <location line="-326"/>
+        <location line="-200"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Height:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Bloc actuel:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-116"/>
+        <location line="+53"/>
         <location line="+87"/>
-        <location line="+20"/>
-        <location line="+20"/>
+        <location line="+29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-117"/>
+        <location line="-179"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Hash:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Hash du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+29"/>
+        <location line="+85"/>
+        <location line="+31"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0x0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Merkle:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Merkle du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="-93"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block nNonce:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;nNonce du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block nBits:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;nBits du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+120"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Timestamp:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Timestamp du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+140"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Difficulty:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Difficulté du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-230"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0.00&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Hashrate:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Taux de hash du bloc:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-130"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0000 KH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-2711"/>
+        <location line="+460"/>
+        <location line="+2835"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/exchangeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3231"/>
+        <location line="+32"/>
+        <location line="+233"/>
+        <location line="+2916"/>
+        <location line="+19"/>
+        <location line="+304"/>
+        <location line="+19"/>
+        <source>PushButton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3382"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+89"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;suggest an exchange admin@netcoin.io or discord.me/netcoin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;proposez une plateforme d’échange : admin@netcoin.io ou discord.me/netcoin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+241"/>
+        <source>Services</source>
+        <translation>Services</translation>
+    </message>
+    <message>
+        <location line="+104"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/SpendNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
+        <location line="+54"/>
+        <location line="+54"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/coinpayments2Tooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Are you a store or service owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If you would like to accept Netcoin at your store or service please get in touch at support@netcoin.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Vous gérez une boutique ou un service ?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Si vous souhaitez accepter Netcoin, écrivez à support@netcoin.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+147"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To keep up with development keep an eye out on the &lt;a href=&quot;https://github.com/netcoinfoundation/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;github pages&lt;/span&gt;&lt;/a&gt; for updates.&lt;/p&gt;&lt;p&gt;If you wish to speak with a member of the team come to &lt;a href=&quot;https://discord.me/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;discord.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;from time to time we may need to test out new features for this we run a testnet if you would wish to participate check the forums/discord/website for the unstable releases.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pour suivre le développement, consultez les &lt;a href=&quot;https://github.com/netcoinfoundation/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;pages GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Pour parler avec un membre de l’équipe, rejoignez-nous sur &lt;a href=&quot;https://discord.me/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;Discord.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;De temps en temps, nous testons de nouvelles fonctions sur un réseau de test. Si vous souhaitez participer, cherchez les versions de test sur le forum, Discord ou le site web.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+251"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Below is the donation adress of the Netcoin Foundation. All donations are welcome and help maintaining Netcoin and further development. For more information about the Netcoin Foundation please visit netcoinfoundation.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Voici l’adresse de dons de la Netcoin Foundation. Tous les dons sont les bienvenus et aident à maintenir et développer Netcoin. Plus d’informations sur la Netcoin Foundation : netcoinfoundation.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+491"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffaa00;&quot;&gt;n57TyDv2D3sjNqkRpk26HSg9Ftmx8ZXMTm&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+190"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/infositeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+84"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/foundationsiteTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+530"/>
         <source>Transactions</source>
-        <translation></translation>
+        <translation>Transactions</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2976,7 +2710,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+27"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Transaction ID:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;ID de transaction :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3004,9 +2738,19 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Entrées:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+59"/>
-        <source>Pools</source>
-        <translation></translation>
+        <location line="+66"/>
+        <source>Stake Pools</source>
+        <translation>Pools de staking</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;own a pool wish to have it promoted here??&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;If you would like to add your pool here email support@netcoin.io &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;with subject heading &amp;quot;pool slot&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Vous gérez un pool et souhaitez le promouvoir ici ?&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Pour ajouter votre pool, écrivez à support@netcoin.io &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;avec l’objet &amp;quot;pool slot&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+121"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3079,43 +2823,15 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>The address to sign the message with (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>Entrer une adresse Netcoin (ex: PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <source>Choose an address from the address book</source>
-        <translation>Choisir une adresse du carnet d&apos;adresse</translation>
-    </message>
-    <message>
         <location line="-242"/>
         <location line="+201"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
     <message>
-        <source>Paste address from clipboard</source>
-        <translation>Coller une adresse depuis le presse-papier</translation>
-    </message>
-    <message>
         <location line="-178"/>
         <source>Alt+P</source>
         <translation>Alt+P</translation>
-    </message>
-    <message>
-        <source>Enter the message you want to sign here</source>
-        <translation>Saisir ici le message que vous désirez signer</translation>
-    </message>
-    <message>
-        <source>Copy the current signature to the system clipboard</source>
-        <translation>Copier la signature actuelle dans le presse-papier</translation>
-    </message>
-    <message>
-        <source>Sign the message to prove you own this Netcoin address</source>
-        <translation>Signer le message afin de prouver l&apos;identité de votre adresse Netcoin</translation>
-    </message>
-    <message>
-        <source>Reset all sign message fields</source>
-        <translation>Réinitialiser tous les champs de signature de message</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -3135,22 +2851,6 @@ p, li { white-space: pre-wrap; }
         <translation>Saisir ci-dessous l&apos;adresse de signature, le message (assurez-vous d&apos;avoir copié exactement les retours à la ligne, les espaces, tabulations etc...) et la signature pour vérifier le message. Faire attention à ne pas déduire davantage de la signature que ce qui est contenu dans le message signé lui-même pour éviter d&apos;être trompé par une attaque d&apos;homme du milieu.</translation>
     </message>
     <message>
-        <source>The address the message was signed with (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>L&apos;adresse avec laquelle le message à été signé (ex: PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <source>Verify the message to ensure it was signed with the specified Netcoin address</source>
-        <translation>Vérifier le message afin de vous assurer qu&apos;il provient de l&apos;adresse Netcoin spécifiée</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Réinitialiser tous les champs de vérification de message</translation>
-    </message>
-    <message>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>Entrer une adresse Netcoin (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
         <source>Enter a Netcoin address (e.g. nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
@@ -3159,7 +2859,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-2"/>
         <source>Click &quot;Sign Message&quot; to generate signature</source>
-        <translation>Cliquer sur « Signer le message » pour générer la signature</translation>
+        <translation>Cliquer sur «&#xa0;Signer le message&#xa0;» pour générer la signature</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3213,7 +2913,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+0"/>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Please check the signature and try again.</source>
         <translation>Veuillez vérifier la signature et réessayer.</translation>
     </message>
@@ -3223,7 +2923,7 @@ p, li { white-space: pre-wrap; }
         <translation>La signature ne correspond pas à l&apos;empreinte du message.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Message verification failed.</source>
         <translation>Échec de la vérification du message.</translation>
     </message>
@@ -3231,6 +2931,89 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>Message verified.</source>
         <translation>Message vérifié.</translation>
+    </message>
+</context>
+<context>
+    <name>SplitCoinsDialog</name>
+    <message>
+        <location filename="../splitcoinsdialog.cpp" line="+27"/>
+        <location line="+96"/>
+        <location line="+16"/>
+        <location line="+5"/>
+        <location line="+22"/>
+        <location line="+5"/>
+        <location line="+7"/>
+        <source>Split coins</source>
+        <translation>Diviser les pièces</translation>
+    </message>
+    <message>
+        <location line="-147"/>
+        <source>A stake locks the coin it uses, together with the reward, until it matures (50 blocks). If your whole balance is one coin, nothing can be sent during that time.
+
+This splits your spendable balance into several equal coins on new addresses of this wallet. A stake then locks only one of them, the others stay spendable and keep staking. The coins do not leave your wallet; only the network fee is paid.</source>
+        <translation>Un stake bloque la pièce utilisée, avec la récompense, jusqu’à sa maturité (50 blocs). Si tout votre solde tient en une seule pièce, rien ne peut être envoyé pendant ce temps.
+
+Cette fonction divise votre solde disponible en plusieurs pièces égales sur de nouvelles adresses de ce portefeuille. Un stake n’en bloque alors qu’une, les autres restent disponibles et continuent de staker. Les pièces ne quittent pas votre portefeuille ; seuls les frais de réseau sont payés.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Number of &amp;coins:</source>
+        <translation>&amp;Nombre de pièces :</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Split</source>
+        <translation>&amp;Diviser</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Close</source>
+        <translation>&amp;Fermer</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Spendable now: %1</source>
+        <translation>Disponible maintenant : %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spendable coins in the wallet now: %1</source>
+        <translation>Pièces disponibles dans le portefeuille : %1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Each coin: %1. The network fee is at most about %2; what is left over comes back as one more small coin.</source>
+        <translation>Chaque pièce : %1. Les frais de réseau seront d’environ %2 au plus ; le reste revient sous forme d’une petite pièce supplémentaire.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The spendable balance is too small to split into this many coins.</source>
+        <translation>Le solde disponible est trop faible pour être divisé en autant de pièces.</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Split %1 into %2 coins of %3 on new addresses of this wallet?</source>
+        <translation>Diviser %1 en %2 pièces de %3 sur de nouvelles adresses de ce portefeuille ?</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Could not create a new address.</source>
+        <translation>Impossible de créer une nouvelle adresse.</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Done. The new coins can be used for staking and sending once the transaction is confirmed.</source>
+        <translation>Terminé. Les nouvelles pièces pourront être utilisées pour le staking et les envois une fois la transaction confirmée.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>Le total dépasse votre solde une fois les frais de transaction de %1 inclus.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error: Transaction creation failed.</source>
+        <translation>Erreur : la création de la transaction a échoué.</translation>
     </message>
 </context>
 <context>
@@ -3300,11 +3083,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
-        <source>Charity Address:</source>
-        <translation>Addresse de Charité:</translation>
+        <source>Recieving Address:</source>
+        <translation>Adresse du destinataire :</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+103"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Stake For Charity allows you to automatically send up to 50% of your stake to another Netcoin address after it matures.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Please enter percentage to give and Netcoin address to give to. Min and Max amount and change address are optional.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Le stake solidaire envoie automatiquement jusqu’à 50 % de votre stake à une autre adresse Netcoin une fois qu’il est arrivé à maturité.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Indiquez le pourcentage et l’adresse du destinataire. Les montants min. et max. et l’adresse de monnaie sont facultatifs.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="-93"/>
         <source>Enter Address to Send to</source>
         <translation>Entrez l&apos;adresse à envoyer à</translation>
     </message>
@@ -3362,17 +3150,7 @@ p, li { white-space: pre-wrap; }
         <translation>Désactiver</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Stake For Education allows you to automatically send up to 50% of your stake to another Netcoin address after it matures.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Please enter percentage to give and Netcoin address to give to. Min and Max amount and change address are optional.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Le Stake pour l&apos;Éducation vous permet d&apos;envoyer automatiquement jusqu&apos;à 50 % de votre Stake à une autre adresse Netcoin après qu’il murit.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;S’il vous plaît entrer un pourcentage à donner et entrez l’adresse Netcoin à donner. Les montants Min, Max et l’adresse de change sont optionnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../charitydialog.cpp" line="-3"/>
-        <source>Enter Charity Address</source>
-        <translation>Entrez l&apos;adresse de Charité</translation>
-    </message>
-    <message>
-        <location line="+37"/>
+        <location filename="../charitydialog.cpp" line="+34"/>
         <location line="+124"/>
         <source>Thank you for giving to
 </source>
@@ -3385,9 +3163,14 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-82"/>
-        <source>Please unlock wallet before starting stake for charity.</source>
-        <translation>S’il vous plaît débloqué le portefeuille avant de commencer le stake pour la charité.</translation>
+        <location line="-161"/>
+        <source>Enter recieving Address</source>
+        <translation>Saisir l’adresse du destinataire</translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>Please unlock wallet before starting stake for Charity.</source>
+        <translation>Déverrouillez le portefeuille avant d’activer le stake solidaire.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3446,22 +3229,248 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
     </message>
 </context>
 <context>
+    <name>StakeReportDialog</name>
+    <message>
+        <location filename="../forms/stakereportdialog.ui" line="+26"/>
+        <location line="+58"/>
+        <source>Stake Report</source>
+        <translation>Rapport de staking</translation>
+    </message>
+    <message>
+        <location line="-15"/>
+        <source>Earnings made by stake over time</source>
+        <translation>Gains du staking dans le temps</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Coin SubTotal</source>
+        <translation>Sous-total des pièces</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Blocks Staked</source>
+        <translation>Blocs stakés</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+451"/>
+        <source>Stakes</source>
+        <translation>Stakes</translation>
+    </message>
+    <message>
+        <location line="-428"/>
+        <source>Last 24 Hours</source>
+        <translation>Dernières 24 heures</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 24H</source>
+        <translation>Pièces gagnées sur les dernières 24 h</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+100"/>
+        <source>0.00</source>
+        <translation type="unfinished">0.00</translation>
+    </message>
+    <message>
+        <location line="-283"/>
+        <source>Stake Made in last 24H</source>
+        <translation>Stakes des dernières 24 h</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+306"/>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <location line="-487"/>
+        <source>Last 7 Days</source>
+        <translation>7 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 7 Days</source>
+        <translation>Pièces gagnées sur les 7 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 7 Days</source>
+        <translation>Stakes des 7 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Last 30 Days</source>
+        <translation>30 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 30 Days</source>
+        <translation>Pièces gagnées sur les 30 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 30 Days</source>
+        <translation>Stakes des 30 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Last 365 Days</source>
+        <translation>365 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 365 Days</source>
+        <translation>Pièces gagnées sur les 365 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 365 Days</source>
+        <translation>Stakes des 365 derniers jours</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Date of the last mature Stake</source>
+        <translation>Date du dernier stake arrivé à maturité</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Never</source>
+        <translation>Jamais</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Coin Earned in last mature Stake</source>
+        <translation>Pièces gagnées avec le dernier stake mature</translation>
+    </message>
+    <message>
+        <location line="+76"/>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <location filename="../stakereportdialoge.cpp" line="+205"/>
+        <source>Amount</source>
+        <translation>Montant</translation>
+    </message>
+    <message>
+        <location line="+93"/>
+        <source>Time took to retrieve the data</source>
+        <translation>Durée de récupération des données</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+23"/>
+        <source>Wait please...</source>
+        <translation>Veuillez patienter...</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Time took to refresh dialog</source>
+        <translation>Durée d’actualisation</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Total Stakes Analyzed</source>
+        <translation>Total des stakes analysés</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Data of the current block.</source>
+        <translation>Données du bloc actuel.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Current Chain Block :</source>
+        <translation>Bloc actuel de la chaîne :</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Refresh the data</source>
+        <translation>Actualiser les données</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Refresh</source>
+        <translation>Actualiser</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Copy Report to ClipBoard</source>
+        <translation>Copier le rapport dans le presse-papiers</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copy to clipboard</source>
+        <translation>Copier dans le presse-papiers</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Close the dialog</source>
+        <translation>Fermer la fenêtre</translation>
+    </message>
+    <message>
+        <location filename="../stakereportdialoge.cpp" line="-26"/>
+        <source>Please wait...</source>
+        <translation>Veuillez patienter...</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>SubTotal</source>
+        <translation>Sous-total</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+2"/>
+        <location line="+2"/>
+        <location line="+2"/>
+        <location line="+3"/>
+        <source> [NET]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Amount: </source>
+        <translation>Montant : </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Latest stake date: </source>
+        <translation>Date du dernier stake : </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Stakes analysed: </source>
+        <translation>Stakes analysés : </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Last Recalc took </source>
+        <translation>Dernier recalcul : </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Refresh took </source>
+        <translation>Actualisation : </translation>
+    </message>
+</context>
+<context>
     <name>TransactionDesc</name>
     <message>
-        <location filename="../transactiondesc.cpp" line="+19"/>
+        <location filename="../transactiondesc.cpp" line="+21"/>
         <source>Open until %1</source>
         <translation>Ouvert jusqu&apos;à %1</translation>
     </message>
-    <message numerus="yes">
-        <location line="-2"/>
-        <source>Open for %n block(s)</source>
-        <translation>
-            <numerusform>Ouvert pour %n bloc</numerusform>
-            <numerusform>Ouvert pour %n blocks</numerusform>
-        </translation>
-    </message>
     <message>
-        <location line="+8"/>
+        <location line="+6"/>
         <source>conflicted</source>
         <translation>en conflit</translation>
     </message>
@@ -3481,7 +3490,7 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>%1 confirmations</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Status</source>
         <translation>État</translation>
     </message>
@@ -3593,10 +3602,6 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>Les pièces de monnaie générées nécessitent une maturation de 70 blocs avant de pouvoir être utilisées. Lors de la génération d&apos;un bloc, celui-ci est diffusé sur le réseau afin d&apos;être ajouté à la chaîne de blocs. En cas d&apos;échec, son état passera en &quot;non accepté&quot; et celui-ci ne pourra pas être dépensé. Cela peut occasionnellement se produire, lorsqu&apos;un noeud différent génère un bloc à quelques secondes d&apos;intervalle du vôtre.</translation>
     </message>
     <message>
-        <source>Generated coins must mature 510 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
-        <translation>Les pièces de monnaie générées nécessitent une maturation de 510 blocks avant de pouvoir être utilisées. Lors de la génération d&apos;un blokc, celui-ci est diffusé sur le réseau afin d&apos;être ajouté à la chaîne de blocks. En cas d&apos;échec, son état passera en &quot;non accepté&quot; et celui-ci ne pourra pas être dépensé. Cela peut occasionnellement se produire, lorsqu&apos;un noeud différent génère un block à quelques secondes d&apos;intervalle du vôtre.</translation>
-    </message>
-    <message>
         <location line="+7"/>
         <source>Debug information</source>
         <translation>Informations de débogage</translation>
@@ -3612,7 +3617,7 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>Entrants</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+24"/>
         <source>Amount</source>
         <translation>Montant</translation>
     </message>
@@ -3627,12 +3632,20 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>faux</translation>
     </message>
     <message>
-        <location line="-211"/>
+        <location line="-212"/>
         <source>, has not been successfully broadcast yet</source>
         <translation>, n’a pas encore été diffusée avec succès</translation>
     </message>
+    <message numerus="yes">
+        <location line="-38"/>
+        <source>Open for %n more block(s)</source>
+        <translation>
+            <numerusform>Ouvert pour %n bloc de plus</numerusform>
+            <numerusform>Ouvert pour %n blocs de plus</numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+35"/>
+        <location line="+73"/>
         <source>unknown</source>
         <translation>inconnu</translation>
     </message>
@@ -3653,7 +3666,7 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
 <context>
     <name>TransactionTableModel</name>
     <message>
-        <location filename="../transactiontablemodel.cpp" line="+226"/>
+        <location filename="../transactiontablemodel.cpp" line="+238"/>
         <source>Date</source>
         <translation>Date</translation>
     </message>
@@ -3673,7 +3686,7 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>Montant</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+67"/>
         <source>Open until %1</source>
         <translation>Ouvert jusqu&apos;à %1</translation>
     </message>
@@ -3747,9 +3760,13 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2"/>
         <source>Mined</source>
         <translation>Extrait</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>POS Mined</source>
+        <translation>Miné en PoS</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -3839,6 +3856,11 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <location line="+1"/>
         <source>Mined</source>
         <translation>Extrait</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pos-mined</source>
+        <translation>Miné en PoS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3959,7 +3981,7 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
 <context>
     <name>WalletModel</name>
     <message>
-        <location filename="../walletmodel.cpp" line="+206"/>
+        <location filename="../walletmodel.cpp" line="+250"/>
         <source>Sending...</source>
         <translation>Envoi...</translation>
     </message>
@@ -3977,10 +3999,6 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <translation>Utilisation:</translation>
     </message>
     <message>
-        <source>Send command to -server or pandacoind</source>
-        <translation>Envoyer commande à -server ou pandacoind</translation>
-    </message>
-    <message>
         <location line="+2"/>
         <source>List commands</source>
         <translation>Lister les commandes</translation>
@@ -3994,14 +4012,6 @@ S’il vous plaît vérifier l’address et essayer de nouveau.</translation>
         <location line="+2"/>
         <source>Options:</source>
         <translation>Options:</translation>
-    </message>
-    <message>
-        <source>Specify configuration file (default: pandacoin.conf)</source>
-        <translation>Spécifier le fichier de configuration (par défaut: pandacoin.conf)</translation>
-    </message>
-    <message>
-        <source>Specify pid file (default: pandacoind.pid)</source>
-        <translation>Spécifier le fichier pid (par défaut: pandacoind.pid)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4066,12 +4076,12 @@ for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.
     <message>
         <location line="+3"/>
         <source>Set database cache size in megabytes (default: 25)</source>
-        <translation>Définir la taille du cache de base de données en mégaoctets (par défaut : 25)</translation>
+        <translation>Définir la taille du cache de base de données en mégaoctets (par défaut&#xa0;: 25)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set database disk log size in megabytes (default: 100)</source>
-        <translation>Définir la taille du journal de base de données en mégaoctets (par défaut : 100)</translation>
+        <translation>Définir la taille du journal de base de données en mégaoctets (par défaut&#xa0;: 100)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4081,7 +4091,7 @@ for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.
     <message>
         <location line="+1"/>
         <source>Maintain at most &lt;n&gt; connections to peers (default: 125)</source>
-        <translation>Garder au plus &lt;n&gt; connexions avec les pairs (par défaut : 125)</translation>
+        <translation>Garder au plus &lt;n&gt; connexions avec les pairs (par défaut&#xa0;: 125)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4106,12 +4116,12 @@ for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.
     <message>
         <location line="+5"/>
         <source>Threshold for disconnecting misbehaving peers (default: 100)</source>
-        <translation>Seuil de déconnexion des pairs de mauvaise qualité (par défaut : 100)</translation>
+        <translation>Seuil de déconnexion des pairs de mauvaise qualité (par défaut&#xa0;: 100)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Number of seconds to keep misbehaving peers from reconnecting (default: 86400)</source>
-        <translation>Délai en secondes de refus de reconnexion aux pairs de mauvaise qualité (par défaut : 86400)</translation>
+        <translation>Délai en secondes de refus de reconnexion aux pairs de mauvaise qualité (par défaut&#xa0;: 86400)</translation>
     </message>
     <message>
         <location line="-44"/>
@@ -4176,7 +4186,7 @@ for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.
     <message>
         <location line="-24"/>
         <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Accepter les connexions entrantes (par défaut : 1 si aucun -proxy ou -connect )</translation>
+        <translation>Accepter les connexions entrantes (par défaut&#xa0;: 1 si aucun -proxy ou -connect )</translation>
     </message>
     <message>
         <location line="-38"/>
@@ -4386,30 +4396,6 @@ for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.
         <translation>Mot de passe pour les connexions JSON-RPC</translation>
     </message>
     <message>
-        <source>%s, you must set a rpcpassword in the configuration file:
- %s
-It is recommended you use the following random password:
-rpcuser=pandacoinrpc
-rpcpassword=%s
-(you do not need to remember this password)
-The username and password MUST NOT be the same.
-If the file does not exist, create it with owner-readable-only file permissions.
-It is also recommended to set alertnotify so you are notified of problems;
-for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
-</source>
-        <translation>%s, vous devez définir un mot de passe rpc &apos;rpcpassword&apos; au sein du fichier de configuration:
- %s
-Il est recommandé d&apos;utiliser le mot de passe aléatoire suivant:
-rpcuser=pandacoinrpc
-rpcpassword=%s
-(il n&apos;est pas nécessaire de retenir ce mot de passe)
-Le nom d&apos;utilisateur et le mot de passe doivent IMPERATIVEMENT être différents.
-Si le fichier n&apos;existe pas, il est nécessaire de le créer, avec les droit de lecture au propriétaire seulement.
-Il est également recommandé d&apos;utiliser l&apos;option alertnotify afin d&apos;être notifié des problèmes;
-par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo.com
-</translation>
-    </message>
-    <message>
         <location line="-33"/>
         <source>Find peers using internet relay chat (default: 0)</source>
         <translation>Find peers using internet relay chat (default: 1) {0)?}</translation>
@@ -4432,7 +4418,7 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
     <message>
         <location line="+1"/>
         <source>Send commands to node running on &lt;ip&gt; (default: 127.0.0.1)</source>
-        <translation>Envoyer des commandes au nœud fonctionnant sur &lt;ip&gt; (par défaut : 127.0.0.1)</translation>
+        <translation>Envoyer des commandes au nœud fonctionnant sur &lt;ip&gt; (par défaut&#xa0;: 127.0.0.1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4467,7 +4453,7 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
     <message>
         <location line="+1"/>
         <source>Set key pool size to &lt;n&gt; (default: 100)</source>
-        <translation>Régler la taille de la réserve de clefs sur &lt;n&gt; (par défaut : 100)</translation>
+        <translation>Régler la taille de la réserve de clefs sur &lt;n&gt; (par défaut&#xa0;: 100)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4497,12 +4483,12 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
     <message>
         <location line="+1"/>
         <source>Server certificate file (default: server.cert)</source>
-        <translation>Fichier de certificat serveur (par défaut : server.cert)</translation>
+        <translation>Fichier de certificat serveur (par défaut&#xa0;: server.cert)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server private key (default: server.pem)</source>
-        <translation>Clef privée du serveur (par défaut : server.pem)</translation>
+        <translation>Clef privée du serveur (par défaut&#xa0;: server.pem)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4510,7 +4496,12 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
         <translation>Algorithmes de  chiffrements acceptés (défaut: TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!AH:!3DES:@STRENGTH)</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+31"/>
+        <source>Error loading block database</source>
+        <translation>Erreur de chargement de la base de données des blocs</translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Error: Wallet unlocked for staking only, unable to create transaction.</source>
         <translation>Erreur: Portefeuille déverrouillé uniquement pour &quot;staking&quot; , impossible d&apos;effectuer cette transaction.</translation>
     </message>
@@ -4560,12 +4551,7 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
         <translation>Chargement des adresses…</translation>
     </message>
     <message>
-        <location line="-15"/>
-        <source>Error loading blkindex.dat</source>
-        <translation>Erreur de chargement du fichier blkindex.dat</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>Error loading wallet.dat: Wallet corrupted</source>
         <translation>Erreur lors du chargement de wallet.dat: portefeuille corrompu</translation>
     </message>
@@ -4587,32 +4573,32 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
     <message>
         <location line="-16"/>
         <source>Invalid -proxy address: &apos;%s&apos;</source>
-        <translation>Adresse -proxy invalide : « %s »</translation>
+        <translation>Adresse -proxy invalide&#xa0;: «&#xa0;%s&#xa0;»</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Unknown network specified in -onlynet: &apos;%s&apos;</source>
-        <translation>Réseau inconnu spécifié sur -onlynet : « %s »</translation>
+        <translation>Réseau inconnu spécifié sur -onlynet&#xa0;: «&#xa0;%s&#xa0;»</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Unknown -socks proxy version requested: %i</source>
-        <translation>Version inconnue de serveur mandataire -socks demandée : %i</translation>
+        <translation>Version inconnue de serveur mandataire -socks demandée&#xa0;: %i</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Cannot resolve -bind address: &apos;%s&apos;</source>
-        <translation>Impossible de résoudre l&apos;adresse -bind : « %s »</translation>
+        <translation>Impossible de résoudre l&apos;adresse -bind&#xa0;: «&#xa0;%s&#xa0;»</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Cannot resolve -externalip address: &apos;%s&apos;</source>
-        <translation>Impossible de résoudre l&apos;adresse -externalip : « %s »</translation>
+        <translation>Impossible de résoudre l&apos;adresse -externalip&#xa0;: «&#xa0;%s&#xa0;»</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Invalid amount for -paytxfee=&lt;amount&gt;: &apos;%s&apos;</source>
-        <translation>Montant invalide pour -paytxfee=&lt;montant&gt; : « %s »</translation>
+        <translation>Montant invalide pour -paytxfee=&lt;montant&gt;&#xa0;: «&#xa0;%s&#xa0;»</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -4704,7 +4690,7 @@ par exemple: alertnotify=echo %%s | mail -s &quot;Alerte Netcoin&quot; admin@foo
         <source>You must set rpcpassword=&lt;password&gt; in the configuration file:
 %s
 If the file does not exist, create it with owner-readable-only file permissions.</source>
-        <translation>Vous devez ajouter la ligne rpcpassword=&lt;mot-de-passe&gt; au fichier de configuration :
+        <translation>Vous devez ajouter la ligne rpcpassword=&lt;mot-de-passe&gt; au fichier de configuration&#xa0;:
 %s
 Si le fichier n&apos;existe pas, créez-le avec les droits de lecture seule accordés au propriétaire.</translation>
     </message>

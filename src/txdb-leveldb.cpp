@@ -7,12 +7,12 @@
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/filesystem/fstream.hpp>
 
 #include <leveldb/env.h>
 #include <leveldb/cache.h>
 #include <leveldb/filter_policy.h>
-#include <memenv/memenv.h>
 
 #include "kernel.h"
 #include "checkpoints.h"
@@ -26,6 +26,12 @@ using namespace boost;
 
 leveldb::DB *txdb; // global pointer for LevelDB object instance
 
+// The database is opened on first use from whichever thread gets there
+// first. Without this lock two threads could both try to open it: the old
+// bundled LevelDB then silently opened it twice (risking corruption), newer
+// LevelDB versions refuse ("lock already held") and the node stopped.
+static boost::mutex csTxdbOpen;
+
 static leveldb::Options GetOptions() {
     leveldb::Options options;
     int nCacheSizeMB = GetArg("-dbcache", 25);
@@ -36,27 +42,27 @@ static leveldb::Options GetOptions() {
 
 void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
     // First time init.
-    filesystem::path directory = GetDataDir() / "txleveldb";
+    boost::filesystem::path directory = GetDataDir() / "txleveldb";
 
     if (fRemoveOld) {
-        filesystem::remove_all(directory); // remove directory
+        boost::filesystem::remove_all(directory); // remove directory
         unsigned int nFile = 1;
 
         while (true)
         {
-            filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
+            boost::filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
 
             // Break if no such file
-            if( !filesystem::exists( strBlockFile ) )
+            if( !boost::filesystem::exists( strBlockFile ) )
                 break;
 
-            filesystem::remove(strBlockFile);
+            boost::filesystem::remove(strBlockFile);
 
             nFile++;
         }
     }
 
-    filesystem::create_directory(directory);
+    boost::filesystem::create_directory(directory);
     printf("Opening LevelDB in %s\n", directory.string().c_str());
     leveldb::Status status = leveldb::DB::Open(options, directory.string(), &txdb);
     if (!status.ok()) {
@@ -73,6 +79,13 @@ CTxDB::CTxDB(const char* pszMode)
     fReadOnly = (!strchr(pszMode, '+') && !strchr(pszMode, 'w'));
 
     if (txdb) {
+        pdb = txdb;
+        return;
+    }
+
+    boost::mutex::scoped_lock lockOpen(csTxdbOpen);
+    if (txdb) {
+        // another thread opened it while we were waiting
         pdb = txdb;
         return;
     }
@@ -123,6 +136,7 @@ CTxDB::CTxDB(const char* pszMode)
 
 void CTxDB::Close()
 {
+    boost::mutex::scoped_lock lockOpen(csTxdbOpen);
     delete txdb;
     txdb = pdb = NULL;
     delete options.filter_policy;

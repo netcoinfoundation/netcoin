@@ -28,6 +28,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/bind/bind.hpp>
+using namespace boost::placeholders;
 
 #include "netbase.h" // for AddTimeData
 
@@ -72,9 +74,9 @@ void LogStackTrace();
   #define PRIpdu    "Iu"
   #define PRIpdd    "Id"
 #else
-#define PRI64d  "lld"
-#define PRI64u  "llu"
-#define PRI64x  "llx"
+#define PRI64d  PRId64
+#define PRI64u  PRIu64
+#define PRI64x  PRIx64
   #define PRIszx    "zx"
   #define PRIszu    "zu"
   #define PRIszd    "zd"

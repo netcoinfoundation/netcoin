@@ -120,7 +120,7 @@ void StakeReportDialog::showEvent( QShowEvent* event )
 // Extendable localtime format
 QString HalfDate(int64_t nTime, QString TimeMode="")
 {
-    QDateTime OrigDate = QDateTime::fromTime_t((qint32)nTime);
+    QDateTime OrigDate = QDateTime::fromSecsSinceEpoch((qint32)nTime);
     QString LocalDate = OrigDate.date().toString("yyyy-MM-dd");
     if (TimeMode != "")
         LocalDate += " " + OrigDate.toString(TimeMode);

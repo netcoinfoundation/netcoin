@@ -1,0 +1,112 @@
+name: Build
+
+# Compile and test on every push / pull request. Binaries built here are
+# kept as workflow artifacts for a few days; official downloads are made by
+# the "Release" workflow.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+          - name: Ubuntu 26.04
+            image: ubuntu:26.04
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y git build-essential pkg-config \
+            libssl-dev libboost-all-dev libsqlite3-dev libdb5.3++-dev \
+            libleveldb-dev libminiupnpc-dev qt6-base-dev qt6-tools-dev-tools qt6-l10n-tools libqrencode-dev
+      - uses: actions/checkout@v5
+      - name: Build, test and package
+        run: bash contrib/ci/build-linux.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v5
+        with:
+          name: netcoin-${{ matrix.image == 'ubuntu:24.04' && 'ubuntu-24.04' || 'ubuntu-26.04' }}
+          path: dist/*.tar.gz
+          retention-days: 7
+
+  fedora:
+    strategy:
+      fail-fast: false
+      matrix:
+        release: ["44", "45"]
+    name: Fedora ${{ matrix.release }}
+    runs-on: ubuntu-24.04
+    container: fedora:${{ matrix.release }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y git gcc-c++ make findutils which tar gzip glibc-common \
+            boost-devel openssl-devel sqlite-devel leveldb-devel miniupnpc-devel zlib-devel \
+            qt6-qtbase-devel qt6-linguist qrencode-devel
+          # Berkeley DB is only used to convert old wallets; build without it if Fedora dropped it
+          if dnf install -y libdb-cxx-devel; then echo "USE_BDB=1" >> "$GITHUB_ENV"; else echo "USE_BDB=0" >> "$GITHUB_ENV"; fi
+      - uses: actions/checkout@v5
+      - name: Build, test and package
+        run: bash contrib/ci/build-linux.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v5
+        with:
+          name: netcoin-fedora-${{ matrix.release }}
+          path: dist/*.tar.gz
+          retention-days: 7
+
+  macos:
+    name: macOS
+    runs-on: macos-14
+    steps:
+      - name: Install dependencies
+        run: brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db qt qrencode
+      - uses: actions/checkout@v5
+      - name: Build, test and package
+        run: bash contrib/ci/build-macos.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: netcoin-macos
+          path: |
+            dist/*.dmg
+            build-macos.log
+          retention-days: 7
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: zip
+      - uses: actions/checkout@v5
+      - name: Build, test and package
+        run: bash contrib/ci/build-windows.sh ci-${GITHUB_SHA::8}
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: netcoin-win64
+          path: |
+            dist/*.zip
+            build-windows.log
+          retention-days: 7

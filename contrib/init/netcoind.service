@@ -1,0 +1,31 @@
+# systemd service for a NetCoin node
+#
+# Expects the binary in /usr/local/bin and a "netcoin" system user whose home
+# /var/lib/netcoin is the data directory (see doc/run-a-node.md).
+#
+#   sudo cp contrib/init/netcoind.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now netcoind
+
+[Unit]
+Description=NetCoin node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=netcoin
+Group=netcoin
+ExecStart=/usr/local/bin/netcoind -datadir=/var/lib/netcoin -printtoconsole=0
+Restart=on-failure
+RestartSec=30
+# give the node time to flush its databases on shutdown
+TimeoutStopSec=300
+
+# hardening
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target

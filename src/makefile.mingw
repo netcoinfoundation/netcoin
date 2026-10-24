@@ -1,48 +1,65 @@
 # Copyright (c) 2009-2010 Satoshi Nakamoto
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+#
+# Windows build of the headless daemon (netcoind.exe) in an MSYS2 UCRT64 or
+# MINGW64 shell, using the MSYS2 packages for all dependencies.
+# See doc/build-windows.md.
+#
+#   make -f makefile.mingw -j4
+#   make -f makefile.mingw test_netcoin.exe
 
-USE_UPNP:=0
-USE_IPV6:=1
+USE_UPNP ?= 1
+USE_BDB ?= 1
+BOOST_LIB_SUFFIX ?= -mt
 
-INCLUDEPATHS= \
- -I"C:\deps\64bit\boost_1_68_0" \
- -I"C:\deps\64bit\db-6.2.32.NC\build_unix" \
- -I"C:\deps\64bit\openssl-1.0.2q\include"
+CXX ?= g++
+CC ?= gcc
 
-LIBPATHS= \
- -L"C:\deps\64bit\boost_1_68_0\stage\lib" \
- -L"C:\deps\64bit\db-6.2.32.NC\build_unix" \
- -L"C:\deps\64bit\openssl-1.0.2q"
+DEFS = -DWIN32 -D_WINDOWS -D_WIN32_WINNT=0x0601 -DWIN32_LEAN_AND_MEAN -DNOMINMAX \
+       -DUSE_IPV6 -DBOOST_SPIRIT_THREADSAFE -DBOOST_BIND_GLOBAL_PLACEHOLDERS \
+       -DOPENSSL_API_COMPAT=0x10100000L -DHAVE_BUILD_INFO
+DEFS += -I$(CURDIR) -I$(CURDIR)/obj
 
-LIBS= \
- -l boost_system-mgw83-mt-s-x64-1_68 \
- -l boost_filesystem-mgw83-mt-s-x64-1_68 \
- -l boost_program_options-mgw83-mt-s-x64-1_68 \
- -l boost_thread-mgw83-mt-s-x64-1_68 \
- -l boost_chrono-mgw83-mt-s-x64-1_68 \
- -l db_cxx \
- -l ssl \
- -l crypto
+LIBS = \
+   -l boost_filesystem$(BOOST_LIB_SUFFIX) \
+   -l boost_program_options$(BOOST_LIB_SUFFIX) \
+   -l boost_thread$(BOOST_LIB_SUFFIX) \
+   -l boost_chrono$(BOOST_LIB_SUFFIX) \
+   -l sqlite3 \
+   -l leveldb \
+   -l ssl \
+   -l crypto
 
-DEFS=-DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6 -D__NO_SYSTEM_INCLUDES
-#DEBUGFLAGS=-g
-CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS) -static -static-libgcc -static-libstdc++
-LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat , --large-address-aware
+ifeq (${USE_BDB}, 1)
+	LIBS += -l db_cxx$(BDB_LIB_SUFFIX)
+	DEFS += -DENABLE_BDB_MIGRATION
+endif
 
-TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
+ifneq (${USE_UPNP}, -)
+	LIBS += -l miniupnpc
+	DEFS += -DUSE_UPNP=$(USE_UPNP)
+endif
 
-#ifdef USE_UPNP
-# INCLUDEPATHS += -I"C:\deps\64bit\miniupnpc"
-# LIBPATHS += -L"C:\deps\64bit\miniupnpc"
-# LIBS += -l miniupnpc -l iphlpapi
-# DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
-#endif
+# STATIC=1: link all libraries statically (one self-contained .exe);
+# LEVELDB_EXTRA_LIBS: libraries a static LevelDB needs (e.g. -lsnappy -lcrc32c)
+TESTLINK = -DBOOST_TEST_DYN_LINK
+ifeq (${STATIC}, 1)
+	TESTLINK =
+	LIBS += $(LEVELDB_EXTRA_LIBS)
+	DEFS += -DBOOST_THREAD_USE_LIB -DMINIUPNP_STATICLIB
+endif
 
-LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock
+LIBS += -l ws2_32 -l mswsock -l iphlpapi -l shlwapi -l ole32 -l oleaut32 -l uuid \
+        -l gdi32 -l user32 -l advapi32 -l shell32 -l crypt32 -l bcrypt -l z
 
-# TODO: make the mingw builds smarter about dependencies, like the linux/osx builds are
-HEADERS = $(wildcard *.h)
+xCXXFLAGS = -std=c++17 -O2 -mthreads -Wall -Wextra -Wformat -Wformat-security \
+            -Wno-unused-parameter -Wno-deprecated-copy $(DEFS) $(CXXFLAGS)
+xLDFLAGS = -mthreads -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va \
+           -static-libgcc -static-libstdc++ $(LDFLAGS)
+ifeq (${STATIC}, 1)
+	xLDFLAGS += -static
+endif
 
 OBJS= \
     obj/kernel.o \
@@ -55,6 +72,8 @@ OBJS= \
     obj/miner.o \
     obj/key.o \
     obj/db.o \
+    obj/db_bdb.o \
+    obj/torcontrol.o \
     obj/init.o \
     obj/keystore.o \
     obj/core.o \
@@ -76,38 +95,41 @@ OBJS= \
     obj/walletdb.o \
     obj/hash.o \
     obj/noui.o \
-    obj/chainparams.o
-
+    obj/chainparams.o \
+    obj/txdb-leveldb.o
 
 all: netcoind.exe
 
-LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a -l shlwapi
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
-OBJS += obj/txdb-leveldb.o
-leveldb/libleveldb.a:
-	cd leveldb; make; cd ..
-obj/txdb-leveldb.o: leveldb/libleveldb.a
+-include obj/*.d
+-include obj-test/*.d
+
+obj/build.h: FORCE
+	@mkdir -p obj
+	/bin/sh ../share/genbuild.sh obj/build.h
+version.cpp: obj/build.h
 
 obj/scrypt.o: scrypt.c
-	gcc -c $(CFLAGS) -o $@ $^
+	@mkdir -p obj
+	$(CC) -c -O2 $(CFLAGS) -o $@ $^
 
-obj/%.o: %.cpp $(HEADERS)
-	g++ -c $(CFLAGS) -o $@ $<
+obj/%.o: %.cpp
+	@mkdir -p obj
+	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 
-netcoind.exe: $(OBJS:obj/%=obj/%)
-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+netcoind.exe: $(OBJS)
+	$(CXX) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
-obj-test/%.o: test/%.cpp $(HEADERS)
-	g++ -c $(TESTDEFS) $(CFLAGS) -o $@ $<
+obj-test/%.o: test/%.cpp
+	@mkdir -p obj-test
+	$(CXX) -c -DTEST_DATA_DIR=$(abspath test/data) $(TESTLINK) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 
-test_netcoind.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
-	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework-mgw82-mt-s-x64-1_68 $(LIBS)
+test_netcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS))
+	$(CXX) $(xCXXFLAGS) -o $@ $^ -l boost_unit_test_framework$(BOOST_LIB_SUFFIX) $(xLDFLAGS) $(LIBS)
 
 clean:
 	rm -f netcoind.exe test_netcoin.exe
-	rm -f obj/*.o
-	rm -f obj-test/*.o
-	rm -f build.h
+	rm -f obj/*.o obj/*.d obj-test/*.o obj-test/*.d obj/build.h
+
+FORCE:

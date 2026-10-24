@@ -220,3 +220,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# build outputs
+src/netcoind
+src/test_netcoin
+src/obj/
+src/obj-test/
+src/leveldb/build_config.mk
+src/leveldb/*.a
+src/leveldb/**/*.o
+*.P

@@ -12,6 +12,7 @@
 #include "db.h"
 #include "main.h"
 #include "walletdb.h"
+#include "torcontrol.h"
 #include "bitcoinrpc.h"
 #include "net.h"
 // #include "init.h"
@@ -21,7 +22,6 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/convenience.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <openssl/crypto.h>
@@ -135,33 +135,6 @@ void Shutdown()
         if (pwalletMain)
             pwalletMain->SetBestChain(CBlockLocator(pindexBest));
     }
- /*   {
-        fShutdown = true;
-        nTransactionsUpdated++;
-        StopRPCThreads();
-        bitdb.Flush(false);
-        StopNode();
-        bitdb.Flush(true);
-        boost::filesystem::remove(GetPidFile());
-        UnregisterWallet(pwalletMain);
-        delete pwalletMain;
-        NewThread(ExitTimeout, NULL);
-        MilliSleep(50);
-        printf("Netcoin exited\n\n");
-        // fExit = true;
-#ifndef QT_GUI
-        // ensure non-UI client gets exited here, but let Bitcoin-Qt reach 'return 0;' in bitcoin.cpp
-        exit(0);
-#endif
-    }
- /*   else
-    {
-        while (!fExit)
-            MilliSleep(500);
-        MilliSleep(100);
-        ExitThread(0);
-    }
- */
     bitdb.Flush(true);
     boost::filesystem::remove(GetPidFile());
     UnregisterWallet(pwalletMain);
@@ -305,7 +278,13 @@ bool AppInit(int argc, char* argv[])
         delete detectShutdownThread;
         detectShutdownThread = NULL;
     }
-        Shutdown();
+    // Wait for all worker threads (staking, message handler, network, ...)
+    // before Shutdown() frees the wallet; otherwise they kept running while
+    // the wallet was deleted and the static mutexes were destroyed at exit
+    // ("boost::lock_error ... Invalid argument" after Ctrl+C).
+    threadGroup.interrupt_all();
+    threadGroup.join_all();
+    Shutdown();
 
     return fRet;
 }
@@ -369,7 +348,10 @@ std::string HelpMessage()
         "  -timeout=<n>           " + _("Specify connection timeout (in milliseconds)") + "\n" +
         "  -proxy=<ip:port>       " + _("Connect through socks proxy") + "\n" +
         "  -socks=<n>             " + _("Select the version of socks proxy to use (4-5, default: 5)") + "\n" +
-        "  -tor=<ip:port>         " + _("Use proxy to reach tor hidden services (default: same as -proxy)") + "\n"
+        "  -tor=<ip:port>         " + _("Use proxy to reach tor hidden services (default: same as -proxy)") + "\n" +
+        "  -listenonion           " + _("Automatically create a Tor onion service (reachable behind NAT/CGNAT) if Tor is running (default: 1)") + "\n" +
+        "  -torcontrol=<ip:port>  " + _("Tor control port to use for -listenonion (default: 127.0.0.1:9051)") + "\n" +
+        "  -torpassword=<pass>    " + _("Tor control port password (default: cookie authentication)") + "\n" +
         "  -dns                   " + _("Allow DNS lookups for -addnode, -seednode and -connect") + "\n" +
         "  -port=<port>           " + _("Listen for connections on <port> (default: 11310 or testnet: 21310)") + "\n" +
         "  -maxconnections=<n>    " + _("Maintain at most <n> connections to peers (default: 125)") + "\n" +
@@ -386,6 +368,9 @@ std::string HelpMessage()
         "  -dnsseed               " + _("Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)") + "\n" +
         "  -forcednsseed          " + _("Always query for peer addresses via DNS lookup (default: 0)") + "\n" +
         "  -staking               " + _("Stake your coins to support network and gain reward (default: 1)") + "\n" +
+        "  -reservebalance=<amt>  " + _("Amount that never takes part in staking and stays spendable (default: 0)") + "\n" +
+        "  -stakecombine          " + _("Let a stake take in more coins of the same address; they are then locked until the stake matures (default: 0)") + "\n" +
+        "  -stakecombinethreshold=<amt> " + _("With -stakecombine: stop adding coins to a stake at this amount (default: 10000000)") + "\n" +
         "  -synctime              " + _("Sync time with other nodes. Disable if time on your system is precise e.g. syncing with NTP (default: 1)") + "\n" +
         "  -cppolicy              " + _("Sync checkpoints policy (default: strict)") + "\n" +
         "  -banscore=<n>          " + _("Threshold for disconnecting misbehaving peers (default: 100)") + "\n" +
@@ -415,17 +400,17 @@ std::string HelpMessage()
         "  -shrinkdebugfile       " + _("Shrink debug.log file on client startup (default: 1 when no -debug)") + "\n" +
         "  -printtoconsole        " + _("Send trace/debug info to console instead of debug.log file") + "\n" +
         "  -regtest               " + _("Enter regression test mode, which uses a special chain in which blocks can be "
-                                        "solved instantly. This is intended for regression testing tools and app development.") + "\n";
+                                        "solved instantly. This is intended for regression testing tools and app development.") + "\n" +
 #ifdef WIN32
         "  -printtodebugger       " + _("Send trace/debug info to debugger") + "\n" +
 #endif
         "  -rpcuser=<user>        " + _("Username for JSON-RPC connections") + "\n" +
         "  -rpcpassword=<pw>      " + _("Password for JSON-RPC connections") + "\n" +
-        "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 11311 or testnet 21311)") + "\n" +
+        "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 11211 or testnet 22444)") + "\n" +
         "  -rpcallowip=<ip>       " + _("Allow JSON-RPC connections from specified IP address") + "\n" +
         "  -rpcconnect=<ip>       " + _("Send commands to node running on <ip> (default: 127.0.0.1)") + "\n" +
         "  -rpcthreads=<n>        " + _("Use this many threads to service RPC calls (default: 4)") + "\n" +
-        "  -rpcwait               " + _("Wait for RPC server to start") + "\n";
+        "  -rpcwait               " + _("Wait for RPC server to start") + "\n" +
         "  -blocknotify=<cmd>     " + _("Execute command when the best block changes (%s in cmd is replaced by block hash)") + "\n" +
         "  -walletnotify=<cmd>    " + _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)") + "\n" +
         "  -confchange            " + _("Require a confirmations for change (default: 0)") + "\n" +
@@ -438,7 +423,7 @@ std::string HelpMessage()
         "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 2500, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-6, default: 1)") + "\n" +
         "  -loadblock=<file>      " + _("Imports blocks from external blk000?.dat file") + "\n" +
-        "  -maxorphanblocksmib=<n>   " + strprintf(_("Keep at most <n> MiB of unconnectable blocks in memory (default: %u)"), DEFAULT_MAX_ORPHAN_BLOCKS) + "\n";
+        "  -maxorphanblocksmib=<n>   " + strprintf(_("Keep at most <n> MiB of unconnectable blocks in memory (default: %u)"), DEFAULT_MAX_ORPHAN_BLOCKS) + "\n" +
 
        "\n" + _("Block creation options:") + "\n" +
         "  -blockminsize=<n>      "   + _("Set minimum block size in bytes (default: 0)") + "\n" +
@@ -448,7 +433,7 @@ std::string HelpMessage()
         "  -rpcssl                                  " + _("Use OpenSSL (https) for JSON-RPC connections") + "\n" +
         "  -rpcsslcertificatechainfile=<file.cert>  " + _("Server certificate file (default: server.cert)") + "\n" +
         "  -rpcsslprivatekeyfile=<file.pem>         " + _("Server private key (default: server.pem)") + "\n" +
-        "  -rpcsslciphers=<ciphers>                 " + _("Acceptable ciphers (default: TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!AH:!3DES:@STRENGTH)") + "\n";
+        "  -rpcsslciphers=<ciphers>                 " + _("Acceptable ciphers (default: HIGH:!aNULL:!eNULL:!AH:!3DES:!MD5:@STRENGTH)") + "\n";
 
     return strUsage;
 }
@@ -560,7 +545,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         SoftSetBoolArg("-listen", false);
 
         // to protect privacy, do not discover addresses by default
-        if (SoftSetBoolArg("-discover", false));
+        SoftSetBoolArg("-discover", false);
     }
 
     if (!GetBoolArg("-listen", true)) {
@@ -647,7 +632,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     std::string strWalletFileName = GetArg("-wallet", "wallet.dat");
 
     // strWalletFileName must be a plain filename without a directory
-    if (strWalletFileName != boost::filesystem::basename(strWalletFileName) + boost::filesystem::extension(strWalletFileName))
+    if (strWalletFileName != boost::filesystem::path(strWalletFileName).filename().string())
         return InitError(strprintf(_("Wallet %s resides outside data directory %s."), strWalletFileName.c_str(), strDataDir.c_str()));
 
     // Make sure only a single NetCoin process is using the data directory.
@@ -710,7 +695,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
         // try moving the database env out of the way
         boost::filesystem::path pathDatabase = GetDataDir() / "database";
-        boost::filesystem::path pathDatabaseBak = GetDataDir() / strprintf("database.%d.bak", GetTime());
+        boost::filesystem::path pathDatabaseBak = GetDataDir() / strprintf("database.%" PRI64d ".bak", GetTime());
         try {
             boost::filesystem::rename(pathDatabase, pathDatabaseBak);
             printf("Moved old %s to %s. Retrying.\n", pathDatabase.string().c_str(), pathDatabaseBak.string().c_str());
@@ -727,6 +712,17 @@ bool AppInit2(boost::thread_group& threadGroup)
         }
     }
 
+    // Wallets used to be Berkeley DB files; convert once to SQLite
+    if (boost::filesystem::exists(GetDataDir() / strWalletFileName))
+    {
+        std::string strErr;
+        if (!MigrateBerkeleyWallet(strWalletFileName, strErr))
+            return InitError(strprintf(_("Cannot convert the old (Berkeley DB) wallet %s: %s\n"
+                                         "Your original wallet file was not changed. You can move your keys with "
+                                         "dumpwallet in the old client and importwallet in this one."),
+                                       strWalletFileName.c_str(), strErr.c_str()));
+    }
+
     if (GetBoolArg("-salvagewallet"))
     {
         // Recover readable keypairs:
@@ -734,7 +730,7 @@ bool AppInit2(boost::thread_group& threadGroup)
             return false;
     }
 
-    if (filesystem::exists(GetDataDir() / strWalletFileName))
+    if (boost::filesystem::exists(GetDataDir() / strWalletFileName))
     {
         CDBEnv::VerifyResult r = bitdb.Verify(strWalletFileName, CWalletDB::Recover);
         if (r == CDBEnv::RECOVER_OK)
@@ -861,6 +857,16 @@ bool AppInit2(boost::thread_group& threadGroup)
         if (!ParseMoney(mapArgs["-reservebalance"], nReserveBalance))
         {
             InitError(_("Invalid amount for -reservebalance=<amount>"));
+            return false;
+        }
+    }
+
+    fStakeCombine = GetBoolArg("-stakecombine", false);
+    if (mapArgs.count("-stakecombinethreshold"))
+    {
+        if (!ParseMoney(mapArgs["-stakecombinethreshold"], nStakeCombineThreshold))
+        {
+            InitError(_("Invalid amount for -stakecombinethreshold=<amount>"));
             return false;
         }
     }
@@ -1039,24 +1045,25 @@ bool AppInit2(boost::thread_group& threadGroup)
             if (file)
                 LoadExternalBlockFile(file);
         }
-        exit(0);
+        // (this used to call exit(0) here: the process ended without
+        // flushing its databases, and the node never started)
     }
 
-    filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
-    if (filesystem::exists(pathBootstrap)) {
+    boost::filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
+    if (boost::filesystem::exists(pathBootstrap)) {
         uiInterface.InitMessage(_("Importing bootstrap blockchain data file."));
 
         FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
         if (file) {
-            filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
+            boost::filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
             LoadExternalBlockFile(file);
             RenameOver(pathBootstrap, pathBootstrapOld);
         }
     }
 
     // Netcoin: import PoW blockchain
-    filesystem::path pathOldblockchain = GetDataDir() / "blocks";
-    if (filesystem::exists(pathOldblockchain)) {
+    boost::filesystem::path pathOldblockchain = GetDataDir() / "blocks";
+    if (boost::filesystem::exists(pathOldblockchain)) {
         uiInterface.InitMessage(_("Importing blockchain from PoW wallet..."));
 
         FILE *file = fopen((pathOldblockchain / "blk00000.dat").string().c_str(), "rb");
@@ -1069,11 +1076,11 @@ bool AppInit2(boost::thread_group& threadGroup)
         }
 #if BOOST_VERSION >= 105000
         boost::system::error_code errcode;
-        filesystem::remove_all(pathOldblockchain, errcode);
-        filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old", errcode);
+        boost::filesystem::remove_all(pathOldblockchain, errcode);
+        boost::filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old", errcode);
 #else
-        filesystem::remove_all(pathOldblockchain);
-        filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old");
+        boost::filesystem::remove_all(pathOldblockchain);
+        boost::filesystem::copy_file(GetDataDir() / "wallet.dat", GetDataDir() / "wallet.dat.old");
 #endif
     }
 
@@ -1114,6 +1121,11 @@ bool AppInit2(boost::thread_group& threadGroup)
     // if (!NewThread(StartNode, (void*)&threadGroup))
     //    InitError(_("Error: could not start node"));
     StartNode(threadGroup);
+
+    // Onion service through a local Tor daemon (makes the node reachable
+    // and advertised even behind CGNAT)
+    if (!fNoListen && GetBoolArg("-listenonion", DEFAULT_LISTEN_ONION))
+        threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "torcontrol", &ThreadTorControl));
 
     // InitRPCMining is needed here so getwork/getblocktemplate in the GUI debug console works properly.
     InitRPCMining();

@@ -4,7 +4,7 @@
 
 USE_UPNP:=0
 
-DEFS=-DUSE_IPV6 -DBOOST_SPIRIT_THREADSAFE
+DEFS=-DUSE_IPV6 -DBOOST_SPIRIT_THREADSAFE -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DOPENSSL_API_COMPAT=0x10100000L
 
 DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
@@ -25,13 +25,22 @@ endif
 # for boost 1.37, add -mt to the boost libraries
 LIBS += \
  -Wl,-B$(LMODE) \
-   -l boost_system$(BOOST_LIB_SUFFIX) \
    -l boost_filesystem$(BOOST_LIB_SUFFIX) \
    -l boost_program_options$(BOOST_LIB_SUFFIX) \
    -l boost_thread$(BOOST_LIB_SUFFIX) \
-   -l db_cxx$(BDB_LIB_SUFFIX) \
+   -l boost_chrono$(BOOST_LIB_SUFFIX) \
+   -l sqlite3 \
    -l ssl \
    -l crypto
+
+# Berkeley DB is only needed to convert old wallet files to SQLite.
+# Build with USE_BDB=0 to drop the dependency (old wallets must then be
+# moved with dumpwallet/importwallet).
+USE_BDB ?= 1
+ifeq (${USE_BDB}, 1)
+	LIBS += -l db_cxx$(BDB_LIB_SUFFIX)
+	DEFS += -DENABLE_BDB_MIGRATION
+endif
 
 ifndef USE_UPNP
 	override USE_UPNP = -
@@ -86,7 +95,7 @@ DEBUGFLAGS=-g
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-O2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+xCXXFLAGS=-std=c++17 -O2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
     $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
@@ -104,6 +113,8 @@ OBJS= \
     obj/miner.o \
     obj/key.o \
     obj/db.o \
+    obj/db_bdb.o \
+    obj/torcontrol.o \
     obj/init.o \
     obj/keystore.o \
     obj/core.o \
@@ -129,27 +140,37 @@ OBJS= \
 
 all: netcoind
 
+# LevelDB: by default link the system library (Ubuntu: libleveldb-dev).
+# Use "make -f makefile.unix USE_SYSTEM_LEVELDB=0" to build the bundled copy.
+USE_SYSTEM_LEVELDB ?= 1
+OBJS += obj/txdb-leveldb.o
+ifeq (${USE_SYSTEM_LEVELDB}, 1)
+LIBS += -l leveldb
+else
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
-OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
 	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
+endif
 
 # auto-generated dependencies:
 -include obj/*.P
 -include obj-test/*.P
 
 obj/scrypt.o: scrypt.c
-	gcc -c -o $@ $^
+	@mkdir -p obj
+	$(CC) -c -O2 $(CFLAGS) -o $@ $^
 
 obj/build.h: FORCE
+	@mkdir -p obj
 	/bin/sh ../share/genbuild.sh obj/build.h
 version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
 obj/%.o: %.cpp
+	@mkdir -p obj
 	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
@@ -162,6 +183,7 @@ netcoind: $(OBJS:obj/%=obj/%)
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
 obj-test/%.o: test/%.cpp
+	@mkdir -p obj-test
 	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \

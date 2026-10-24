@@ -1,3 +1,4 @@
+#include <atomic>
 #include <vector>
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
@@ -198,7 +199,7 @@ BOOST_AUTO_TEST_CASE(util_FormatMoney)
 
 BOOST_AUTO_TEST_CASE(util_ParseMoney)
 {
-    int64 ret = 0;
+    int64_t ret = 0;
     BOOST_CHECK(ParseMoney("0.0", ret));
     BOOST_CHECK_EQUAL(ret, 0);
 
@@ -322,7 +323,7 @@ BOOST_AUTO_TEST_CASE(util_seed_insecure_rand)
 }
 
 
-static int nCounter = 0;
+static std::atomic<int> nCounter(0);
 
 static void Count()
 {
@@ -341,9 +342,13 @@ BOOST_AUTO_TEST_CASE(util_loop_forever1)
     boost::thread_group threadGroup;
 
     threadGroup.create_thread(boost::bind(&LoopForever<void (*)()>, "count", &Count, 1));
-    MilliSleep(1);
+    // The original test slept 1ms and expected exactly one iteration, which is
+    // racy; wait for the thread to make progress instead.
+    for (int i = 0; i < 1000 && nCounter == 0; i++)
+        MilliSleep(1);
     threadGroup.interrupt_all();
-    BOOST_CHECK_EQUAL(nCounter, 1);
+    threadGroup.join_all();
+    BOOST_CHECK(nCounter >= 1);
     nCounter = 0;
 }
 
@@ -353,9 +358,11 @@ BOOST_AUTO_TEST_CASE(util_loop_forever2)
 
     boost::function<void()> f = boost::bind(&CountWithArg, 11);
     threadGroup.create_thread(boost::bind(&LoopForever<boost::function<void()> >, "count11", f, 11));
-    MilliSleep(1);
+    for (int i = 0; i < 1000 && nCounter == 0; i++)
+        MilliSleep(1);
     threadGroup.interrupt_all();
-    BOOST_CHECK_EQUAL(nCounter, 11);
+    threadGroup.join_all();
+    BOOST_CHECK(nCounter >= 11 && nCounter % 11 == 0);
     nCounter = 0;
 }
 

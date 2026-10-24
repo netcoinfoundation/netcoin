@@ -269,7 +269,7 @@ Value stakeforcharity(const Array &params, bool fHelp)
             "stakeforcharity <Netcoin Address> <percent> [Change Address] [min amount] [max amount]\n"
             "Gives a percentage of a found stake to a different address, after stake matures\n"
             "Percent is a whole number 1 to 50.\n"
-			"Change Address, Min and Max Amount are optional\n"
+            "Change Address, Min and Max Amount are optional\n"
             "Set percentage to zero to turn off"
             + HelpRequiringPassphrase());
 
@@ -286,9 +286,9 @@ Value stakeforcharity(const Array &params, bool fHelp)
     unsigned int nPer = (unsigned int) params[1].get_int();
 
     int64_t nMinAmount = MIN_TXOUT_AMOUNT;
-	int64_t nMaxAmount = MAX_MONEY;
+    int64_t nMaxAmount = MAX_MONEY;
 
-	// Optional Change Address
+    // Optional Change Address
     CBitcoinAddress changeAddress;
     if (params.size() > 2) {
         changeAddress = params[2].get_str();
@@ -319,14 +319,14 @@ Value stakeforcharity(const Array &params, bool fHelp)
 
     CWalletDB walletdb(pwalletMain->strWalletFile);
 
-	LOCK(pwalletMain->cs_wallet);
-	{
-		bool fFileBacked = pwalletMain->fFileBacked;
-		//Turn off if we set to zero.
-		//Future: After we allow multiple addresses, only turn of this address
-		if(nPer == 0)
-		{
-			pwalletMain->fStakeForCharity = false;
+    LOCK(pwalletMain->cs_wallet);
+    {
+        bool fFileBacked = pwalletMain->fFileBacked;
+        //Turn off if we set to zero.
+        //Future: After we allow multiple addresses, only turn of this address
+        if(nPer == 0)
+        {
+            pwalletMain->fStakeForCharity = false;
             pwalletMain->nStakeForCharityPercent = 0;
             pwalletMain->nStakeForCharityMin = nMinAmount;
             pwalletMain->nStakeForCharityMax = nMaxAmount;
@@ -335,28 +335,28 @@ Value stakeforcharity(const Array &params, bool fHelp)
                 walletdb.EraseStakeForCharity(pwalletMain->strStakeForCharityAddress.ToString());
 
             pwalletMain->strStakeForCharityAddress = "";
-			pwalletMain->strStakeForCharityChangeAddress = "";
+            pwalletMain->strStakeForCharityChangeAddress = "";
 
             return Value::null;
-		}
-		//For now max percentage is 50.
+        }
+        //For now max percentage is 50.
         if (nPer > 50 )
-			nPer = 50;
+            nPer = 50;
 
-		if(fFileBacked)
+        if(fFileBacked)
               walletdb.EraseStakeForCharity(pwalletMain->strStakeForCharityAddress.ToString());
 
-		pwalletMain->strStakeForCharityAddress = address;
+        pwalletMain->strStakeForCharityAddress = address;
         pwalletMain->nStakeForCharityPercent = nPer;
-		pwalletMain->strStakeForCharityChangeAddress = changeAddress;
+        pwalletMain->strStakeForCharityChangeAddress = changeAddress;
         pwalletMain->fStakeForCharity = true;
         pwalletMain->nStakeForCharityMin = nMinAmount;
         pwalletMain->nStakeForCharityMax = nMaxAmount;
-		fGlobalStakeForCharity = true;
-		if(fFileBacked)
-			walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(), nMinAmount, nMaxAmount);
+        fGlobalStakeForCharity = true;
+        if(fFileBacked)
+            walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(), nMinAmount, nMaxAmount);
 
-     	if(fFileBacked)
+        if(fFileBacked)
                 walletdb.WriteStakeForCharity(address.ToString(), nPer, changeAddress.ToString(),nMinAmount,nMaxAmount);
         }
         return Value::null;
@@ -857,13 +857,13 @@ Value sendfrom(const Array& params, bool fHelp)
     if (params.size() > 5 && params[5].type() != null_type && !params[5].get_str().empty())
         wtx.mapValue["to"] = params[5].get_str();
 
-	std::string txcomment;
+    std::string txcomment;
     if (params.size() > 6 && params[6].type() != null_type && !params[6].get_str().empty())
-	{
+    {
         txcomment = params[6].get_str();
-		if (txcomment.length() > MAX_TX_COMMENT_LEN)
-			txcomment.resize(MAX_TX_COMMENT_LEN);
-	}
+        if (txcomment.length() > MAX_TX_COMMENT_LEN)
+            txcomment.resize(MAX_TX_COMMENT_LEN);
+    }
 
     EnsureWalletIsUnlocked();
 
@@ -896,7 +896,7 @@ Value sendmany(const Array& params, bool fHelp)
         nMinDepth = params[2].get_int();
 
     CWalletTx wtx;
-	std::string strTxComment;
+    std::string strTxComment;
 
     wtx.strFromAccount = strAccount;
     if (params.size() > 3 && params[3].type() != null_type && !params[3].get_str().empty())
@@ -1989,8 +1989,6 @@ Value makekeypair(const Array& params, bool fHelp)
       if (strPrefix != HexStr(key.GetPubKey()).substr(0, strPrefix.size()))
        return Value::null;
 
-    bool fCompressed;
-    // CPrivKey vchSecret = key.GetSecret(fCompressed);
 
     CPrivKey vchPrivKey = key.GetPrivKey();
     Object result;
@@ -2085,7 +2083,11 @@ vStakePeriodRange_T PrepareRangeForStakeReport()
     int64_t nToday = GetTime();
     time_t CurTime = nToday;
 
+#ifdef WIN32
+    localtime_s(&Loc_MidNight, &CurTime);
+#else
     localtime_r(&CurTime, &Loc_MidNight);
+#endif
     Loc_MidNight.tm_hour = 0;
     Loc_MidNight.tm_min = 0;
     Loc_MidNight.tm_sec = 0;  // set midnight

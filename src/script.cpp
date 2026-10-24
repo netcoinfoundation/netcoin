@@ -338,7 +338,8 @@ bool IsLowDERSignature(const valtype &vchSig, bool haveHashType) {
     // complement modulo the order could have been used instead, which is
     // one byte shorter when encoded correctly.
     // Unfortunately Netcoin blockchain contains S-high signatures so we skip these
-    if (pindexBest->nHeight >= (!TestNet() ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
+    // pindexBest is NULL before the block index is loaded (and in unit tests)
+    if (pindexBest && pindexBest->nHeight >= (!TestNet() ? LOW_S_CHECK_SIGNATURES : LOW_S_CHECK_SIGNATURES_TESTET))
     {
         if (!CKey::CheckSignatureElement(S, nLenS, true))
             return error("Non-canonical signature: S value is unnecessarily high");
@@ -1026,17 +1027,17 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                         break;
 
                     case OP_MUL:
-                        if (!BN_mul(&bn, &bn1, &bn2, pctx))
+                        if (!BN_mul(bn.get(), bn1.get(), bn2.get(), pctx))
                             return false;
                         break;
 
                     case OP_DIV:
-                        if (!BN_div(&bn, NULL, &bn1, &bn2, pctx))
+                        if (!BN_div(bn.get(), NULL, bn1.get(), bn2.get(), pctx))
                             return false;
                         break;
 
                     case OP_MOD:
-                        if (!BN_mod(&bn, &bn1, &bn2, pctx))
+                        if (!BN_mod(bn.get(), bn1.get(), bn2.get(), pctx))
                             return false;
                         break;
 
@@ -1111,11 +1112,11 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                     valtype& vch = stacktop(-1);
                     valtype vchHash((opcode == OP_RIPEMD160 || opcode == OP_SHA1 || opcode == OP_HASH160) ? 20 : 32);
                     if (opcode == OP_RIPEMD160)
-                        RIPEMD160(&vch[0], vch.size(), &vchHash[0]);
+                        RIPEMD160(vch.data(), vch.size(), vchHash.data());
                     else if (opcode == OP_SHA1)
-                        SHA1(&vch[0], vch.size(), &vchHash[0]);
+                        SHA1(vch.data(), vch.size(), vchHash.data());
                     else if (opcode == OP_SHA256)
-                        SHA256(&vch[0], vch.size(), &vchHash[0]);
+                        SHA256(vch.data(), vch.size(), vchHash.data());
                     else if (opcode == OP_HASH160)
                     {
                         uint160 hash160 = Hash160(vch);
@@ -1895,7 +1896,7 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const C
     if (!EvalScript(stack, scriptSig, txTo, nIn, flags, nHashType))
         return false;
 
-        stackCopy = stack;
+    stackCopy = stack;
 
     if (!EvalScript(stack, scriptPubKey, txTo, nIn, flags, nHashType))
         return false;

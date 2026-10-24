@@ -579,7 +579,7 @@ unsigned int GetP2SHSigOpCount(const CTransaction& tx, const MapPrevTx& mapInput
 /** Check for standard transaction types
     @return True if all outputs (scriptPubKeys) use only standard transaction forms
 */
-bool IsStandardTx(const CTransaction& tx);
+bool IsStandardTx(const CTransaction& tx, std::string& strReason);
 
 bool IsFinalTx(const CTransaction &tx, int nBlockHeight = 0, int64_t nBlockTime = 0);
 
@@ -940,7 +940,7 @@ public:
 
     void print() const
     {
-        printf("CBlock(hash=%s, PoW=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%" PRI64u ", vchBlockSig=%s)\n",
+        printf("CBlock(hash=%s, PoW=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%" PRIszu ", vchBlockSig=%s)\n",
             GetHash().ToString().c_str(),
             GetPoWHash().ToString().c_str(),
             nVersion,

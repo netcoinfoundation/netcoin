@@ -6,6 +6,7 @@
  * The Bitcoin Developers 2011-2012
  */
 #include "bitcoingui.h"
+#include "splitcoinsdialog.h"
 #include "calcdialog.h"
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
@@ -63,6 +64,8 @@
 #include <QTextStream>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QStandardPaths>
+#include <QRegularExpression>
 #include <QTimer>
 #include <QDragEnterEvent>
 #if QT_VERSION < 0x050000
@@ -267,43 +270,43 @@ void BitcoinGUI::createActions()
 
     overviewAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/overviewTooltip.png/></p></body></html>"));
     overviewAction->setCheckable(true);
-    overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
+    overviewAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send coins"), this);
     sendCoinsAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/sendTooltip.png/></p></body></html>"));
     sendCoinsAction->setCheckable(true);
-    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
+    sendCoinsAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_2));
     tabGroup->addAction(sendCoinsAction);
 
     receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive coins"), this);
     receiveCoinsAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/recieveTooltip.png/></p></body></html>"));
     receiveCoinsAction->setCheckable(true);
-    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
+    receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_3));
     tabGroup->addAction(receiveCoinsAction);
 
     historyAction = new QAction(QIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/transactionTooltip.png/></p></body></html>"));
     historyAction->setCheckable(true);
-    historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
+    historyAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_4));
     tabGroup->addAction(historyAction);
 
     addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Address Book"), this);
     addressBookAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/addressTooltip.png/></p></body></html>"));
     addressBookAction->setCheckable(true);
-    addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
+    addressBookAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
     shoppingAction = new QAction(QIcon(":/icons/res/icons/services.png"), tr("&Services"), this);
     shoppingAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/servicesTooltip.png/></p></body></html>"));
     shoppingAction->setCheckable(true);
-    shoppingAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+    shoppingAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_6));
     tabGroup->addAction(shoppingAction);
 
     networkAction = new QAction(QIcon(":/icons/res/icons/stakingTab.png"), tr("&Staking"), this);
     networkAction->setToolTip(tr("<html><head/><body><p><img src=:/toolTip/res/tooltips/stakingTabTooltip.png/></p></body></html>"));
     networkAction->setCheckable(true);
-    networkAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    networkAction->setShortcut(QKeySequence(Qt::ALT | Qt::Key_7));
     tabGroup->addAction(networkAction);
 
     charityAction = new QAction(this);
@@ -328,11 +331,15 @@ void BitcoinGUI::createActions()
     connect(networkAction, SIGNAL(triggered()), this, SLOT(gotoNetworkPage()));
     connect(calcAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(calcAction, SIGNAL(triggered()), this, SLOT(calcClicked()));
+    splitCoinsAction = new QAction(QIcon(":/icons/send"), tr("Spli&t coins..."), this);
+    splitCoinsAction->setToolTip(tr("Split the balance into several coins, so that a stake does not lock all of it"));
+    connect(splitCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(splitCoinsAction, SIGNAL(triggered()), this, SLOT(splitCoinsClicked()));
 
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
-    quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
+    quitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
     aboutAction = new QAction(QIcon(":/icons/bitcoin"), tr("&About Netcoin"), this);
     aboutAction->setToolTip(tr("Show information about Netcoin"));
@@ -398,7 +405,7 @@ void BitcoinGUI::createActions()
             signalMapper->setMapping(customActions[i], theme);
             connect(customActions[i], SIGNAL(triggered()), signalMapper, SLOT (map()));
         }
-        connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(changeTheme(QString)));
+        connect(signalMapper, SIGNAL(mappedString(QString)), this, SLOT(changeTheme(QString)));
     }
     /* /zeewolf: Hot swappable wallet themes */
 
@@ -434,6 +441,7 @@ void BitcoinGUI::createMenuBar()
     settings->addAction(optionsAction);
     settings->addSeparator();
     settings->addAction(calcAction);
+    settings->addAction(splitCoinsAction);
 
     /* zeewolf: Hot swappable wallet themes */
     if (themesList.count()>0)
@@ -652,50 +660,6 @@ void BitcoinGUI::setNumBlocks(int count)
     // bool fShowStatusBar = false;
     QString tooltip;
 
- /*   if(count < nTotalBlocks)
-    {
-        int nRemainingBlocks = nTotalBlocks - count;
-        float nPercentageDone = count / (nTotalBlocks * 0.01f);
-
-      /*  if (strStatusBarWarnings.isEmpty())
-        {
-            progressBarLabel->setText(tr("Synchronizing with network..."));
-
-            progressBarLabel->setVisible(true);
-            progressBar->setFormat(tr("~%n block(s) remaining", "", nRemainingBlocks));
-            progressBar->setMaximum(nTotalBlocks);
-            progressBar->setValue(count);
-            progressBar->setVisible(true);
-        }
-    *
-        progressBarLabel->setText(tr("Synchronizing with network..."));
-        progressBarLabel->setVisible(true);
-        progressBar->setFormat(tr("~%n block(s) remaining", "", nRemainingBlocks));
-        progressBar->setMaximum(nTotalBlocks);
-        progressBar->setValue(count);
-        progressBar->setVisible(true);
-        // fShowStatusBar = true;
-        tooltip = tr("Downloaded %1 of %2 blocks of transaction history (%3% done).").arg(count).arg(nTotalBlocks).arg(nPercentageDone, 0, 'f', 2);
-
-    }
-    else
-    {
-        // if (strStatusBarWarnings.isEmpty())
-        //    progressBarLabel->setVisible(false);
-        progressBarLabel->setVisible(false);
-
-        progressBar->setVisible(false);
-        tooltip = tr("Downloaded %1 blocks of transaction history.").arg(count);
-    }
- */
- /*   // Override progressBarLabel text and hide progress bar, when we have warnings to display
-    if (!strStatusBarWarnings.isEmpty())
-    {
-        progressBarLabel->setText(strStatusBarWarnings);
-        progressBarLabel->setVisible(true);
-        progressBar->setVisible(false);
-    }
-  */
 
     QDateTime lastBlockDate = clientModel->getLastBlockDate();
     // int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
@@ -1077,7 +1041,7 @@ void BitcoinGUI::encryptWallet(bool status)
 
 void BitcoinGUI::backupWallet()
 {
-    QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
     if(!filename.isEmpty()) {
         if(!walletModel->backupWallet(filename)) {
@@ -1241,6 +1205,14 @@ void BitcoinGUI::calcClicked()
     dlg.exec();
 }
 
+void BitcoinGUI::splitCoinsClicked()
+{
+    if (!walletModel)
+        return;
+    SplitCoinsDialog dlg(walletModel, this);
+    dlg.exec();
+}
+
 /* zeewolf: Hot swappable wallet themes */
 void BitcoinGUI::changeTheme(QString theme)
 {
@@ -1314,7 +1286,7 @@ void BitcoinGUI::loadTheme(QString theme)
             // Apply the result qss file to Qt
 
             /*if (styleSheet.contains("$", Qt::CaseInsensitive)) {
-                QRegExp rx("(\\$[-\\w]+)");
+                QRegularExpression rx("(\\$[-\\w]+)");
                 rx.indexIn(styleSheet);
                 QString captured = rx.cap(1);
                 QMessageBox::warning(this, "Theme syntax error", "You have used variable that is not declared " + captured + ". Theme will not be applied.");

@@ -1,25 +1,28 @@
 TEMPLATE = app
 TARGET = netcoin
-VERSION = 3.0.0
+VERSION = 3.1.0
 
 CONFIG += qt
-QT += gui
+QT += gui printsupport
     QT += widgets
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
-CONFIG += thread
+lessThan(QT_MAJOR_VERSION, 6): CONFIG += thread
 win32 {
     CONFIG += release
 } else {
     CONFIG += debug_and_release
 }
-CONFIG += static
+!contains(MSYS2, 1):CONFIG += static
+CONFIG += c++17
+QMAKE_CXXFLAGS += -std=c++17
+DEFINES += BOOST_BIND_GLOBAL_PLACEHOLDERS OPENSSL_API_COMPAT=0x10100000L
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
 
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    lessThan(QT_MAJOR_VERSION, 6): DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
 
 # for boost 1.37, add -mt to the boost libraries
@@ -32,17 +35,22 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
-   win32:BOOST_LIB_SUFFIX=-mgw83-mt-s-x64-1_68
+# Old hand-built Windows dependency layout (C:/deps). Not used for MSYS2
+# builds: qmake MSYS2=1 (libraries come from the MSYS2 packages, see
+# doc/build-windows.md).
+win32:!contains(MSYS2, 1) {
+    win32:BOOST_LIB_SUFFIX=-mgw83-mt-s-x64-1_68
     win32:BOOST_INCLUDE_PATH=C:/deps/64bit/boost_1_68_0
     win32:BOOST_LIB_PATH=C:/deps/64bit/boost_1_68_0/stage/lib
     win32:BDB_INCLUDE_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
-  win32:BDB_LIB_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
+    win32:BDB_LIB_PATH=C:/deps/64bit/db-6.2.32.NC/build_unix
     win32:OPENSSL_INCLUDE_PATH=C:/deps/64bit/openssl-1.0.2u/include
     win32:OPENSSL_LIB_PATH=C:/deps/64bit/openssl-1.0.2u
     win32:MINIUPNPC_INCLUDE_PATH=C:/deps8/64bit/
     win32:MINIUPNPC_LIB_PATH=C:/deps/64bit/miniupnpc
     win32:QRENCODE_INCLUDE_PATH=C:/deps/64bit/qrencode-4.0.2
     win32:QRENCODE_LIB_PATH=C:/deps/64bit/qrencode-4.0.2/.libs
+}
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -51,7 +59,6 @@ UI_DIR = build
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
     # Mac: compile for maximum compatibility (10.6, 64-bit)
-    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET=10.6
     !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
@@ -68,7 +75,7 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
-win32:QMAKE_LFLAGS *= -static
+win32:!contains(MSYS2, 1):QMAKE_LFLAGS *= -static
 
 # use: qmake "USE_QRCODE=1"
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
@@ -118,76 +125,84 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
 
+# macOS: libraries from Homebrew (see doc/build-macos.md). The prefixes of
+# the keg-only formulae can be overridden on the qmake command line.
 macx: {
-
-    isEmpty(DEPSDIR) {
-
-        check_dir = /usr/local/Cellar
-        exists($$check_dir) {
-            DEPSDIR = /usr/local
-        }
-
-        !exists($$check_dir) {
-            DEPSDIR = /opt/local
-        }
-    }
-
-    isEmpty(BOOST_LIB_PATH) {
-        BOOST_LIB_PATH = $$DEPSDIR/lib
-    }
-
-    isEmpty(BOOST_INCLUDE_PATH) {
-        BOOST_INCLUDE_PATH = $$DEPSDIR/include
-    }
-
-    isEmpty(BDB_LIB_PATH) {
-        BDB_LIB_PATH = $$DEPSDIR/lib
-    }
-
-    isEmpty(BDB_INCLUDE_PATH) {
-        BDB_INCLUDE_PATH = $$DEPSDIR/include
-    }
+    isEmpty(BREW_PREFIX):BREW_PREFIX = $$system(brew --prefix)
+    isEmpty(OPENSSL_PREFIX):OPENSSL_PREFIX = $$system(brew --prefix openssl@3)
+    isEmpty(SQLITE_PREFIX):SQLITE_PREFIX = $$system(brew --prefix sqlite)
+    isEmpty(BDB_PREFIX):BDB_PREFIX = $$system(brew --prefix berkeley-db)
+    isEmpty(QRENCODE_PREFIX):QRENCODE_PREFIX = $$system(brew --prefix qrencode)
+    isEmpty(BOOST_INCLUDE_PATH):BOOST_INCLUDE_PATH = $$BREW_PREFIX/include
+    isEmpty(BOOST_LIB_PATH):BOOST_LIB_PATH = $$BREW_PREFIX/lib
+    isEmpty(BDB_INCLUDE_PATH):BDB_INCLUDE_PATH = $$BDB_PREFIX/include
+    isEmpty(BDB_LIB_PATH):BDB_LIB_PATH = $$BDB_PREFIX/lib
+    isEmpty(OPENSSL_INCLUDE_PATH):OPENSSL_INCLUDE_PATH = $$OPENSSL_PREFIX/include
+    isEmpty(OPENSSL_LIB_PATH):OPENSSL_LIB_PATH = $$OPENSSL_PREFIX/lib
+    INCLUDEPATH += $$SQLITE_PREFIX/include
+    LIBS += -L$$SQLITE_PREFIX/lib
+    isEmpty(QRENCODE_INCLUDE_PATH):QRENCODE_INCLUDE_PATH = $$QRENCODE_PREFIX/include
+    isEmpty(QRENCODE_LIB_PATH):QRENCODE_LIB_PATH = $$QRENCODE_PREFIX/lib
+    BOOST_LIB_SUFFIX =
+    BDB_LIB_SUFFIX =
+    USE_SYSTEM_LEVELDB = 1
 
     HEADERS += src/qt/macdockiconhandler.h src/qt/macnotificationhandler.h
     OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm src/qt/macnotificationhandler.mm
-    LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices \
-        $$BDB_LIB_PATH/libdb_cxx.a \
-        $$BOOST_LIB_PATH/libboost_system-mt.a \
-        $$BOOST_LIB_PATH/libboost_filesystem-mt.a \
-        $$BOOST_LIB_PATH/libboost_program_options-mt.a \
-        $$BOOST_LIB_PATH/libboost_thread-mt.a \
-        $$BOOST_LIB_PATH/libboost_chrono-mt.a
+    LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices
     DEFINES += MAC_OSX MSG_NOSIGNAL=0
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     ICON = src/mac/artwork/NetCoin.icns
-    QMAKE_INFO_PLIST=src/mac/Info.plist
-    # osx 10.9 has changed the stdlib default to libc++. To prevent some link error, you may need to use libstdc++
-   !macx:QMAKE_CXXFLAGS += -stdlib=libstdc++
-    macx:QMAKE_CXXFLAGS += -stdlib=libc++
+    QMAKE_INFO_PLIST = src/mac/Info.plist
+    isEmpty(QMAKE_MACOSX_DEPLOYMENT_TARGET_SET):QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.0
     QMAKE_CFLAGS_THREAD += -pthread
     QMAKE_CXXFLAGS_THREAD += -pthread
 }
 
-INCLUDEPATH += src/leveldb/include src/leveldb/helpers
-LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
-SOURCES += src/txdb-leveldb.cpp\
-
-!win32 {
-    # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
-} else {
-    # make an educated guess about what the ranlib command is called
-    isEmpty(QMAKE_RANLIB) {
-        QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
-    }
-    LIBS += -lshlwapi
-    #genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+# LevelDB: on Linux link the system library by default (Ubuntu: libleveldb-dev).
+# use: qmake "USE_SYSTEM_LEVELDB=0" to build the bundled copy instead
+!macx:isEmpty(USE_SYSTEM_LEVELDB):!win32|contains(MSYS2, 1) {
+    USE_SYSTEM_LEVELDB=1
 }
-genleveldb.target = $$PWD/src/leveldb/libleveldb.a
-genleveldb.depends = FORCE
-PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
-QMAKE_EXTRA_TARGETS += genleveldb
-# Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
-QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+SOURCES += src/txdb-leveldb.cpp
+contains(USE_SYSTEM_LEVELDB, 1) {
+    message(Building with system LevelDB)
+    LIBS += -lleveldb
+} else {
+    INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+    LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+
+    !win32 {
+        # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
+        genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
+    } else {
+        # make an educated guess about what the ranlib command is called
+        isEmpty(QMAKE_RANLIB) {
+            QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
+        }
+        LIBS += -lshlwapi
+        #genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+    }
+    genleveldb.target = $$PWD/src/leveldb/libleveldb.a
+    genleveldb.depends = FORCE
+    PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
+    QMAKE_EXTRA_TARGETS += genleveldb
+    # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
+    QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+}
+
+# macOS: Homebrew's LevelDB is built without RTTI, so the file with a class
+# derived from a LevelDB class (CBatchScanner) is compiled with -fno-rtti
+macx:contains(USE_SYSTEM_LEVELDB, 1) {
+    SOURCES -= src/txdb-leveldb.cpp
+    NORTTI_SOURCES = src/txdb-leveldb.cpp
+    nortti.input = NORTTI_SOURCES
+    nortti.output = $$OBJECTS_DIR/${QMAKE_FILE_BASE}.o
+    nortti.commands = $(CXX) -c $(CXXFLAGS) -fno-rtti $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
+    nortti.dependency_type = TYPE_C
+    nortti.variable_out = OBJECTS
+    QMAKE_EXTRA_COMPILERS += nortti
+}
 
 # regenerate src/build.h
 !windows|contains(USE_BUILD_INFO, 1) {
@@ -222,6 +237,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/transactiontablemodel.h \
     src/qt/addresstablemodel.h \
     src/qt/optionsdialog.h \
+    src/qt/conffile.h \
+    src/qt/splitcoinsdialog.h \
     src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
     src/qt/sendcoinsdialog.h \
@@ -256,6 +273,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/net.h \
     src/key.h \
     src/db.h \
+    src/db_bdb.h \
+    src/torcontrol.h \
     src/txdb.h \
     src/walletdb.h \
     src/script.h \
@@ -312,6 +331,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/addresstablemodel.cpp \
     src/qt/optionsdialog.cpp \
+    src/qt/conffile.cpp \
+    src/qt/splitcoinsdialog.cpp \
     src/qt/sendcoinsdialog.cpp \
     src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \
@@ -341,6 +362,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/checkpoints.cpp \
     src/addrman.cpp \
     src/db.cpp \
+    src/db_bdb.cpp \
+    src/torcontrol.cpp \
     src/walletdb.cpp \
     src/qt/clientmodel.cpp \
     src/qt/guiutil.cpp \
@@ -441,7 +464,6 @@ OTHER_FILES += \
 
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
-    macx:BOOST_LIB_SUFFIX = -mt
     windows:BOOST_LIB_SUFFIX = -mt
 }
 
@@ -451,29 +473,24 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = /opt/local/lib/db48
 }
 
 isEmpty(BDB_LIB_SUFFIX) {
-    macx:BDB_LIB_SUFFIX = -4.8
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = /opt/local/include/db48
 }
 
 isEmpty(BOOST_LIB_PATH) {
-    macx:BOOST_LIB_PATH = /opt/local/lib
 }
 
 isEmpty(BOOST_INCLUDE_PATH) {
-    macx:BOOST_INCLUDE_PATH = /opt/local/include
 }
 
 windows:DEFINES += WIN32
 windows:RC_FILE = src/qt/res/bitcoin-qt.rc
 
-windows:!contains(MINGW_THREAD_BUGFIX, 0) {
+windows:!contains(MSYS2, 1):!contains(MINGW_THREAD_BUGFIX, 0) {
     # At least qmake's win32-g++-cross profile is missing the -lmingwthrd
     # thread-safety flag. GCC has -mthreads to enable this, but it doesn't
     # work with static linking. -lmingwthrd must come BEFORE -lmingw, so
@@ -492,11 +509,17 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
 INCLUDEPATH += $$BOOST_INCLUDE_PATH $$BDB_INCLUDE_PATH $$OPENSSL_INCLUDE_PATH $$QRENCODE_INCLUDE_PATH
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
-LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
+LIBS += -lssl -lcrypto -lsqlite3
+# Berkeley DB is only used to convert old wallet files to SQLite.
+# use: qmake "USE_BDB=0" to build without it
+!contains(USE_BDB, 0) {
+    DEFINES += ENABLE_BDB_MIGRATION
+    LIBS += -ldb_cxx$$BDB_LIB_SUFFIX
+}
 # -lgdi32 has to happen after -lcrypto (see  #681)
-windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
-LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
-windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
+windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32 -liphlpapi
+LIBS += -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
+LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
   windows:QMAKE_CFLAGS_THREAD += -mthread
     windows:QMAKE_CXXFLAGS_THREAD += -mthread
 contains(RELEASE, 1) {
@@ -507,3 +530,15 @@ contains(RELEASE, 1) {
 }
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
+
+# MSYS2 static build (qmake from the qt6-static package): one self-contained
+# netcoin.exe. use: qmake MSYS2=1 STATIC=1 [LEVELDB_EXTRA_LIBS="-lsnappy -lcrc32c"]
+win32:contains(MSYS2, 1):contains(STATIC, 1) {
+    QMAKE_LFLAGS += -static
+    # only the image format plugins the wallet uses (the others, e.g. TIFF and
+    # WebP, would need more static libraries)
+    QTPLUGIN.imageformats = qico qgif
+    # after the Qt libraries on the link line
+    QMAKE_LIBS += $$QT_EXTRA_LIBS
+    LIBS += $$LEVELDB_EXTRA_LIBS -lcrypt32 -lbcrypt -lz
+}

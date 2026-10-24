@@ -13,8 +13,6 @@ using namespace std;
 
 // Test routines internal to script.cpp:
 extern uint256 SignatureHash(CScript scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType);
-extern bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const CTransaction& txTo, unsigned int nIn,
-                         bool fValidatePayToScriptHash, int nHashType);
 
 // Helpers:
 static std::vector<unsigned char>
@@ -43,6 +41,20 @@ Verify(const CScript& scriptSig, const CScript& scriptPubKey, bool fStrict)
     return VerifyScript(scriptSig, scriptPubKey, txTo, 0, fStrict, 0);
 }
 
+
+static bool IsStandardTx(const CTransaction& tx)
+{
+    std::string strReason;
+    return ::IsStandardTx(tx, strReason);
+}
+
+static std::vector<CPubKey> PubKeys(std::vector<CKey>::const_iterator b, std::vector<CKey>::const_iterator e)
+{
+    std::vector<CPubKey> ret;
+    for (; b != e; ++b)
+        ret.push_back(b->GetPubKey());
+    return ret;
+}
 
 BOOST_AUTO_TEST_SUITE(script_P2SH_tests)
 
@@ -82,7 +94,7 @@ BOOST_AUTO_TEST_CASE(sign)
         txFrom.vout[i].scriptPubKey = evalScripts[i];
         txFrom.vout[i+4].scriptPubKey = standardScripts[i];
     }
-    BOOST_CHECK(txFrom.IsStandard());
+    BOOST_CHECK(IsStandardTx(txFrom));
 
     CTransaction txTo[8]; // Spending transactions
     for (int i = 0; i < 8; i++)
@@ -155,9 +167,9 @@ BOOST_AUTO_TEST_CASE(set)
 
     CScript inner[4];
     inner[0].SetDestination(key[0].GetPubKey().GetID());
-    inner[1].SetMultisig(2, std::vector<CKey>(keys.begin(), keys.begin()+2));
-    inner[2].SetMultisig(1, std::vector<CKey>(keys.begin(), keys.begin()+2));
-    inner[3].SetMultisig(2, std::vector<CKey>(keys.begin(), keys.begin()+3));
+    inner[1].SetMultisig(2, PubKeys(keys.begin(), keys.begin()+2));
+    inner[2].SetMultisig(1, PubKeys(keys.begin(), keys.begin()+2));
+    inner[3].SetMultisig(2, PubKeys(keys.begin(), keys.begin()+3));
 
     CScript outer[4];
     for (int i = 0; i < 4; i++)
@@ -172,7 +184,7 @@ BOOST_AUTO_TEST_CASE(set)
     {
         txFrom.vout[i].scriptPubKey = outer[i];
     }
-    BOOST_CHECK(txFrom.IsStandard());
+    BOOST_CHECK(IsStandardTx(txFrom));
 
     CTransaction txTo[4]; // Spending transactions
     for (int i = 0; i < 4; i++)
@@ -188,7 +200,7 @@ BOOST_AUTO_TEST_CASE(set)
     for (int i = 0; i < 4; i++)
     {
         BOOST_CHECK_MESSAGE(SignSignature(keystore, txFrom, txTo[i], 0), strprintf("SignSignature %d", i));
-        BOOST_CHECK_MESSAGE(txTo[i].IsStandard(), strprintf("txTo[%d].IsStandard", i));
+        BOOST_CHECK_MESSAGE(IsStandardTx(txTo[i]), strprintf("txTo[%d].IsStandard", i));
     }
 }
 
@@ -235,9 +247,9 @@ BOOST_AUTO_TEST_CASE(switchover)
     fund.SetDestination(notValid.GetID());
 
 
-    // Validation should succeed under old rules (hash is correct):
-    BOOST_CHECK(Verify(scriptSig, fund, false));
-    // Fail under new:
+    // NetCoin has no pre-BIP16 mode: P2SH is always evaluated, so this
+    // must fail regardless of the (legacy) fStrict argument.
+    BOOST_CHECK(!Verify(scriptSig, fund, false));
     BOOST_CHECK(!Verify(scriptSig, fund, true));
 }
 
@@ -261,7 +273,7 @@ BOOST_AUTO_TEST_CASE(AreInputsStandard)
     CScript pay1; pay1.SetDestination(key[0].GetPubKey().GetID());
     keystore.AddCScript(pay1);
     CScript payScriptHash1; payScriptHash1.SetDestination(pay1.GetID());
-    CScript pay1of3; pay1of3.SetMultisig(1, keys);
+    CScript pay1of3; pay1of3.SetMultisig(1, PubKeys(keys.begin(), keys.end()));
 
     txFrom.vout[0].scriptPubKey = payScriptHash1;
     txFrom.vout[1].scriptPubKey = pay1;
@@ -297,15 +309,15 @@ BOOST_AUTO_TEST_CASE(AreInputsStandard)
     txTo.vin[2].prevout.hash = txFrom.GetHash();
     BOOST_CHECK(SignSignature(keystore, txFrom, txTo, 2));
 
-    BOOST_CHECK(txTo.AreInputsStandard(mapInputs));
-    BOOST_CHECK_EQUAL(txTo.GetP2SHSigOpCount(mapInputs), 1);
+    BOOST_CHECK(::AreInputsStandard(txTo, mapInputs));
+    BOOST_CHECK_EQUAL(GetP2SHSigOpCount(txTo, mapInputs), 1);
 
     // Make sure adding crap to the scriptSigs makes them non-standard:
     for (int i = 0; i < 3; i++)
     {
         CScript t = txTo.vin[i].scriptSig;
         txTo.vin[i].scriptSig = (CScript() << 11) + t;
-        BOOST_CHECK(!txTo.AreInputsStandard(mapInputs));
+        BOOST_CHECK(!::AreInputsStandard(txTo, mapInputs));
         txTo.vin[i].scriptSig = t;
     }
 
@@ -320,11 +332,11 @@ BOOST_AUTO_TEST_CASE(AreInputsStandard)
     txToNonStd.vin[1].prevout.hash = txFrom.GetHash();
     txToNonStd.vin[1].scriptSig << OP_0 << Serialize(oneOfEleven);
 
-    BOOST_CHECK(!txToNonStd.AreInputsStandard(mapInputs));
-    BOOST_CHECK_EQUAL(txToNonStd.GetP2SHSigOpCount(mapInputs), 11);
+    BOOST_CHECK(!::AreInputsStandard(txToNonStd, mapInputs));
+    BOOST_CHECK_EQUAL(GetP2SHSigOpCount(txToNonStd, mapInputs), 11);
 
     txToNonStd.vin[0].scriptSig.clear();
-    BOOST_CHECK(!txToNonStd.AreInputsStandard(mapInputs));
+    BOOST_CHECK(!::AreInputsStandard(txToNonStd, mapInputs));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

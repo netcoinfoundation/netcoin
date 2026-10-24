@@ -1,0 +1,171 @@
+# NetCoin 3.1.0
+
+NetCoin 3.1.0 brings the 2019 code base (3.0.0) back to life on current
+operating systems and libraries, fixes a number of bugs and moves the
+wallet to SQLite.
+
+**Consensus rules and the P2P protocol (version 70005) are unchanged.**
+3.1.0 nodes and 3.0.0 nodes run on the same network. The new client
+re-validated the complete main chain, from the genesis block up to block
+3,357,862, and arrived at the same best block as the 3.0.0 client
+(`e356e35cce22aee9dbb2b0041c9c93227e04bb9b376621079e5c35014d226533`).
+
+## Upgrading — please read
+
+* **Back up `wallet.dat` first.**
+* On the first start an old Berkeley DB `wallet.dat` is converted to the
+  new SQLite format. The original file is kept as
+  `wallet.dat.bdb-<time>.bak`. **3.0.0 clients cannot open the converted
+  wallet**; to go back, restore the `.bak` file.
+* If the conversion fails, the original wallet is left unchanged and the
+  client stops with an error. Keys can then be moved with `dumpwallet`
+  (old client) and `importwallet` (new client).
+* The data directory is the same as before (`%APPDATA%\NetCoin` on
+  Windows, `~/.netcoin` on Linux). The block chain does not need to be
+  downloaded again.
+
+## Platforms and downloads
+
+* Windows 10/11 64-bit: `netcoin-<version>-win64.zip` — `netcoin.exe`
+  (graphical wallet) and `netcoind.exe` (command-line node), each a single
+  self-contained file without DLLs.
+* Ubuntu 24.04 and 26.04 (x86_64): `netcoin-<version>-ubuntu-<release>-x86_64.tar.gz`.
+* Fedora 44 and 45 (x86_64): `netcoin-<version>-fedora-<release>-x86_64.tar.gz`.
+* macOS 14 or newer on Apple Silicon: `netcoin-<version>-macos-arm64.dmg`
+  (`NetCoin.app`, with `netcoind` inside). Experimental: built and
+  start-tested automatically, but not yet tried by hand.
+* The programs are not signed with a paid certificate; Windows SmartScreen
+  and macOS Gatekeeper warn on the first start (see the README in each
+  package).
+* Builds from source with the standard packages on Ubuntu
+  (`doc/build-ubuntu-24.04.md`), Fedora (`doc/build-fedora.md`), macOS with
+  Homebrew (`doc/build-macos.md`) and Windows with MSYS2
+  (`doc/build-windows.md`).
+* Verify downloads with `SHA256SUMS.txt`.
+
+## Wallet
+
+* The wallet is stored in SQLite instead of Berkeley DB (one
+  self-contained file; same approach as Bitcoin Core since 0.21).
+* After `encryptwallet` the old unencrypted keys are physically removed
+  from the file (previously they could remain in free database pages).
+* `backupwallet` makes a consistent copy even while the wallet is in use.
+* `-salvagewallet` and automatic recovery work with the new format and
+  keep the key pool, so a recovered encrypted wallet can start again.
+* Berkeley DB is now only needed to convert old wallets and is optional
+  when building from source (`USE_BDB=0`).
+* **Staking no longer locks the whole balance.** A stake used to take in
+  up to 100 other coins of the same address, all of which were then locked
+  for the 50-block maturity. Now only the coin that found the stake is
+  used; the rest stays spendable and keeps staking. The old behaviour can
+  be switched back on (Options > Main > "Combine coins when staking", or
+  `stakecombine=1`). This is a wallet setting, not a consensus change.
+* **Settings > Split coins...** divides the spendable balance into several
+  equal coins on new addresses of the wallet, so that a stake locks only a
+  part of it.
+* `-reservebalance` is now listed in `--help` (it already existed, also as
+  "Reserve" in Options > Main).
+
+## Graphical wallet
+
+* Options > Network: list of nodes to always connect to (`addnode`), Tor
+  onion service on/off, Tor control port and the current `.onion`
+  address. Saved in `netcoin.conf`, so editing the file by hand is no
+  longer needed.
+* Translations: Polish, German, French, Spanish, Russian and Chinese
+  (simplified). Earlier versions contained translation files but never
+  included them, so the wallet was English only. Select the language in
+  Options > Display.
+
+## Performance
+
+* Initial sync and `-loadblock` imports are much faster: every block
+  used to trigger a walk back to the last synchronized checkpoint, which
+  on a fresh node is the genesis block (O(n²)). Importing the full chain
+  now takes about one and a half hours on a 2-core machine instead of
+  several days.
+
+## Bug fixes
+
+* Memory leak in signature creation and verification (one leaked
+  EC key per operation).
+* `-loadblock` import stopped at block 2,872,661: a valid block was
+  rejected by the "duplicate proof-of-stake" flood protection and the
+  rest of the chain stayed orphaned. Blocks from a local file are still
+  fully validated, but no longer subject to this network-only check.
+* `-loadblock` ended the program with `exit(0)` without flushing the
+  databases; the node now continues normally after the import.
+* Crash on shutdown when the RPC port could not be opened.
+* `AreInputsStandard` stopped checking a transaction's inputs after the
+  first non-standard P2SH input.
+* NULL pointer dereferences in signature checks before the block index is
+  loaded and in `GetNextTargetRequired`.
+* Undefined static initialisation order in the testnet checkpoints.
+* `CreateTransaction` called `GetReservedKey()` inside `assert()`, so the
+  call was skipped in builds without assertions.
+* Seed nodes given as `host:port` could never be resolved, and the port
+  was ignored.
+* `--help` was missing all RPC, block creation and SSL options.
+* The documented default RPC port was wrong: it is 11211 (testnet
+  22444), not 11311 / 21311.
+* Two threads opening the block/transaction database at the same time:
+  the old bundled LevelDB then opened it twice (risk of corruption),
+  newer LevelDB versions refused and the node stopped.
+* I2P addresses given as `.oc.b32.i2p` were stored with the Tor prefix.
+* Wallet database cursors leaked on error paths.
+* Several accesses to empty vectors and a negative array index in hex
+  parsing.
+* About 150 incorrect `printf` formats for 64-bit values.
+* The Qt wallet was linked with an executable stack.
+* `netcoind` could crash on Ctrl+C or `systemctl stop` (worker threads were
+  still running while the wallet was freed).
+
+## Security and libraries
+
+* OpenSSL 3 (the 1.0.x API used before has been unsupported since 2019).
+* RPC over SSL (`-rpcssl`) accepts TLS 1.2 or newer only, with a modern
+  default cipher list.
+* Key generation checks the result of the random number generator.
+* Boost 1.83 – 1.92, LevelDB 1.23 (system library by default), miniupnpc
+  up to 2.3, Qt 6 (Qt 5.15 still works), C++17; works with GCC 13 – 16.
+* Checked with AddressSanitizer, UndefinedBehaviorSanitizer and cppcheck.
+
+## Network
+
+* Nodes behind NAT or carrier-grade NAT (CGNAT) can now be reachable:
+  with a local Tor daemon the node creates its own Tor v3 onion service
+  (`-listenonion`, default on) and advertises it (`doc/cgnat-tor-ipv6.md`).
+* BIP155 `addrv2` address messages: Tor v3 `.onion` addresses are relayed
+  between 3.1.0 nodes and stored in `peers.dat`. Older nodes are
+  unaffected — they ignore the new messages and keep receiving addresses
+  in the old format, without `.onion` v3 entries.
+* `externalip=`, `addnode=` and `connect=` accept v3 `.onion` addresses.
+* While the node has no connection it tries the DNS seed addresses first,
+  instead of thousands of long-gone addresses from an old `peers.dat`.
+* Addresses from the carrier-grade NAT range 100.64.0.0/10 are no longer
+  stored or relayed.
+* The wallet warns when Tor is running but not connected to the Tor
+  network (e.g. the Tor Browser waiting for "Connect"), because the
+  `.onion` address can then not be reached.
+* UPnP: support for miniupnpc 2.2.8+; logs when the router itself is
+  behind carrier-grade NAT (CGNAT), where port mapping cannot help.
+
+## Development
+
+* The unit tests compile again and all 75 pass.
+* GitHub Actions build and test every change on Ubuntu 24.04 and 26.04,
+  Fedora 44 and 45, macOS and Windows (including a start test of the
+  packaged macOS app); release packages are built by the "Release" workflow,
+  which only the repository owner can start.
+
+## Known limitations
+
+* The automatic wallet conversion was tested with Berkeley DB 5.3 wallets
+  from Linux and with an encrypted wallet from the old Windows client. If a
+  wallet cannot be converted, use `dumpwallet` / `importwallet`.
+* IPv6 connectivity is implemented as before but was not tested in this
+  release.
+* At the time of this release the network has very few nodes and no new
+  blocks have been produced since 30 September 2026. Proof-of-stake blocks
+  are only created while wallets holding coins are online, unlocked for
+  staking and connected.

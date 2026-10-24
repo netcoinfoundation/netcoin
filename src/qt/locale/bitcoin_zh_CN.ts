@@ -1,39 +1,38 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="../forms/aboutdialog.ui" line="+14"/>
-        <source>About Netcoin</source>
-        <translation>关于熊猫币</translation>
+        <source>About NetCoin</source>
+        <translation>关于 NetCoin</translation>
     </message>
     <message>
-        <location line="+39"/>
-        <source>&lt;b&gt;Netcoin&lt;/b&gt; version</source>
-        <translation>熊猫币客户端 版本</translation>
+        <location line="+160"/>
+        <source>&lt;b&gt;NetCoin&lt;/b&gt; version</source>
+        <translation>&lt;b&gt;NetCoin&lt;/b&gt; 版本</translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>Copyright © 2009-2014 The Bitcoin developers
-Copyright © 2012-2014 The NovaCoin developers
-Copyright © 2014 The Netcoin developers</source>
-        <translation>版权所有 © 2009-2014 比特币Bitcoin开发组
-版权所有 © 2012-2014 新星币Novacoin开发组
-版权所有 © 2014 熊猫币Netcoin开发组</translation>
-    </message>
-    <message>
-        <location line="+15"/>
+        <location line="+159"/>
         <source>
-This is experimental software.
+Copyright © 2009-2012 Bitcoin Developers
+Copyright © 2012 PeerCoin Developers
+Copyright © 2014 NetCoin Developers
+
+Lead Developer: Who
+design by: meee and regtable69
+Translated by: Arjan Dekkers - Dutch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>This is experimental software. If you don&apos;t treat it as such, you&apos;re likely to put an eye out!
 
 Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by Eric Young (eay@cryptsoft.com) and UPnP software written by Thomas Bernard.</source>
-        <translation>
-测试版软件
-
-经MIT/X11软件授权发布, 具体参见http://www.opensource.org/licenses/mit-license.php.
-
-本产品包括由OpenSSL Project (http://www.openssl.org/)开发的OpenSSL工具包 ，由 Eric Young (eay@cryptsoft.com) 撰写的密码学软件以及由 Thomas Bernard 撰写的UPnP软件.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -44,72 +43,82 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>地址簿</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>Double-click to edit address or label</source>
-        <translation>双击编辑地址或标签</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Create a new address</source>
-        <translation>创建新地址</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Copy the currently selected address to the system clipboard</source>
-        <translation>复制当前选中的地址到系统剪贴板</translation>
-    </message>
-    <message>
-        <location line="-11"/>
+        <location line="+98"/>
         <source>&amp;New Address</source>
         <translation>新建地址(&amp;N)</translation>
     </message>
     <message>
-        <location line="-46"/>
-        <source>These are your Netcoin addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you.</source>
-        <translation>这是您用来接收支付的熊猫币地址列表。为不同的支付方建立不同的地址以便于了解支付来源。</translation>
+        <location line="-81"/>
+        <source>Here are your NetCoin addresses for receiving payments. You may want to give a different one to each sender so you can keep track of who is paying you.</source>
+        <translation>这些是您用于收款的 NetCoin 地址。您可以给每个付款人不同的地址，以便了解是谁在付款。</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/doubleClickToEditTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/deleteCurrentAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/copyCurrentAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&amp;Copy Address</source>
         <translation>复制地址(&amp;C)</translation>
     </message>
     <message>
         <location line="+11"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/createNewNetcoinAddress.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/signMessageTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/verifyMessageTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/showQrCodeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Show &amp;QR Code</source>
         <translation>显示二维码(&amp;Q)</translation>
     </message>
     <message>
         <location line="+11"/>
-        <source>Sign a message to prove you own a Netcoin address</source>
-        <translation>对信息进行签名以证明您对该熊猫币地址的所有权</translation>
+        <source>S4E</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-39"/>
         <source>Sign &amp;Message</source>
         <translation>签名(&amp;M)</translation>
     </message>
     <message>
-        <location line="+25"/>
-        <source>Delete the currently selected address from the list</source>
-        <translation>从列表中删除选中的地址</translation>
-    </message>
-    <message>
-        <location line="-14"/>
-        <source>Verify a message to ensure it was signed with a specified Netcoin address</source>
-        <translation>验证信息以保证其经过指定熊猫币地址的签名</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+14"/>
         <source>&amp;Verify Message</source>
         <translation>验证消息(&amp;V)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="-56"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../addressbookpage.cpp" line="+65"/>
+        <location filename="../addressbookpage.cpp" line="+69"/>
         <source>Copy &amp;Label</source>
         <translation>复制标签(&amp;L)</translation>
     </message>
@@ -119,7 +128,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location line="+250"/>
+        <location line="+273"/>
         <source>Export Address Book Data</source>
         <translation>导出地址簿数据</translation>
     </message>
@@ -175,14 +184,14 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>新密码</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
         <source>Repeat new passphrase</source>
         <translation>重复新密码</translation>
     </message>
     <message>
         <location line="+33"/>
-        <source>Serves to disable the trivial sendmoney when OS account compromised. Provides no real security.</source>
-        <translation>在系统允许的情况下用于防止sendmoney欺诈，并未提供真正的安全防护措施。</translation>
+        <source>Serves to disable trivial use of sendmoney when the OS account is compromised. Provides no real security.</source>
+        <translation>用于在系统账户被入侵时阻止轻易调用 sendmoney，并不提供真正的安全保护。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -190,7 +199,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>仅用于权益增值</translation>
     </message>
     <message>
-        <location filename="../askpassphrasedialog.cpp" line="+35"/>
+        <location filename="../askpassphrasedialog.cpp" line="+37"/>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;10 or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
         <translation>输入钱包的新密码。&lt;br/&gt;使用的密码请至少包含&lt;b&gt;10个以上随机字符&lt;/&gt;，或者是&lt;b&gt;8个以上的单词&lt;/b&gt;。</translation>
     </message>
@@ -230,7 +239,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>请输入该钱包的旧密码与新密码。</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+49"/>
         <source>Confirm wallet encryption</source>
         <translation>确认加密钱包</translation>
     </message>
@@ -311,62 +320,42 @@ This product includes software developed by the OpenSSL Project for use in the O
 <context>
     <name>BitcoinGUI</name>
     <message>
-        <location filename="../bitcoingui.cpp" line="+282"/>
+        <location filename="../bitcoingui.cpp" line="+363"/>
         <source>Sign &amp;message...</source>
         <translation>消息签名(&amp;M)...</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+419"/>
         <source>Synchronizing with network...</source>
         <translation>正在与网络同步...</translation>
     </message>
     <message>
-        <location line="-319"/>
+        <location line="-515"/>
         <source>&amp;Overview</source>
         <translation>概况(&amp;O)</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Show general overview of wallet</source>
-        <translation>显示钱包概况</translation>
-    </message>
-    <message>
-        <location line="+17"/>
+        <location line="+19"/>
         <source>&amp;Transactions</source>
         <translation>交易记录(&amp;T)</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Browse transaction history</source>
-        <translation>查看交易历史</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>&amp;Address Book</source>
         <translation>地址簿(&amp;A)</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Edit the list of stored addresses and labels</source>
-        <translation>管理已储存的地址和标签</translation>
-    </message>
-    <message>
-        <location line="-13"/>
+        <location line="-12"/>
         <source>&amp;Receive coins</source>
         <translation>接收熊猫币(&amp;R)</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Show the list of addresses for receiving payments</source>
-        <translation>显示用于接收支付的地址列表</translation>
-    </message>
-    <message>
-        <location line="-7"/>
+        <location line="-6"/>
         <source>&amp;Send coins</source>
         <translation>发送货币(&amp;S)</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+64"/>
         <source>E&amp;xit</source>
         <translation>退出(&amp;X)</translation>
     </message>
@@ -376,7 +365,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>退出程序</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
         <source>Show information about Netcoin</source>
         <translation>显示关于熊猫币的信息</translation>
     </message>
@@ -410,38 +399,18 @@ This product includes software developed by the OpenSSL Project for use in the O
         <source>&amp;Change Passphrase...</source>
         <translation>更改密码(&amp;C)...</translation>
     </message>
-    <message numerus="yes">
-        <location line="+259"/>
-        <source>~%n block(s) remaining</source>
-        <translation><numerusform>~%n 个区块未完成</numerusform></translation>
-    </message>
     <message>
-        <location line="+6"/>
-        <source>Downloaded %1 of %2 blocks of transaction history (%3% done).</source>
-        <translation>交易记录已下载%3% (%1 / %2 个区块)</translation>
-    </message>
-    <message>
-        <location line="-256"/>
+        <location line="+11"/>
         <source>&amp;Export...</source>
         <translation>导出(&amp;E)</translation>
     </message>
     <message>
-        <location line="-64"/>
-        <source>Send coins to a Netcoin address</source>
-        <translation>向指定的地址发送熊猫币</translation>
-    </message>
-    <message>
-        <location line="+47"/>
+        <location line="-19"/>
         <source>Modify configuration options for Netcoin</source>
         <translation>更改设置选项</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Export the data in the current tab to a file</source>
-        <translation>导出当前标签页的数据</translation>
-    </message>
-    <message>
-        <location line="-14"/>
+        <location line="+4"/>
         <source>Encrypt or decrypt wallet</source>
         <translation>加密/解密钱包</translation>
     </message>
@@ -456,7 +425,7 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>更改钱包加密口令</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+13"/>
         <source>&amp;Debug window</source>
         <translation>调试窗口(&amp;D)</translation>
     </message>
@@ -466,12 +435,12 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>打开调试和诊断控制台</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="-8"/>
         <source>&amp;Verify message...</source>
         <translation>验证消息(&amp;V)...</translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-263"/>
         <source>Netcoin</source>
         <translation>熊猫币</translation>
     </message>
@@ -481,7 +450,72 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>钱包</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+168"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/overviewTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/sendTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/recieveTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/transactionTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/addressTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>&amp;Services</source>
+        <translation>服务(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/servicesTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>&amp;Staking</source>
+        <translation>权益挖矿(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/stakingTabTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&amp;PIR Calculator</source>
+        <translation>PIR 计算器(&amp;P)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open PIR Calculator</source>
+        <translation>打开 PIR 计算器</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Spli&amp;t coins...</source>
+        <translation>拆分币(&amp;T)...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split the balance into several coins, so that a stake does not lock all of it</source>
+        <translation>将余额拆分为多枚币，避免一次权益锁定全部余额</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;About Netcoin</source>
         <translation>关于熊猫币(&amp;A)</translation>
     </message>
@@ -506,7 +540,22 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>锁定钱包</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+3"/>
+        <source>Show stake report</source>
+        <translation>显示权益报告</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open the Stake Report Box</source>
+        <translation>打开权益报告窗口</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/exportTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
         <source>&amp;File</source>
         <translation>文件(&amp;F)</translation>
     </message>
@@ -516,49 +565,61 @@ This product includes software developed by the OpenSSL Project for use in the O
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+16"/>
+        <source>T&amp;hemes</source>
+        <translation>主题(&amp;H)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>&amp;Help</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+7"/>
+        <source>Information</source>
+        <translation>信息</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tabs toolbar</source>
         <translation>分页工具栏</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+13"/>
         <source>Actions toolbar</source>
         <translation>工具栏</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <location line="+9"/>
         <source>[testnet]</source>
         <translation>[测试网络]</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+60"/>
+        <location line="+66"/>
         <source>Netcoin client</source>
         <translation>熊猫币客户端</translation>
     </message>
     <message numerus="yes">
-        <location line="+75"/>
+        <location line="+72"/>
         <source>%n active connection(s) to Netcoin network</source>
-        <translation><numerusform>与熊猫币网络建立了 %n 个连接</numerusform></translation>
+        <translation>
+            <numerusform>与熊猫币网络建立了 %n 个连接</numerusform>
+        </translation>
     </message>
     <message>
-        <location line="+40"/>
-        <source>Downloaded %1 blocks of transaction history.</source>
-        <translation>已下载 %1 个区块的交易记录</translation>
+        <location line="+727"/>
+        <source>.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+413"/>
-        <source>Staking.&lt;br&gt;Your weight is %1&lt;br&gt;Network weight is %2&lt;br&gt;Expected time to earn reward is %3</source>
-        <translation>权益增值中 &lt;br&gt;您的权重为 %1 &lt;br&gt;网络总权重为 %2&lt;br&gt;预计将在 %3 之后获得收益</translation>
+        <location line="+0"/>
+        <source>..</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-162"/>
         <source>Not staking because wallet is locked</source>
         <translation>未进行权益增值，因为钱包已锁定</translation>
     </message>
@@ -577,63 +638,29 @@ This product includes software developed by the OpenSSL Project for use in the O
         <source>Not staking because you don&apos;t have mature coins</source>
         <translation>未进行权益增值，因为钱包中没有成熟的熊猫币</translation>
     </message>
-    <message numerus="yes">
-        <location line="-403"/>
-        <source>%n second(s) ago</source>
-        <translation><numerusform>%n 秒前</numerusform></translation>
-    </message>
     <message>
-        <location line="-312"/>
-        <source>About Netcoin card</source>
-        <translation>关于熊猫币卡</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Show information about Netcoin card</source>
-        <translation>显示关于熊猫币卡的信息</translation>
-    </message>
-    <message>
-        <location line="+18"/>
+        <location line="-855"/>
         <source>&amp;Unlock Wallet...</source>
         <translation>解锁钱包(&amp;U)</translation>
     </message>
-    <message numerus="yes">
-        <location line="+297"/>
-        <source>%n minute(s) ago</source>
-        <translation><numerusform>%n 分钟前</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <location line="+4"/>
-        <source>%n hour(s) ago</source>
-        <translation><numerusform>%n 小时前</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <location line="+4"/>
-        <source>%n day(s) ago</source>
-        <translation><numerusform>%n 天前</numerusform></translation>
-    </message>
     <message>
-        <location line="+6"/>
+        <location line="+385"/>
         <source>Up to date</source>
         <translation>已是最新</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+46"/>
+        <location line="+2"/>
         <source>Catching up...</source>
         <translation>更新中...</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Last received block was generated %1.</source>
-        <translation>最近生成的区块接收于%1</translation>
-    </message>
-    <message>
-        <location line="+59"/>
+        <location line="+76"/>
         <source>This transaction is over the size limit.  You can still send it for a fee of %1, which goes to the nodes that process your transaction and helps to support the network.  Do you want to pay the fee?</source>
         <translation>该笔交易数据量太大，需支付%1手续费给执行该笔交易的网络结点。您愿意支付吗？</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Confirm transaction fee</source>
         <translation>手续费确认</translation>
     </message>
@@ -661,7 +688,7 @@ Address: %4
 </translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+112"/>
         <location line="+15"/>
         <source>URI handling</source>
         <translation>URI处理</translation>
@@ -673,17 +700,7 @@ Address: %4
         <translation>无法解析URI：无效的熊猫币地址或错误的URI参数。</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
-        <translation>钱包已被&lt;b&gt;加密&lt;/b&gt;，当前为&lt;b&gt;解锁&lt;/b&gt;状态</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
-        <translation>钱包已被&lt;b&gt;加密&lt;/b&gt;，当前为&lt;b&gt;锁定&lt;/b&gt;状态</translation>
-    </message>
-    <message>
-        <location line="+25"/>
+        <location line="+55"/>
         <source>Backup Wallet</source>
         <translation>备份钱包</translation>
     </message>
@@ -703,32 +720,102 @@ Address: %4
         <translation>试图将钱包地址保存到新位置时出现错误</translation>
     </message>
     <message numerus="yes">
-        <location line="+76"/>
+        <location line="+95"/>
         <source>%n second(s)</source>
-        <translation><numerusform>%n秒</numerusform></translation>
+        <translation>
+            <numerusform>%n秒</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n minute(s)</source>
-        <translation><numerusform>%n 分钟</numerusform></translation>
+        <translation>
+            <numerusform>%n 分钟</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
-        <location line="+4"/>
+        <location line="-426"/>
+        <location line="+430"/>
         <source>%n hour(s)</source>
-        <translation><numerusform>%n 小时</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <location line="+4"/>
-        <source>%n day(s)</source>
-        <translation><numerusform>%n 天</numerusform></translation>
+        <translation>
+            <numerusform>%n 小时</numerusform>
+        </translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="-454"/>
+        <source>Processed %1 blocks of transaction history.</source>
+        <translation>已处理 %1 个交易历史区块。</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+29"/>
+        <location line="+429"/>
+        <source>%n day(s)</source>
+        <translation>
+            <numerusform>%n 天</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="-425"/>
+        <location line="+7"/>
+        <source>%n week(s)</source>
+        <translation>
+            <numerusform>%n 周</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>%1 and %2</source>
+        <translation>%1 %2</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+0"/>
+        <source>%n year(s)</source>
+        <translation>
+            <numerusform>%n 年</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 behind</source>
+        <translation>落后 %1</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Last received block was generated %1 ago.</source>
+        <translation>最后收到的区块生成于 %1 前。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Transactions after this will not yet be visible.</source>
+        <translation>此后的交易尚不可见。</translation>
+    </message>
+    <message>
+        <location line="+97"/>
+        <source>Sent S4C transaction</source>
+        <translation>已发送 S4C 交易</translation>
+    </message>
+    <message>
+        <location line="+148"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/encryptedUnlockedTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=:/toolTip/res/tooltips/encryptedLockedTooltip.png/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
+        <source>Staking.&lt;br&gt;Your weight: %1&lt;br&gt;Network weight: %2&lt;br&gt;Expected time to earn reward: %3</source>
+        <translation>正在权益挖矿。&lt;br&gt;您的权重：%1&lt;br&gt;网络权重：%2&lt;br&gt;预计获得奖励时间：%3</translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Not staking</source>
         <translation>未进行权益增值</translation>
     </message>
     <message>
-        <location filename="../bitcoin.cpp" line="+109"/>
+        <location filename="../bitcoin.cpp" line="+114"/>
         <source>A fatal error occurred. Netcoin can no longer continue safely and will quit.</source>
         <translation>发生严重错误，熊猫币客户端即将关闭。</translation>
     </message>
@@ -736,7 +823,7 @@ Address: %4
 <context>
     <name>ClientModel</name>
     <message>
-        <location filename="../clientmodel.cpp" line="+90"/>
+        <location filename="../clientmodel.cpp" line="+101"/>
         <source>Network Alert</source>
         <translation>网络警报</translation>
     </message>
@@ -754,17 +841,31 @@ Address: %4
         <translation>总量：</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+13"/>
+        <location line="+26"/>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <location line="-13"/>
         <source>Bytes:</source>
         <translation>字节：</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+42"/>
         <source>Amount:</source>
         <translation>金额：</translation>
     </message>
     <message>
+        <location line="+13"/>
+        <location line="+74"/>
+        <location line="+74"/>
         <location line="+32"/>
+        <source>0.00 NET</source>
+        <translation type="unfinished">123.456 NET {0.00 ?}</translation>
+    </message>
+    <message>
+        <location line="-167"/>
         <source>Priority:</source>
         <translation>优先级：</translation>
     </message>
@@ -774,27 +875,28 @@ Address: %4
         <translation>费用：</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+29"/>
         <source>Low Output:</source>
         <translation>低输出</translation>
     </message>
     <message>
-        <location filename="../coincontroldialog.cpp" line="+551"/>
+        <location line="+16"/>
+        <location filename="../coincontroldialog.cpp" line="+552"/>
         <source>no</source>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../forms/coincontroldialog.ui" line="+51"/>
+        <location line="+29"/>
         <source>After Fee:</source>
         <translation>加上交易费用后:</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+29"/>
         <source>Change:</source>
         <translation>变更 : </translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+239"/>
         <source>(un)select all</source>
         <translation>(不)全选</translation>
     </message>
@@ -809,7 +911,7 @@ Address: %4
         <translation>列表模式</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+218"/>
         <source>Amount</source>
         <translation>金额</translation>
     </message>
@@ -844,7 +946,7 @@ Address: %4
         <translation>优先级</translation>
     </message>
     <message>
-        <location filename="../coincontroldialog.cpp" line="-515"/>
+        <location filename="../coincontroldialog.cpp" line="-516"/>
         <source>Copy address</source>
         <translation>复制地址</translation>
     </message>
@@ -855,17 +957,17 @@ Address: %4
     </message>
     <message>
         <location line="+1"/>
-        <location line="+26"/>
+        <location line="+27"/>
         <source>Copy amount</source>
         <translation>复制金额</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="-26"/>
         <source>Copy transaction ID</source>
         <translation>复制交易编号</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Copy quantity</source>
         <translation>复制金额</translation>
     </message>
@@ -1071,6 +1173,29 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
 </context>
 <context>
+    <name>FreespaceChecker</name>
+    <message>
+        <location filename="../intro.cpp" line="+60"/>
+        <source>A new data directory will be created.</source>
+        <translation>将创建新的数据目录。</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Add &lt;code&gt;%1name&lt;/code&gt; if you intend to create a new directory here.</source>
+        <translation>如果要在此处新建目录，请添加 &lt;code&gt;%1名称&lt;/code&gt;。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Path already exists, and is not a directory.</source>
+        <translation>路径已存在，且不是目录。</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cannot create data directory here.</source>
+        <translation>无法在此处创建数据目录。</translation>
+    </message>
+</context>
+<context>
     <name>GUIUtil::HelpMessageBox</name>
     <message>
         <location filename="../guiutil.cpp" line="+420"/>
@@ -1115,6 +1240,76 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
 </context>
 <context>
+    <name>Intro</name>
+    <message>
+        <location filename="../forms/intro.ui" line="+14"/>
+        <source>Welcome</source>
+        <translation>欢迎</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Welcome to Netcoin-Qt.</source>
+        <translation>欢迎使用 Netcoin-Qt。</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Use the default data directory</source>
+        <translation>使用默认数据目录</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Netcoin-Qt will download and store a copy of the NetCoin block chain. At least 1 GB of data will be stored in this directory, and it will grow over time.</source>
+        <translation>Netcoin-Qt 将下载并保存 NetCoin 区块链的副本。此目录中至少会保存 1 GB 数据，并且会随时间增长。</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Use a custom data directory:</source>
+        <translation>使用自定义数据目录：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>As this is the first time the program is launched, you can choose where Netcoin-Qt will store its data.</source>
+        <translation>这是程序首次启动，您可以选择 Netcoin-Qt 存储数据的位置。</translation>
+    </message>
+    <message>
+        <location filename="../intro.cpp" line="+101"/>
+        <source>Error</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>GB of free space available</source>
+        <translation>GB 可用空间</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>(of %1GB needed)</source>
+        <translation>（需要 %1 GB）</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkPage</name>
+    <message>
+        <location filename="../forms/networkpage.ui" line="+14"/>
+        <source>Address Book</source>
+        <translation type="unfinished">地址簿</translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;p&gt;&lt;span&gt;So what is “staking”? Allow us to explain it a little... &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;Satoshi created cryptocurrencies with fairness in mind. He envisioned a decentralized method for providing secure and anonymous storage and transference of currency that focused on the needs of private individuals of the digital era. This system includes the tracking and verification of the integrity of transaction data by utilizing consumer-grade computer components to perform calculations. To reward users utilizing their hardware to complete this work, and simultaneously control inflation, Satoshi integrated a reward system into this process. This is now known as &amp;quot;mining&amp;quot; or Proof of work (POW). At a set time interval, the system generates and releases new coins to miners.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;POS doesn’t require fancy equipment. Users can utilize very simple laptops or desktops it doesn&apos;t use a lot of power and is very easy to set up. You simply install the wallet, place some coins inside it and wait! Now I am sure we can agree that most people can do this very easily.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;Netcoin Developers put it to the community, and asked, is this what we want? The response was a resounding YES! &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;There is nothing special you need to do to get staking, all you need to do is simply place coins in your wallet and wait. That is all.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;The POS system implemented by Netcoin frees users of the need to purchase expensive hardware for their mining operation to remain relevant, but POS offers better security. To provide incentive, we have made a system where users get rewarded more as the amount they stake increases! We are calling it Personal investment rate or PIR for short. PIR works on a sliding scale, so it always benefits you to own more Netcoins! You can set your own interest rate by simply adjusting how many coins you wish to stake!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OptionsDialog</name>
     <message>
         <location filename="../forms/optionsdialog.ui" line="+14"/>
@@ -1147,24 +1342,9 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>保留</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>Automatically start Netcoin after logging in to the system.</source>
-        <translation>开机自动启动熊猫币客户端</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+34"/>
         <source>&amp;Start Netcoin on system login</source>
         <translation>开机时自动启动熊猫币客户端(&amp;S)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Detach block and address databases at shutdown. This means they can be moved to another data directory, but it slows down shutdown. The wallet is always detached.</source>
-        <translation>关机时断开区块和地址数据连接使得它们可以被移动到其他目录。这样做会使关机速度变慢。钱包数据总是断开存储的。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Detach databases at shutdown</source>
-        <translation>关机时断开区块和地址数据库连接(&amp;D)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1172,19 +1352,24 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>网络(&amp;N)</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Automatically open the Netcoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>路由器自动打开熊猫币客户端端口。该功能仅在路由器开启UPnP支持时有效。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+9"/>
         <source>Map port using &amp;UPnP</source>
         <translation>使用 &amp;UPnP 映射端口</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Connect to the Netcoin network through a SOCKS proxy (e.g. when connecting through Tor).</source>
-        <translation>经SOCKS代理连接到熊猫币网络(例如使用Tor)</translation>
+        <location line="-33"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically start Netcoin after logging in to the system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;登录系统后自动启动 Netcoin。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically open the Netcoin client port on the router. This only works when your router supports UPnP and it is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;自动在路由器上打开 Netcoin 客户端端口。仅当路由器支持并启用了 UPnP 时有效。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connect to the Netcoin network through a SOCKS proxy (e.g. when connecting through Tor).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;通过 SOCKS 代理连接 Netcoin 网络（例如通过 Tor）。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1258,11 +1443,16 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+13"/>
-        <source>The user interface language can be set here. This setting will take effect after restarting Netcoin.</source>
-        <translation>在此设置用户界面语言。重启熊猫币客户端后设置生效。</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The user interface language can be set here. This setting will take effect after restarting Netcoin.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;可在此设置界面语言。重启 Netcoin 后生效。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+33"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether to show Netcoin addresses in the transaction list or not.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;是否在交易列表中显示 Netcoin 地址。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="-22"/>
         <source>&amp;Unit to show amounts in:</source>
         <translation>熊猫币金额单位(&amp;U)：</translation>
     </message>
@@ -1272,12 +1462,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>选择熊猫币单位。</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Whether to show Netcoin addresses in the transaction list or not.</source>
-        <translation>是否在交易列表中显示熊猫币地址</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+12"/>
         <source>&amp;Display addresses in transaction list</source>
         <translation>在交易清单中显示熊猫币地址(&amp;D)</translation>
     </message>
@@ -1307,12 +1492,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>应用(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../optionsdialog.cpp" line="+55"/>
+        <location filename="../optionsdialog.cpp" line="+75"/>
         <source>default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+153"/>
         <location line="+9"/>
         <source>Warning</source>
         <translation>警告</translation>
@@ -1328,85 +1513,416 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <source>The supplied proxy address is invalid.</source>
         <translation>提供的代理服务器地址无效。</translation>
     </message>
+    <message>
+        <location line="+34"/>
+        <source>&amp;Combine coins when staking</source>
+        <translation>权益挖矿时合并币(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>When on, a stake also takes in other coins of the same address. All of them are then locked until the stake matures (50 blocks). When off, only the coin that found the stake is locked and the rest of the balance stays spendable.</source>
+        <translation>开启时，权益会合并同一地址的其他币，这些币在权益成熟（50 个区块）前都会被锁定。关闭时，只锁定找到权益的那枚币，其余余额仍可使用。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Tor onion service</source>
+        <translation>Tor 洋葱服务</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Make this node reachable through &amp;Tor (works behind NAT and CGNAT)</source>
+        <translation>通过 Tor 让此节点可被访问(&amp;T)（适用于 NAT 和 CGNAT 之后）</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Creates a .onion address for this node while Tor is running. Other NetCoin 3.1+ nodes can then connect to you even if your router does not allow incoming connections.</source>
+        <translation>Tor 运行时为此节点创建 .onion 地址。即使路由器不允许入站连接，其他 NetCoin 3.1+ 节点也能连接到您。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Tor &amp;control port:</source>
+        <translation>Tor 控制端口(&amp;C)：</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Tor Browser: 127.0.0.1:9151 (keep it open), Tor service: 127.0.0.1:9051</source>
+        <translation>Tor 浏览器：127.0.0.1:9151（保持打开），Tor 服务：127.0.0.1:9051</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Always connect to these nodes</source>
+        <translation>始终连接这些节点</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>IP address, host name or .onion, optionally with :port</source>
+        <translation>IP 地址、主机名或 .onion，可附带 :端口</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Add</source>
+        <translation>添加(&amp;A)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Remove</source>
+        <translation>删除(&amp;R)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Saved in netcoin.conf (addnode=). New nodes are connected right away; Tor settings take effect after restarting NetCoin.</source>
+        <translation>保存在 netcoin.conf（addnode=）中。新节点会立即连接；Tor 设置在重启 NetCoin 后生效。</translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>&quot;%1&quot; is not a valid node address.</source>
+        <translation>“%1”不是有效的节点地址。</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Tor is running but not connected to the Tor network, so %1 cannot be reached. In the Tor Browser click &quot;Connect&quot;.</source>
+        <translation>Tor 正在运行但未连接到 Tor 网络，因此无法访问 %1。请在 Tor 浏览器中点击“连接”。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>This node is reachable as %1</source>
+        <translation>此节点可通过 %1 访问</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No onion address yet: Tor is not running or not reachable (see debug.log).</source>
+        <translation>尚无洋葱地址：Tor 未运行或无法访问（参见 debug.log）。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Tor onion service is switched off.</source>
+        <translation>Tor 洋葱服务已关闭。</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Error</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cannot save the settings to netcoin.conf: %1</source>
+        <translation>无法将设置保存到 netcoin.conf：%1</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Tor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The Tor settings will take effect after restarting NetCoin.</source>
+        <translation>Tor 设置将在重启 NetCoin 后生效。</translation>
+    </message>
 </context>
 <context>
     <name>OverviewPage</name>
     <message>
-        <location filename="../forms/overviewpage.ui" line="+14"/>
+        <location filename="../forms/overviewpage.ui" line="+26"/>
         <source>Form</source>
         <translation>表单</translation>
     </message>
     <message>
         <location line="+33"/>
-        <location line="+231"/>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Netcoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>所显示的信息尚未更新，建立连接后钱包客户端会自动和网络进行同步，但目前该过程尚未完成。</translation>
+        <source>10</source>
+        <translation type="unfinished">10</translation>
     </message>
     <message>
-        <location line="-160"/>
-        <source>Stake:</source>
-        <translation>用于权益累积：</translation>
+        <location line="+16"/>
+        <source>100</source>
+        <translation type="unfinished">100</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+13"/>
+        <source>1000</source>
+        <translation type="unfinished">1000</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>all (HEAVY)</source>
+        <translation>全部（较慢）</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>pow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>disable chart</source>
+        <translation>隐藏图表</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Unlock</source>
+        <translation>解锁</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>S4C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+93"/>
+        <source>POS Statistics</source>
+        <translation>PoS 统计</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/stakingTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Recent Transactions</source>
+        <translation>最近交易</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>(Out of Sync)</source>
+        <translation>（未同步）</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Number of Transactions:</source>
+        <translation>交易数量：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <location line="+404"/>
+        <location line="+41"/>
+        <location line="+60"/>
+        <location line="+64"/>
+        <location line="+25"/>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <location line="-569"/>
+        <source>Network Statistics</source>
+        <translation>网络统计</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>0.0000</source>
+        <translation type="unfinished">0.0000</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0.0002&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>PoS difficulty</source>
+        <translation>PoS 难度</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pow difficulty&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;PoW 难度&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Last block time&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;最新区块时间&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 KH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Net Hashrate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;全网算力&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0 MH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Total Coin Volume&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;货币总量&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Connections&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;连接数&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <location line="+64"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;250&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-48"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块高度&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW Block Reward&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;PoW 区块奖励&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;00000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Wallet Breakdown</source>
+        <translation>钱包概况</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/maturingTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+28"/>
+        <source>0 </source>
+        <translation type="unfinished">0 </translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/spendableTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/unconfirmedTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Maturing Stake:</source>
+        <translation>成熟中的权益：</translation>
+    </message>
+    <message>
+        <location line="+98"/>
+        <source>checkpoint block</source>
+        <translation>检查点区块</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Interest earned:</source>
+        <translation>已获利息：</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/immatureTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-51"/>
         <source>Unconfirmed:</source>
         <translation>未确认：</translation>
     </message>
     <message>
-        <location line="-107"/>
-        <source>Wallet</source>
-        <translation>钱包</translation>
-    </message>
-    <message>
-        <location line="+49"/>
+        <location line="+76"/>
         <source>Spendable:</source>
         <translation>可用金额：</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>Your current spendable balance</source>
-        <translation>您当前可使用的余额</translation>
-    </message>
-    <message>
-        <location line="+71"/>
+        <location line="-130"/>
         <source>Immature:</source>
         <translation>未成熟的：</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>Mined balance that has not yet matured</source>
-        <translation>尚未成熟的挖矿收入余额</translation>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="-16"/>
         <source>Total:</source>
         <translation>总额：</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>Your current total balance</source>
-        <translation>您当前的总余额</translation>
-    </message>
-    <message>
-        <location line="+46"/>
-        <source>&lt;b&gt;Recent transactions&lt;/b&gt;</source>
-        <translation>&lt;b&gt;最近交易记录&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location line="-108"/>
-        <source>Total of transactions that have yet to be confirmed, and do not yet count toward the current balance</source>
-        <translation>尚未确认的交易总额（不计入目前钱包余额）</translation>
-    </message>
-    <message>
-        <location line="-29"/>
-        <source>Total of coins that was staked, and do not yet count toward the current balance</source>
-        <translation>正在进行权益累积的货币总额（不计入目前钱包余额）</translation>
-    </message>
-    <message>
-        <location filename="../overviewpage.cpp" line="+113"/>
-        <location line="+1"/>
+        <location filename="../overviewpage.cpp" line="+159"/>
         <source>out of sync</source>
         <translation>数据未同步</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+85"/>
+        <source>%n second(s)</source>
+        <translation>
+            <numerusform>%n 秒</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>%n minute(s)</source>
+        <translation>
+            <numerusform>%n 分钟</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>%n hour(s)</source>
+        <translation>
+            <numerusform>%n 小时</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>%n day(s)</source>
+        <translation>
+            <numerusform>%n 天</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Staking.&lt;br&gt;Your weight is %1&lt;br&gt;Network weight is %2&lt;br&gt;Expected time to earn reward is %3</source>
+        <translation>正在权益挖矿。&lt;br&gt;您的权重：%1&lt;br&gt;网络权重：%2&lt;br&gt;预计获得奖励时间：%3</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Not staking because your wallet is locked,&lt;br&gt; please unlock for staking.</source>
+        <translation>未进行权益挖矿：钱包已锁定，&lt;br&gt;请解锁以进行权益挖矿。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not staking because your wallet is offline,&lt;br&gt; please wait for a connection...</source>
+        <translation>未进行权益挖矿：钱包离线，&lt;br&gt;请等待连接...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not staking because your wallet is syncing,&lt;br&gt; please wait for this process to end...</source>
+        <translation>未进行权益挖矿：钱包正在同步，&lt;br&gt;请等待同步完成...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not staking because you don&apos;t have mature coins...</source>
+        <translation>未进行权益挖矿：没有已成熟的币...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not staking</source>
+        <translation>未进行权益挖矿</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../intro.cpp" line="-32"/>
+        <source>Netcoin</source>
+        <translation type="unfinished">熊猫币</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Error: Specified data directory &quot;%1&quot; can not be created.</source>
+        <translation>错误：无法创建指定的数据目录“%1”。</translation>
     </message>
 </context>
 <context>
@@ -1417,17 +1933,17 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>QR二维码对话框</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+587"/>
         <source>Request Payment</source>
         <translation>请求支付</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="-520"/>
         <source>Amount:</source>
         <translation>金额：</translation>
     </message>
     <message>
-        <location line="-44"/>
+        <location line="+477"/>
         <source>Label:</source>
         <translation>标签：</translation>
     </message>
@@ -1437,7 +1953,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>信息：</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+143"/>
         <source>&amp;Save As...</source>
         <translation>另存为(&amp;S)...</translation>
     </message>
@@ -1470,73 +1986,81 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>RPCConsole</name>
     <message>
-        <location filename="../forms/rpcconsole.ui" line="+46"/>
+        <location filename="../forms/rpcconsole.ui" line="+136"/>
         <source>Client name</source>
         <translation>客户端名称</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-83"/>
         <location line="+23"/>
-        <location line="+26"/>
+        <location line="+16"/>
+        <location line="+54"/>
         <location line="+23"/>
+        <location line="+16"/>
+        <location line="+40"/>
         <location line="+23"/>
-        <location line="+36"/>
-        <location line="+53"/>
-        <location line="+23"/>
-        <location line="+23"/>
-        <location filename="../rpcconsole.cpp" line="+348"/>
         <source>N/A</source>
         <translation>不可用</translation>
     </message>
     <message>
-        <location line="-217"/>
+        <location line="-126"/>
         <source>Client version</source>
         <translation>客户端版本</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-95"/>
         <source>&amp;Information</source>
         <translation>信息(&amp;I)</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+78"/>
         <source>Using OpenSSL version</source>
         <translation>使用 OpenSSL 版本</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="-62"/>
         <source>Startup time</source>
         <translation>启动时间</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="-29"/>
+        <source>NetCoin - Debug window</source>
+        <translation>NetCoin - 调试窗口</translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>Network</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+63"/>
         <source>Number of connections</source>
         <translation>连接数</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+30"/>
+        <source>NetCoin Core</source>
+        <translation>NetCoin Core</translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>On testnet</source>
         <translation>测试网</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+221"/>
+        <source>Show the NetCoin-Qt help message to get a list with possible NetCoin command-line options.</source>
+        <translation>显示 NetCoin-Qt 帮助信息，列出可用的命令行选项。</translation>
+    </message>
+    <message>
+        <location line="-383"/>
         <source>Block chain</source>
         <translation>数据链</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+179"/>
         <source>Current number of blocks</source>
         <translation>当前数据块数量</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Estimated total blocks</source>
-        <translation>预计数据块数量</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1544,62 +2068,47 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>上一数据块时间</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+161"/>
+        <source>Open the NetCoin debug log file from the current data directory. This can take a few seconds for large log files.</source>
+        <translation>打开当前数据目录中的 NetCoin 调试日志文件。日志较大时可能需要几秒钟。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+10"/>
         <source>Command-line options</source>
         <translation>命令行选项</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Show the Netcoin-Qt help message to get a list with possible Netcoin command-line options.</source>
-        <translation>显示关于命令行选项的帮助信息。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+10"/>
         <source>&amp;Show</source>
         <translation>显示(&amp;S)</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+155"/>
         <source>&amp;Console</source>
         <translation>控制台(&amp;C)</translation>
     </message>
     <message>
-        <location line="-260"/>
+        <location line="-462"/>
         <source>Build date</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location line="-104"/>
-        <source>Netcoin - Debug window</source>
-        <translation>熊猫币客户端-调试窗口</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Netcoin Core</source>
-        <translation>熊猫币核心进程</translation>
-    </message>
-    <message>
-        <location line="+279"/>
+        <location line="+277"/>
         <source>Debug log file</source>
         <translation>调试日志文件</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Open the Netcoin debug log file from the current data directory. This can take a few seconds for large log files.</source>
-        <translation>打开调试日志文件，对于较大的文件，这可能持续几秒钟。</translation>
-    </message>
-    <message>
-        <location line="+102"/>
+        <location line="+237"/>
         <source>Clear console</source>
         <translation>清空控制台</translation>
     </message>
     <message>
-        <location filename="../rpcconsole.cpp" line="-33"/>
+        <location filename="../rpcconsole.cpp" line="+328"/>
         <source>Welcome to the Netcoin RPC console.</source>
         <translation>欢迎使用熊猫币RPC控制台。</translation>
     </message>
@@ -1617,8 +2126,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>SendCoinsDialog</name>
     <message>
-        <location filename="../forms/sendcoinsdialog.ui" line="+14"/>
-        <location filename="../sendcoinsdialog.cpp" line="+182"/>
+        <location filename="../forms/sendcoinsdialog.ui" line="+17"/>
+        <location filename="../sendcoinsdialog.cpp" line="+186"/>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+5"/>
@@ -1629,12 +2138,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>发送货币</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+50"/>
         <source>Coin Control Features</source>
         <translation>交易源地址控制功能</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+76"/>
         <source>Inputs...</source>
         <translation>输入...</translation>
     </message>
@@ -1644,41 +2153,66 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>自动选择</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+13"/>
         <source>Insufficient funds!</source>
         <translation>存款不足！</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+356"/>
         <source>Quantity:</source>
         <translation>总量：</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location line="+35"/>
+        <location line="+82"/>
+        <location line="+98"/>
+        <location line="+98"/>
+        <location line="+38"/>
+        <source>0.00 MINT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-19"/>
+        <source>Change:</source>
+        <translation>找零：</translation>
+    </message>
+    <message>
+        <location line="+363"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/sendToMultipleRecipientsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/removeAllTransactionFieldsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>123.456 MINT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+260"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/confirmSendActionTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1012"/>
+        <location line="+44"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-63"/>
         <source>Bytes:</source>
         <translation>字节：</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+101"/>
         <source>Amount:</source>
         <translation>金额：</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location line="+86"/>
-        <location line="+86"/>
-        <location line="+32"/>
-        <source>0.00 NET</source>
-        <translation>123.456 NET {0.00 ?}</translation>
-    </message>
-    <message>
-        <location line="-191"/>
+        <location line="+41"/>
         <source>Priority:</source>
         <translation>优先级：</translation>
     </message>
@@ -1688,12 +2222,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>中等</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+38"/>
         <source>Fee:</source>
         <translation>费用：</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+41"/>
         <source>Low Output:</source>
         <translation>低输出</translation>
     </message>
@@ -1703,37 +2237,22 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>no</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+38"/>
         <source>After Fee:</source>
         <translation>加上交易费用后:</translation>
     </message>
     <message>
-        <location line="+35"/>
-        <source>Change</source>
-        <translation>零钱</translation>
-    </message>
-    <message>
-        <location line="+50"/>
+        <location line="-690"/>
         <source>custom change address</source>
         <translation>自定义零钱地址</translation>
     </message>
     <message>
-        <location line="+106"/>
-        <source>Send to multiple recipients at once</source>
-        <translation>一次发送给多个接收者</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+1097"/>
         <source>Add &amp;Recipient</source>
         <translation>添加收款人(&amp;R)</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Remove all transaction fields</source>
-        <translation>删除所有交易区域</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+23"/>
         <source>Clear &amp;All</source>
         <translation>清除所有(&amp;A)</translation>
     </message>
@@ -1743,27 +2262,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>余额：</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>123.456 NET</source>
-        <translation>123.456 NET</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Confirm the send action</source>
-        <translation>确认并发送货币</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+282"/>
         <source>S&amp;end</source>
         <translation>发送(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../sendcoinsdialog.cpp" line="-173"/>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>输入熊猫币地址(例如：PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <location line="+15"/>
+        <location filename="../sendcoinsdialog.cpp" line="-160"/>
         <source>Copy quantity</source>
         <translation>复制金额</translation>
     </message>
@@ -1808,12 +2312,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>&lt;b&gt;%1&lt;/b&gt; 至 %2 (%3)</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Confirm send coins</source>
-        <translation>确认发送货币</translation>
+        <location line="-109"/>
+        <source>Enter a Netcoin address (e.g. nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
+        <translation>输入 Netcoin 地址（例如 nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE）</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+116"/>
         <source>Are you sure you want to send %1?</source>
         <translation>确认要发送 %1 ?</translation>
     </message>
@@ -1823,7 +2327,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>和</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
         <source>The recipient address is not valid, please recheck.</source>
         <translation>收款人地址不合法，请检查。</translation>
     </message>
@@ -1876,65 +2380,338 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>SendCoinsEntry</name>
     <message>
-        <location filename="../forms/sendcoinsentry.ui" line="+14"/>
+        <location filename="../forms/sendcoinsentry.ui" line="+20"/>
         <source>Form</source>
         <translation>表单</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+30"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/sendToAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/removeRecipientTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/pasteAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/chooseAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/sendToAddressLabelTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>A&amp;mount:</source>
         <translation>金额(&amp;M)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-118"/>
         <source>Pay &amp;To:</source>
         <translation>付给(&amp;T)：</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location filename="../sendcoinsentry.cpp" line="+25"/>
+        <location filename="../sendcoinsentry.cpp" line="+26"/>
         <source>Enter a label for this address to add it to your address book</source>
         <translation>为这个地址输入一个标签，以便将它添加到您的地址簿</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+1"/>
+        <source>Enter a Netcoin address (e.g. nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
+        <translation>输入 Netcoin 地址（例如 nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE）</translation>
+    </message>
+    <message>
+        <location filename="../forms/sendcoinsentry.ui" line="+89"/>
         <source>&amp;Label:</source>
         <translation>标签(&amp;L)：</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>The address to send the payment to  (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>收款人地址(例：PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Choose address from address book</source>
-        <translation>从地址簿选择地址</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-7"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Paste address from clipboard</source>
-        <translation>从剪贴板粘贴地址</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-20"/>
         <source>Alt+P</source>
         <translation>Alt+P</translation>
     </message>
+</context>
+<context>
+    <name>ShoppingPage</name>
     <message>
-        <location line="+7"/>
-        <source>Remove this recipient</source>
-        <translation>删除收款人</translation>
+        <location filename="../forms/shoppingpage.ui" line="+35"/>
+        <source>Address Book</source>
+        <translation>地址簿</translation>
     </message>
     <message>
-        <location filename="../sendcoinsentry.cpp" line="+1"/>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>输入一个熊猫币地址 (例：PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
+        <location line="+94"/>
+        <source>exchanges</source>
+        <translation>交易所</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <location line="+460"/>
+        <location line="+2835"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/exchangeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3231"/>
+        <location line="+32"/>
+        <location line="+233"/>
+        <location line="+2916"/>
+        <location line="+19"/>
+        <location line="+304"/>
+        <location line="+19"/>
+        <source>PushButton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3382"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/PurchaseNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+89"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;suggest an exchange admin@netcoin.io or discord.me/netcoin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;推荐交易所：admin@netcoin.io 或 discord.me/netcoin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+241"/>
+        <source>Services</source>
+        <translation>服务</translation>
+    </message>
+    <message>
+        <location line="+104"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/SpendNetcoins.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
+        <location line="+54"/>
+        <location line="+54"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <location line="+41"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/coinpayments2Tooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Are you a store or service owner?&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;If you would like to accept Netcoin at your store or service please get in touch at support@netcoin.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;您是商家或服务提供者吗？&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;如果您希望接受 Netcoin，请联系 support@netcoin.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+94"/>
+        <source>Development</source>
+        <translation>开发</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To keep up with development keep an eye out on the &lt;a href=&quot;https://github.com/netcoinfoundation/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;github pages&lt;/span&gt;&lt;/a&gt; for updates.&lt;/p&gt;&lt;p&gt;If you wish to speak with a member of the team come to &lt;a href=&quot;https://discord.me/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;discord.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;from time to time we may need to test out new features for this we run a testnet if you would wish to participate check the forums/discord/website for the unstable releases.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;如需关注开发进展，请访问 &lt;a href=&quot;https://github.com/netcoinfoundation/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;GitHub 页面&lt;/span&gt;&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;如果想与团队成员交流，欢迎加入 &lt;a href=&quot;https://discord.me/netcoin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;Discord。&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;我们会不时在测试网上测试新功能。如果您想参与，请在论坛、Discord 或网站上查找测试版本。&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Check Progress</source>
+        <translation>查看进度</translation>
+    </message>
+    <message>
+        <location line="+197"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Below is the donation adress of the Netcoin Foundation. All donations are welcome and help maintaining Netcoin and further development. For more information about the Netcoin Foundation please visit netcoinfoundation.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;以下是 Netcoin 基金会的捐赠地址。欢迎任何捐赠，它们将帮助维护和继续开发 Netcoin。更多信息请访问 netcoinfoundation.io&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+491"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffaa00;&quot;&gt;n57TyDv2D3sjNqkRpk26HSg9Ftmx8ZXMTm&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/Development.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Useful Links</source>
+        <translation>实用链接</translation>
+    </message>
+    <message>
+        <location line="+144"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/infositeTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/forumTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/foundationsiteTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;Here are some other links you may find useful.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/images/res/images/HeaderText/UsefulLinks.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span&gt;以下是其他可能有用的链接。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Block Explorer</source>
+        <translation>区块浏览器</translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <source>Blocks</source>
+        <translation>区块</translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <location line="+343"/>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
+        <location line="-326"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Hash:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块哈希：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+53"/>
+        <location line="+87"/>
+        <location line="+29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-159"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block nBits:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块 nBits：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0000 KH/s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block nNonce:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块 nNonce：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0.00&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <location line="+31"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0x0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Height:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块高度：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Merkle:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块 Merkle：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Timestamp:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块时间戳：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Hashrate:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块算力：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+120"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Block Difficulty:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;区块难度：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Transactions</source>
+        <translation>交易</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Enter your Transaction ID</source>
+        <comment>Transaction ID</comment>
+        <extracomment>Transaction ID</extracomment>
+        <translation>输入交易 ID</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Transaction ID:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;交易 ID：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;000&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Value out:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;输出金额：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Fees:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;手续费：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Outputs:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;输出：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Inputs:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;输入：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Netcoin Block Explorer &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Netcoin 区块浏览器 &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Stake Pools</source>
+        <translation>权益矿池</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;own a pool wish to have it promoted here??&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;If you would like to add your pool here email support@netcoin.io &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;with subject heading &amp;quot;pool slot&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;您运营矿池并希望在此推广吗？&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;如需添加矿池，请发送邮件至 support@netcoin.io &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;主题为 &amp;quot;pool slot&amp;quot;。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+121"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1945,100 +2722,100 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>签名 - 为消息签名/验证签名消息</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location line="+124"/>
+        <location line="+434"/>
+        <location line="+128"/>
         <source>&amp;Sign Message</source>
         <translation>签名消息(&amp;S)</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-122"/>
         <source>You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>您可以用你的地址对消息进行签名，以证明您是该地址的所有人。注意不要对模棱两可的消息签名，以免遭受钓鱼式攻击。请确保消息内容准确的表达了您的真实意愿。</translation>
     </message>
     <message>
         <location line="+18"/>
-        <source>The address to sign the message with (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>用来签名该消息的地址(例： PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/signMessageDialogTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+203"/>
-        <source>Choose an address from the address book</source>
-        <translation>从地址簿里选择一个地址</translation>
+        <location line="+201"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/chooseAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-193"/>
-        <location line="+203"/>
+        <location line="-178"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/pasteAddressTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/theMessageToSign.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/copyMessageTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/signThisMessageTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/resetSignMessageFieldsTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/verifyAddyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/verifyMessageTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/toolTip/res/tooltips/clearAllVerifyTooltip.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-242"/>
+        <location line="+201"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
     <message>
-        <location line="-193"/>
-        <source>Paste address from clipboard</source>
-        <translation>从剪贴板粘贴地址</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-178"/>
         <source>Alt+P</source>
         <translation>Alt+P</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Enter the message you want to sign here</source>
-        <translation>请输入您要发送的签名消息</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Copy the current signature to the system clipboard</source>
-        <translation>复制当前签名至剪切板</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Sign the message to prove you own this Netcoin address</source>
-        <translation>对该消息进行签名以证明您对该熊猫币地址的所有权</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Reset all sign message fields</source>
-        <translation>清空所有签名消息栏</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <location line="+146"/>
+        <location line="+75"/>
+        <location line="+147"/>
         <source>Clear &amp;All</source>
         <translation>清除所有(&amp;A)</translation>
     </message>
     <message>
-        <location line="-87"/>
-        <location line="+70"/>
+        <location line="-94"/>
+        <location line="+77"/>
         <source>&amp;Verify Message</source>
         <translation>验证消息(&amp;V)</translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-71"/>
         <source>Enter the signing address, message (ensure you copy line breaks, spaces, tabs, etc. exactly) and signature below to verify the message. Be careful not to read more into the signature than what is in the signed message itself, to avoid being tricked by a man-in-the-middle attack.</source>
         <translation>在下面输入签名地址，消息（请确保换行符、空格符、制表符等等一个不漏）和签名以验证消息。请确保签名信息准确，提防中间人攻击。</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <source>The address the message was signed with (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>用来签名该消息的熊猫币地址(例： PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <source>Verify the message to ensure it was signed with the specified Netcoin address</source>
-        <translation>确认该消息以保证它经由指定的熊猫币地址签名</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Reset all verify message fields</source>
-        <translation>清空所有验证消息栏</translation>
-    </message>
-    <message>
         <location filename="../signverifymessagedialog.cpp" line="+27"/>
         <location line="+3"/>
-        <source>Enter a Netcoin address (e.g. PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
-        <translation>输入熊猫币地址(例： PBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</translation>
+        <source>Enter a Netcoin address (e.g. nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE)</source>
+        <translation>输入 Netcoin 地址（例如 nBZ8YVV3XT3WWWd2a1jo4N9WePiwKB3mJE）</translation>
     </message>
     <message>
         <location line="-2"/>
@@ -2097,7 +2874,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+0"/>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Please check the signature and try again.</source>
         <translation>请检查签名后重试。</translation>
     </message>
@@ -2107,7 +2884,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>签名与消息摘要不匹配。</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Message verification failed.</source>
         <translation>消息验证失败。</translation>
     </message>
@@ -2118,19 +2895,544 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
 </context>
 <context>
+    <name>SplitCoinsDialog</name>
+    <message>
+        <location filename="../splitcoinsdialog.cpp" line="+27"/>
+        <location line="+96"/>
+        <location line="+16"/>
+        <location line="+5"/>
+        <location line="+22"/>
+        <location line="+5"/>
+        <location line="+7"/>
+        <source>Split coins</source>
+        <translation>拆分币</translation>
+    </message>
+    <message>
+        <location line="-147"/>
+        <source>A stake locks the coin it uses, together with the reward, until it matures (50 blocks). If your whole balance is one coin, nothing can be sent during that time.
+
+This splits your spendable balance into several equal coins on new addresses of this wallet. A stake then locks only one of them, the others stay spendable and keep staking. The coins do not leave your wallet; only the network fee is paid.</source>
+        <translation>权益会锁定所用的币及奖励，直到成熟（50 个区块）。如果全部余额只有一枚币，这段时间内将无法发送任何款项。
+
+此功能会把可用余额拆分为若干等额的币，存入本钱包的新地址。这样一次权益只锁定其中一枚，其余仍可使用并继续参与权益挖矿。币不会离开您的钱包，只需支付网络手续费。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Number of &amp;coins:</source>
+        <translation>币的数量(&amp;C)：</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Split</source>
+        <translation>拆分(&amp;S)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Close</source>
+        <translation>关闭(&amp;C)</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Spendable now: %1</source>
+        <translation>当前可用：%1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spendable coins in the wallet now: %1</source>
+        <translation>钱包中当前可用币数量：%1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Each coin: %1. The network fee is at most about %2; what is left over comes back as one more small coin.</source>
+        <translation>每枚币：%1。网络手续费最多约 %2；剩余部分将作为一枚小额币返回。</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The spendable balance is too small to split into this many coins.</source>
+        <translation>可用余额太少，无法拆分为这么多枚币。</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Split %1 into %2 coins of %3 on new addresses of this wallet?</source>
+        <translation>将 %1 拆分为 %2 枚各 %3 的币，存入本钱包的新地址？</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Could not create a new address.</source>
+        <translation>无法创建新地址。</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Done. The new coins can be used for staking and sending once the transaction is confirmed.</source>
+        <translation>完成。交易确认后，新币即可用于权益挖矿和发送。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>加上 %1 的交易手续费后，总额超过您的余额。</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error: Transaction creation failed.</source>
+        <translation>错误：创建交易失败。</translation>
+    </message>
+</context>
+<context>
+    <name>StakeForCharityDialog</name>
+    <message>
+        <location filename="../forms/charitydialog.ui" line="+17"/>
+        <source>Stake For Charity</source>
+        <translation>慈善权益</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Percentage of stake to send</source>
+        <translation>要发送的权益百分比</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Percentage:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;百分比：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Min amount to send</source>
+        <translation>最小发送金额</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Min Amount:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;最小金额：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Max amount to send</source>
+        <translation>最大发送金额</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&quot;&gt;Max Amount:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&quot;&gt;最大金额：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Enter whole numbers 1 - 50</source>
+        <translation>输入 1 至 50 的整数</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location filename="../charitydialog.cpp" line="+21"/>
+        <source>Enter % to Give (1-50)</source>
+        <translation>输入捐赠百分比（1-50）</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location filename="../charitydialog.cpp" line="+2"/>
+        <source>Enter Min Amount (optional)</source>
+        <translation>输入最小金额（可选）</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <location filename="../charitydialog.cpp" line="+1"/>
+        <source>Enter Max Amount (optional)</source>
+        <translation>输入最大金额（可选）</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Address to send portion of stake to</source>
+        <translation>接收部分权益的地址</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Recieving Address:</source>
+        <translation>接收地址：</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Enter Address to Send to</source>
+        <translation>输入目标地址</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+40"/>
+        <source>Choose an address from the address book</source>
+        <translation>从地址簿中选择地址</translation>
+    </message>
+    <message>
+        <location line="-30"/>
+        <location line="+40"/>
+        <source>Alt+A</source>
+        <translation type="unfinished">Alt+A</translation>
+    </message>
+    <message>
+        <location line="-30"/>
+        <source>The amount left over returned to you</source>
+        <translation>剩余金额将退回给您</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change Address:</source>
+        <translation>找零地址：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Change address must be owned by you</source>
+        <translation>找零地址必须属于您</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location filename="../charitydialog.cpp" line="+1"/>
+        <source>Enter Change Address (optional)</source>
+        <translation>输入找零地址（可选）</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Check and turn on Stake For Charity</source>
+        <translation>检查并开启慈善权益</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Enable</source>
+        <translation>启用</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Turn off Stake For Charity</source>
+        <translation>关闭慈善权益</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Disable</source>
+        <translation>停用</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Stake For Charity allows you to automatically send up to 50% of your stake to another Netcoin address after it matures.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Please enter percentage to give and Netcoin address to give to. Min and Max amount and change address are optional.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;慈善权益会在权益成熟后，自动将最多 50% 的权益发送到另一个 Netcoin 地址。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;请输入捐赠百分比和接收地址。最小、最大金额和找零地址为可选项。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../charitydialog.cpp" line="-3"/>
+        <source>Enter recieving Address</source>
+        <translation>输入接收地址</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <location line="+124"/>
+        <source>Thank you for giving to
+</source>
+        <translation>感谢您捐赠给
+</translation>
+    </message>
+    <message>
+        <location line="-124"/>
+        <location line="+124"/>
+        <source>.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-82"/>
+        <source>Please unlock wallet before starting stake for Charity.</source>
+        <translation>启动慈善权益前请先解锁钱包。</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>The entered address:
+</source>
+        <translation>输入的地址：
+</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+52"/>
+        <source> is invalid.
+Please check the address and try again.</source>
+        <translation> 无效。
+请检查地址后重试。</translation>
+    </message>
+    <message>
+        <location line="-43"/>
+        <source>Please Enter 1 - 50 for percent.</source>
+        <translation>请输入 1 至 50 的百分比。</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Min Amount out of Range, please re-enter.</source>
+        <translation>最小金额超出范围，请重新输入。</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Max Amount out of Range, please re-enter.</source>
+        <translation>最大金额超出范围，请重新输入。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Min Amount &gt; Max Amount, please re-enter.</source>
+        <translation>最小金额大于最大金额，请重新输入。</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <location line="+7"/>
+        <source>The entered change address:
+</source>
+        <translation>输入的找零地址：
+</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source> is not owned.
+Please check the address and try again.</source>
+        <translation> 不属于您。
+请检查地址后重试。</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Stake for Charity is now off</source>
+        <translation>慈善权益已关闭</translation>
+    </message>
+</context>
+<context>
+    <name>StakeReportDialog</name>
+    <message>
+        <location filename="../forms/stakereportdialog.ui" line="+26"/>
+        <location line="+58"/>
+        <source>Stake Report</source>
+        <translation>权益报告</translation>
+    </message>
+    <message>
+        <location line="-15"/>
+        <source>Earnings made by stake over time</source>
+        <translation>权益收益随时间变化</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Coin SubTotal</source>
+        <translation>币小计</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Blocks Staked</source>
+        <translation>权益区块数</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+451"/>
+        <source>Stakes</source>
+        <translation>权益次数</translation>
+    </message>
+    <message>
+        <location line="-428"/>
+        <source>Last 24 Hours</source>
+        <translation>最近 24 小时</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 24H</source>
+        <translation>最近 24 小时获得的币</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+100"/>
+        <source>0.00</source>
+        <translation type="unfinished">0.00</translation>
+    </message>
+    <message>
+        <location line="-283"/>
+        <source>Stake Made in last 24H</source>
+        <translation>最近 24 小时的权益次数</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+68"/>
+        <location line="+306"/>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <location line="-487"/>
+        <source>Last 7 Days</source>
+        <translation>最近 7 天</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 7 Days</source>
+        <translation>最近 7 天获得的币</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 7 Days</source>
+        <translation>最近 7 天的权益次数</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Last 30 Days</source>
+        <translation>最近 30 天</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 30 Days</source>
+        <translation>最近 30 天获得的币</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 30 Days</source>
+        <translation>最近 30 天的权益次数</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Last 365 Days</source>
+        <translation>最近 365 天</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Coin Earned in last 365 Days</source>
+        <translation>最近 365 天获得的币</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Stake Made in last 365 Days</source>
+        <translation>最近 365 天的权益次数</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Date of the last mature Stake</source>
+        <translation>最近一次成熟权益的日期</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Never</source>
+        <translation>从未</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Coin Earned in last mature Stake</source>
+        <translation>最近一次成熟权益获得的币</translation>
+    </message>
+    <message>
+        <location line="+76"/>
+        <source>Date</source>
+        <translation>日期</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <location filename="../stakereportdialoge.cpp" line="+205"/>
+        <source>Amount</source>
+        <translation>金额</translation>
+    </message>
+    <message>
+        <location line="+93"/>
+        <source>Time took to retrieve the data</source>
+        <translation>获取数据耗时</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+23"/>
+        <source>Wait please...</source>
+        <translation>请稍候...</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Time took to refresh dialog</source>
+        <translation>刷新窗口耗时</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Total Stakes Analyzed</source>
+        <translation>已分析权益总数</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Data of the current block.</source>
+        <translation>当前区块数据。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Current Chain Block :</source>
+        <translation>当前链区块：</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Refresh the data</source>
+        <translation>刷新数据</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Refresh</source>
+        <translation>刷新</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Copy Report to ClipBoard</source>
+        <translation>复制报告到剪贴板</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Copy to clipboard</source>
+        <translation>复制到剪贴板</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Close the dialog</source>
+        <translation>关闭窗口</translation>
+    </message>
+    <message>
+        <location filename="../stakereportdialoge.cpp" line="-26"/>
+        <source>Please wait...</source>
+        <translation>请稍候...</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>SubTotal</source>
+        <translation>小计</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+2"/>
+        <location line="+2"/>
+        <location line="+2"/>
+        <location line="+3"/>
+        <source> [NET]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Amount: </source>
+        <translation>金额：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Latest stake date: </source>
+        <translation>最近权益日期：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Stakes analysed: </source>
+        <translation>已分析权益：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Last Recalc took </source>
+        <translation>上次重新计算耗时 </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Refresh took </source>
+        <translation>刷新耗时 </translation>
+    </message>
+</context>
+<context>
     <name>TransactionDesc</name>
     <message>
-        <location filename="../transactiondesc.cpp" line="+19"/>
+        <location filename="../transactiondesc.cpp" line="+21"/>
         <source>Open until %1</source>
         <translation>至 %1 个数据块时开启</translation>
     </message>
-    <message numerus="yes">
-        <location line="-2"/>
-        <source>Open for %n block(s)</source>
-        <translation><numerusform>为 %n 个数据块开启</numerusform></translation>
-    </message>
     <message>
-        <location line="+8"/>
+        <location line="+6"/>
         <source>conflicted</source>
         <translation>发现冲突</translation>
     </message>
@@ -2150,14 +3452,16 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>%1 已确认</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>, broadcast through %n node(s)</source>
-        <translation><numerusform>通过 %n 个节点广播</numerusform></translation>
+        <translation>
+            <numerusform>通过 %n 个节点广播</numerusform>
+        </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2210,7 +3514,9 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     <message numerus="yes">
         <location line="-102"/>
         <source>matures in %n more block(s)</source>
-        <translation><numerusform>将在 %n 个数据块后成熟</numerusform></translation>
+        <translation>
+            <numerusform>将在 %n 个数据块后成熟</numerusform>
+        </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2252,8 +3558,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+3"/>
-        <source>Generated coins must mature 510 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
-        <translation>通过权益累积获得的金额需要在510个块确认后方可使用。此数据块生成时，将被广播到网络并加入区块链。如果未能成功加入区块链，其状态会显示为“未接受”，该部分金额也不可被使用。如果其他节点在您生成区块后的几秒钟内也生成了区块，这种情况会偶尔发生。</translation>
+        <source>Generated coins must mature 70 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
+        <translation>生成的币必须经过 70 个区块成熟后才能花费。您生成此区块时，它已广播到网络以加入区块链。如果未能加入区块链，其状态将变为“未被接受”，且无法花费。如果其他节点在几秒内先于您生成区块，就可能发生这种情况。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2271,7 +3577,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>输入</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+24"/>
         <source>Amount</source>
         <translation>金额</translation>
     </message>
@@ -2286,12 +3592,19 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>错误</translation>
     </message>
     <message>
-        <location line="-211"/>
+        <location line="-212"/>
         <source>, has not been successfully broadcast yet</source>
         <translation>，未被成功广播</translation>
     </message>
+    <message numerus="yes">
+        <location line="-38"/>
+        <source>Open for %n more block(s)</source>
+        <translation>
+            <numerusform>还需 %n 个区块</numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+35"/>
+        <location line="+73"/>
         <source>unknown</source>
         <translation>未知</translation>
     </message>
@@ -2312,7 +3625,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>TransactionTableModel</name>
     <message>
-        <location filename="../transactiontablemodel.cpp" line="+226"/>
+        <location filename="../transactiontablemodel.cpp" line="+238"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
@@ -2332,7 +3645,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>数量</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+67"/>
         <source>Open until %1</source>
         <translation>至 %1 个数据块时开启</translation>
     </message>
@@ -2344,7 +3657,9 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     <message numerus="yes">
         <location line="-15"/>
         <source>Open for %n more block(s)</source>
-        <translation><numerusform>为 %n 个更多的区块开启</numerusform></translation>
+        <translation>
+            <numerusform>为 %n 个更多的区块开启</numerusform>
+        </translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2407,12 +3722,17 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>挖矿所得</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+2"/>
+        <source>POS Mined</source>
+        <translation>PoS 挖出</translation>
+    </message>
+    <message>
+        <location line="+42"/>
         <source>(n/a)</source>
         <translation>（不可用）</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+191"/>
         <source>Transaction status. Hover over this field to show number of confirmations.</source>
         <translation>交易状态。 鼠标移到此区域可显示确认项数量。</translation>
     </message>
@@ -2440,7 +3760,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>TransactionView</name>
     <message>
-        <location filename="../transactionview.cpp" line="+55"/>
+        <location filename="../transactionview.cpp" line="+65"/>
         <location line="+16"/>
         <source>All</source>
         <translation>全部</translation>
@@ -2497,6 +3817,11 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+1"/>
+        <source>Pos-mined</source>
+        <translation>PoS 挖出</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -2506,12 +3831,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>输入地址或标签进行搜索</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Min amount</source>
         <translation>最小金额</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+37"/>
         <source>Copy address</source>
         <translation>复制地址</translation>
     </message>
@@ -2541,7 +3866,12 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>显示交易详情</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+1"/>
+        <source>Show transaction on the Netcoin Block Explorer</source>
+        <translation>在 Netcoin 区块浏览器中显示交易</translation>
+    </message>
+    <message>
+        <location line="+148"/>
         <source>Export Transaction Data</source>
         <translation>输出交易数据</translation>
     </message>
@@ -2596,7 +3926,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>无法写入文件 %1 。</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+112"/>
         <source>Range:</source>
         <translation>范围：</translation>
     </message>
@@ -2609,7 +3939,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 <context>
     <name>WalletModel</name>
     <message>
-        <location filename="../walletmodel.cpp" line="+206"/>
+        <location filename="../walletmodel.cpp" line="+250"/>
         <source>Sending...</source>
         <translation>正在发送</translation>
     </message>
@@ -2627,12 +3957,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
         <translation>使用：</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Send command to -server or pandacoind</source>
-        <translation>向-server服务器或pandacoind发送命令</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>List commands</source>
         <translation>列出命令
 </translation>
@@ -2650,17 +3975,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 </translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Specify configuration file (default: pandacoin.conf)</source>
-        <translation>指定配置文件(默认: pandacoin.conf)</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Specify pid file (default: pandacoind.pid)</source>
-        <translation>指定pid文件(默认: pandacoind.pid)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Specify wallet file (within data directory)</source>
         <translation>指定钱包文件（数据目录内）</translation>
     </message>
@@ -2671,7 +3986,47 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-34"/>
+        <source>%s, you must set a rpcpassword in the configuration file:
+ %s
+It is recommended you use the following random password:
+rpcuser=netcoinrpc
+rpcpassword=%s
+(you do not need to remember this password)
+The username and password MUST NOT be the same.
+If the file does not exist, create it with owner-readable-only file permissions.
+It is also recommended to set alertnotify so you are notified of problems;
+for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
+</source>
+        <translation>%s，您必须在配置文件中设置 rpcpassword：
+ %s
+建议使用以下随机密码：
+rpcuser=netcoinrpc
+rpcpassword=%s
+（无需记住此密码）
+用户名和密码不能相同。
+如果文件不存在，请创建它并设置为仅所有者可读。
+还建议设置 alertnotify 以便在出现问题时收到通知；
+例如：alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
+</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Send command to -server or netcoind</source>
+        <translation>向 -server 或 netcoind 发送命令</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Specify configuration file (default: netcoin.conf)</source>
+        <translation>指定配置文件（默认：netcoin.conf）</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Specify pid file (default: netcoind.pid)</source>
+        <translation>指定 pid 文件（默认：netcoind.pid）</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Set database cache size in megabytes (default: 25)</source>
         <translation>设置数据库缓冲区大小 (缺省: 25MB)</translation>
     </message>
@@ -2997,32 +4352,7 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
 </translation>
     </message>
     <message>
-        <location line="-84"/>
-        <source>%s, you must set a rpcpassword in the configuration file:
- %s
-It is recommended you use the following random password:
-rpcuser=pandacoinrpc
-rpcpassword=%s
-(you do not need to remember this password)
-The username and password MUST NOT be the same.
-If the file does not exist, create it with owner-readable-only file permissions.
-It is also recommended to set alertnotify so you are notified of problems;
-for example: alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
-</source>
-        <translation>%s, 必须在配置文件里设置rpc密码:
- %s
-建议使用如下的随机密码:
-rpcuser=pandacoinrpc
-rpcpassword=%s
-(不需要记住该密码)
-用户名和密码不能重复。
-如果该文件不存在，请自行创建并设为用户本身只读权限。
-建议创建提示以监测可能的问题，如：
-alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
-</translation>
-    </message>
-    <message>
-        <location line="+51"/>
+        <location line="-33"/>
         <source>Find peers using internet relay chat (default: 0)</source>
         <translation>寻找使用互联网接力聊天的节点 (默认: 1) {0)?}</translation>
     </message>
@@ -3125,7 +4455,12 @@ alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
         <translation>可用加密算法 (默认: TLSv1+HIGH:!SSLv2:!aNULL:!eNULL:!AH:!3DES:@STRENGTH)</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+31"/>
+        <source>Error loading block database</source>
+        <translation>加载区块数据库出错</translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Error: Wallet unlocked for staking only, unable to create transaction.</source>
         <translation>错误：无法创建交易，已解锁的钱包仅用于权益累积。</translation>
     </message>
@@ -3176,12 +4511,7 @@ alertnotify=echo %%s | mail -s &quot;Netcoin Alert&quot; admin@foo.com
         <translation>正在加载地址簿...</translation>
     </message>
     <message>
-        <location line="-15"/>
-        <source>Error loading blkindex.dat</source>
-        <translation>blkindex.dat 文件加载出错</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>Error loading wallet.dat: Wallet corrupted</source>
         <translation>wallet.dat 钱包文件加载出错：钱包损坏</translation>
     </message>
@@ -3323,6 +4653,51 @@ If the file does not exist, create it with owner-readable-only file permissions.
         <translation>您必须在配置文件中加入选项 rpcpassword :
  %s
 如果配置文件不存在，请新建，并将文件权限设置为仅允许文件所有者读取.</translation>
+    </message>
+</context>
+<context>
+    <name>calcDialog</name>
+    <message>
+        <location filename="../forms/calcdialog.ui" line="+14"/>
+        <location line="+148"/>
+        <source>PIR Calculator</source>
+        <translation>PIR 计算器</translation>
+    </message>
+    <message>
+        <location line="-138"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Yearly APR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;年化收益率&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Daily interest:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;每日利息：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <location line="+13"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Enter Block Size</source>
+        <translation>输入金额</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Calculate</source>
+        <translation>计算</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;This calculator gives you the daily return and your yearly APR based off the amount entered.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Enter an amount below and click calculate.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;此计算器根据输入的金额显示每日收益和年化收益率。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;请在下方输入金额并点击“计算”。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 </TS>

@@ -54,9 +54,9 @@ QDateTime ClientModel::getLastBlockDate() const
 {
     LOCK(cs_main);
     if (pindexBest)
-        return QDateTime::fromTime_t(pindexBest->GetBlockTime());
+        return QDateTime::fromSecsSinceEpoch(pindexBest->GetBlockTime());
     else
-        return QDateTime::fromTime_t(1393221600); // Genesis block's time
+        return QDateTime::fromSecsSinceEpoch(1393221600); // Genesis block's time
 }
 
 void ClientModel::updateTimer()
@@ -157,7 +157,7 @@ QString ClientModel::clientName() const
 
 QString ClientModel::formatClientStartupTime() const
 {
-    return QDateTime::fromTime_t(nClientStartupTime).toString();
+    return QDateTime::fromSecsSinceEpoch(nClientStartupTime).toString();
 }
 
 // Handlers for core signals

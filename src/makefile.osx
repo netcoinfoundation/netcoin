@@ -1,81 +1,64 @@
-# -*- mode: Makefile; -*-
 # Copyright (c) 2011 Bitcoin Developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
+#
+# macOS build of the headless daemon (netcoind) with the Homebrew packages,
+# see doc/build-macos.md:
+#
+#   brew install boost openssl@3 sqlite leveldb miniupnpc berkeley-db
+#   make -f makefile.osx -j"$(sysctl -n hw.ncpu)"
+#   make -f makefile.osx test_netcoin
 
-# Mac OS X makefile for testcoin
-# Originally by Laszlo Hanyecz (solar@heliacal.net)
+USE_UPNP ?= 1
+USE_BDB ?= 1
 
-CXX=llvm-g++
-DEPSDIR=/opt/local
+BREW ?= $(shell brew --prefix)
+OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3)
+SQLITE_PREFIX ?= $(shell brew --prefix sqlite)
+BDB_PREFIX ?= $(shell brew --prefix berkeley-db)
 
-INCLUDEPATHS= \
- -I"$(CURDIR)" \
- -I"$(CURDIR)"/obj \
- -I"$(DEPSDIR)/include" \
- -I"$(DEPSDIR)/include/db48"
+CXX = clang++
+CC = clang
+MACOSX_DEPLOYMENT_TARGET ?= 14.0
 
-LIBPATHS= \
- -L"$(DEPSDIR)/lib" \
- -L"$(DEPSDIR)/lib/db48"
+DEFS = -DMAC_OSX -DMSG_NOSIGNAL=0 -DUSE_IPV6 -DBOOST_SPIRIT_THREADSAFE \
+       -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DOPENSSL_API_COMPAT=0x10100000L -DHAVE_BUILD_INFO
+DEFS += -I$(CURDIR) -I$(CURDIR)/obj -I$(OPENSSL_PREFIX)/include -I$(SQLITE_PREFIX)/include -I$(BREW)/include
 
-USE_UPNP:=1
+LIBS = -L$(OPENSSL_PREFIX)/lib -L$(SQLITE_PREFIX)/lib -L$(BREW)/lib \
+   -lboost_filesystem -lboost_program_options -lboost_thread -lboost_chrono \
+   -lsqlite3 -lleveldb -lssl -lcrypto -lz
 
-LIBS= -dead_strip
-
-TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
-
-ifdef STATIC
-# Build STATIC if you are redistributing the testcoind binary
-TESTLIBS += \
- $(DEPSDIR)/lib/libboost_unit_test_framework-mt.a
-LIBS += \
- $(DEPSDIR)/lib/db48/libdb_cxx-4.8.a \
- $(DEPSDIR)/lib/libboost_system-mt.a \
- $(DEPSDIR)/lib/libboost_filesystem-mt.a \
- $(DEPSDIR)/lib/libboost_program_options-mt.a \
- $(DEPSDIR)/lib/libboost_thread-mt.a \
- $(DEPSDIR)/lib/libssl.a \
- $(DEPSDIR)/lib/libcrypto.a \
- -lz
-else
-TESTLIBS += \
- -lboost_unit_test_framework-mt
-LIBS += \
- -ldb_cxx-4.8 \
- -lboost_system-mt \
- -lboost_filesystem-mt \
- -lboost_program_options-mt \
- -lboost_thread-mt \
- -lssl \
- -lcrypto \
- -lz
-TESTDEFS += -DBOOST_TEST_DYN_LINK
+ifeq (${USE_BDB}, 1)
+	DEFS += -DENABLE_BDB_MIGRATION -I$(BDB_PREFIX)/include
+	LIBS += -L$(BDB_PREFIX)/lib -ldb_cxx
 endif
 
-DEFS=-DMAC_OSX -DMSG_NOSIGNAL=0 -DBOOST_SPIRIT_THREADSAFE -DUSE_IPV6
-
-ifdef RELEASE
-# Compile for maximum compatibility and smallest size.
-# This requires that dependencies are compiled
-# the same way.
-CFLAGS = -mmacosx-version-min=10.5 -arch i386 -O3
-else
-CFLAGS = -g
+ifneq (${USE_UPNP}, -)
+	DEFS += -DUSE_UPNP=$(USE_UPNP)
+	LIBS += -lminiupnpc
 endif
 
-# ppc doesn't work because we don't support big-endian
-CFLAGS += -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
+TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data) -DBOOST_TEST_DYN_LINK
+
+xCXXFLAGS = -std=c++17 -O2 -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -pthread \
+    -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wno-deprecated-declarations \
+    -fstack-protector-all $(DEFS) $(CXXFLAGS)
+xLDFLAGS = -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -Wl,-dead_strip $(LDFLAGS)
 
 OBJS= \
+    obj/kernel.o \
+    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
     obj/addrman.o \
     obj/crypter.o \
+    obj/miner.o \
     obj/key.o \
     obj/db.o \
+    obj/db_bdb.o \
+    obj/torcontrol.o \
     obj/init.o \
     obj/keystore.o \
     obj/core.o \
@@ -83,9 +66,12 @@ OBJS= \
     obj/net.o \
     obj/protocol.o \
     obj/bitcoinrpc.o \
+    obj/rpcblockchain.o \
+    obj/rpcmining.o \
     obj/rpcdump.o \
     obj/rpcnet.o \
     obj/rpcrawtransaction.o \
+    obj/rpcwallet.o \
     obj/script.o \
     obj/scrypt.o \
     obj/sync.o \
@@ -94,63 +80,47 @@ OBJS= \
     obj/walletdb.o \
     obj/hash.o \
     obj/noui.o \
-    obj/chainparams.o
-
-ifdef USE_UPNP
-	DEFS += -DUSE_UPNP=$(USE_UPNP)
-ifdef STATIC
-	LIBS += $(DEPSDIR)/lib/libminiupnpc.a
-else
-	LIBS += -lminiupnpc
-endif
-endif
+    obj/chainparams.o \
+    obj/txdb-leveldb.o
 
 all: netcoind
 
-# auto-generated dependencies:
--include obj/*.P
--include obj-test/*.P
-
-obj/scrypt.o: scrypt.c
-	gcc -c $(CFLAGS) -MMD -o $@ $<
-	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	  rm -f $(@:%.o=%.d)
+-include obj/*.d
+-include obj-test/*.d
 
 obj/build.h: FORCE
+	@mkdir -p obj
 	/bin/sh ../share/genbuild.sh obj/build.h
 version.cpp: obj/build.h
-DEFS += -DHAVE_BUILD_INFO
+
+obj/scrypt.o: scrypt.c
+	@mkdir -p obj
+	$(CC) -c -O2 -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -I$(OPENSSL_PREFIX)/include $(CFLAGS) -o $@ $^
 
 obj/%.o: %.cpp
-	$(CXX) -c $(CFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
-	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	  rm -f $(@:%.o=%.d)
+	@mkdir -p obj
+	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 
-netcoind: $(OBJS:obj/%=obj/%)
-	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
+# Homebrew's LevelDB is built without RTTI; a class derived from one of its
+# classes (CBatchScanner) must be compiled the same way
+obj/txdb-leveldb.o: txdb-leveldb.cpp
+	@mkdir -p obj
+	$(CXX) -c $(xCXXFLAGS) -fno-rtti -MMD -MF $(@:%.o=%.d) -o $@ $<
+
+netcoind: $(OBJS)
+	$(CXX) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
 obj-test/%.o: test/%.cpp
-	$(CXX) -c $(TESTDEFS) $(CFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
-	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	  rm -f $(@:%.o=%.d)
+	@mkdir -p obj-test
+	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 
-test_netcoin: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
-	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) $(TESTLIBS)
+test_netcoin: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS))
+	$(CXX) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) -lboost_unit_test_framework $(LIBS)
 
 clean:
-	-rm -f netcoind test_netcoin
-	-rm -f obj/*.o
-	-rm -f obj-test/*.o
-	-rm -f obj/*.P
-	-rm -f obj-test/*.P
-	-rm -f src/build.h
+	rm -f netcoind test_netcoin
+	rm -f obj/*.o obj/*.d obj-test/*.o obj-test/*.d obj/build.h
 
 FORCE:

@@ -23,6 +23,13 @@
 # SUCH DAMAGE.
 
 
+/* Mark the stack non-executable even when the optimized code below is
+   compiled out (otherwise the linker makes the whole binary's stack
+   executable). */
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif
+
 #if defined(OPTIMIZED_SALSA) && defined(__x86_64__)
 
 #if defined(__linux__) && defined(__ELF__)

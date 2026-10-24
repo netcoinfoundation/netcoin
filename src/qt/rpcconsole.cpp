@@ -18,7 +18,6 @@
 // TODO: make it possible to filter out categories (esp debug messages when implemented)
 // TODO: receive errors and debug messages through ClientModel
 
-const int CONSOLE_SCROLLBACK = 50;
 const int CONSOLE_HISTORY = 50;
 
 const QSize ICON_SIZE(24, 24);
@@ -79,7 +78,7 @@ bool parseCommandLine(std::vector<std::string> &args, const std::string &strComm
         STATE_ESCAPE_DOUBLEQUOTED
     } state = STATE_EATING_SPACES;
     std::string curarg;
-    foreach(char ch, strCommand)
+    for (char ch : strCommand)
     {
         switch(state)
         {
@@ -206,15 +205,15 @@ RPCConsole::RPCConsole(QWidget *parent) :
     // set OpenSSL version label
 
     ui->openSSLVersion->setText(SSLeay_version(SSLEAY_VERSION));
-    ui->openSSLVersion->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->startupTime->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->clientName->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->clientVersion->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->buildDate->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->numberOfBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->numberOfConnections->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    // ui->totalBlocks->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
-    ui->lastBlockTime->setStyleSheet("selection-background-color: rgb(255, 170, 0, 145); selection-color: white;");
+    ui->openSSLVersion->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->startupTime->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->clientName->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->clientVersion->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->buildDate->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->numberOfBlocks->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->numberOfConnections->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    // ui->totalBlocks->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
+    ui->lastBlockTime->setStyleSheet("selection-background-color: rgba(255, 170, 0, 145); selection-color: white;");
 
     startExecutor();
 
@@ -242,7 +241,7 @@ bool RPCConsole::eventFilter(QObject* obj, QEvent *event)
         case Qt::Key_PageDown:
             if(obj == ui->lineEdit)
             {
-                QApplication::postEvent(ui->messagesWidget, new QKeyEvent(*keyevt));
+                QApplication::postEvent(ui->messagesWidget, new QKeyEvent(keyevt->type(), keyevt->key(), keyevt->modifiers(), keyevt->text(), keyevt->isAutoRepeat(), keyevt->count()));
                 return true;
             }
             break;
@@ -255,7 +254,7 @@ bool RPCConsole::eventFilter(QObject* obj, QEvent *event)
                   ((mod & Qt::ShiftModifier) && key == Qt::Key_Insert)))
             {
                 ui->lineEdit->setFocus();
-                QApplication::postEvent(ui->lineEdit, new QKeyEvent(*keyevt));
+                QApplication::postEvent(ui->lineEdit, new QKeyEvent(keyevt->type(), keyevt->key(), keyevt->modifiers(), keyevt->text(), keyevt->isAutoRepeat(), keyevt->count()));
                 return true;
             }
         }
