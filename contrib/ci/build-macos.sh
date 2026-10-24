@@ -121,7 +121,10 @@ for f in $(find "$APP/Contents/PlugIns" "$FW" -name '*.dylib') $(for fw in "$FW"
 done
 bundle_libs
 # install names (ids) of bundled libraries that still point to Homebrew
-for f in $(find "$FW" "$APP/Contents/PlugIns" -type f \( -name '*.dylib' -o -perm -u+x \)); do
+# (framework binaries from Homebrew are not executable files, so list them explicitly)
+for f in $(find "$FW" "$APP/Contents/PlugIns" -type f \( -name '*.dylib' -o -perm -u+x \)) \
+         $(for fw in "$FW"/*.framework; do [ -d "$fw" ] && echo "$fw/Versions/A/$(basename "$fw" .framework)"; done); do
+    [ -f "$f" ] || continue
     id="$(otool -D "$f" 2>/dev/null | sed -n 2p)"
     case "$id" in
         /opt/*|/usr/local/*) case "$id" in

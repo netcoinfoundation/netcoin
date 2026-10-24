@@ -120,10 +120,17 @@ if [ "$STATIC" = 1 ]; then
         [ -n "$UICEXE" ] || { echo "uic.exe not found" | tee -a "$LOG"; false; }
         TOOLDIR="$(dirname "$UICEXE")"
         log "Qt tools (moc/uic/rcc): $TOOLDIR"
-        printf '[Paths]\nPrefix=%s\nArchData=%s\nData=%s\nHostData=%s\nHostPrefix=%s\nLibraryExecutables=%s\nHostLibraryExecutables=%s\n' \
-            "$(cygpath -m "$MINGW_PREFIX/qt6-static")" "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$ARCHDATA")" \
-            "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$MINGW_PREFIX/qt6-static")" \
-            "$(cygpath -m "$TOOLDIR")" "$(cygpath -m "$TOOLDIR")" > "$QTCONF"
+        # headers, libraries and plugins may also not be where the defaults say
+        QS="$MINGW_PREFIX/qt6-static"
+        HDR="$(find "$QS" -path '*QtWidgets/QMainWindow' -print -quit)"; HDR="$(dirname "$(dirname "$HDR")")"
+        LIBD="$(dirname "$(find "$QS" -name 'libQt6Core.a' -print -quit)")"
+        PLUG="$(dirname "$(dirname "$(find "$QS" -path '*platforms/libqwindows.a' -print -quit)")")"
+        log "Qt headers: $HDR  libs: $LIBD  plugins: $PLUG"
+        printf '[Paths]\nPrefix=%s\nArchData=%s\nData=%s\nHostData=%s\nHostPrefix=%s\nLibraryExecutables=%s\nHostLibraryExecutables=%s\nHeaders=%s\nLibraries=%s\nHostLibraries=%s\nPlugins=%s\n' \
+            "$(cygpath -m "$QS")" "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$ARCHDATA")" \
+            "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$QS")" \
+            "$(cygpath -m "$TOOLDIR")" "$(cygpath -m "$TOOLDIR")" \
+            "$(cygpath -m "$HDR")" "$(cygpath -m "$LIBD")" "$(cygpath -m "$LIBD")" "$(cygpath -m "$PLUG")" > "$QTCONF"
         cat "$QTCONF" >>"$LOG"
         QMAKESPECARG="-qtconf $(cygpath -m "$QTCONF")"
     fi
