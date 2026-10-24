@@ -114,9 +114,16 @@ if [ "$STATIC" = 1 ]; then
         # share/qt6: tell qmake where they are with a qt.conf
         ARCHDATA="$(dirname "$(dirname "$SPECDIR")")"
         QTCONF="$ROOT/build-qt-qt.conf"
-        printf '[Paths]\nPrefix=%s\nArchData=%s\nData=%s\nHostData=%s\nHostPrefix=%s\n' \
+        # moc, uic and rcc (Qt 6 keeps them in a libexec directory)
+        UICEXE="$(find "$MINGW_PREFIX/qt6-static" -name 'uic.exe' -print -quit)"
+        [ -n "$UICEXE" ] || UICEXE="$(find "$MINGW_PREFIX/share/qt6" "$MINGW_PREFIX/lib/qt6" -name 'uic.exe' -print -quit 2>/dev/null)"
+        [ -n "$UICEXE" ] || { echo "uic.exe not found" | tee -a "$LOG"; false; }
+        TOOLDIR="$(dirname "$UICEXE")"
+        log "Qt tools (moc/uic/rcc): $TOOLDIR"
+        printf '[Paths]\nPrefix=%s\nArchData=%s\nData=%s\nHostData=%s\nHostPrefix=%s\nLibraryExecutables=%s\nHostLibraryExecutables=%s\n' \
             "$(cygpath -m "$MINGW_PREFIX/qt6-static")" "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$ARCHDATA")" \
-            "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$MINGW_PREFIX/qt6-static")" > "$QTCONF"
+            "$(cygpath -m "$ARCHDATA")" "$(cygpath -m "$MINGW_PREFIX/qt6-static")" \
+            "$(cygpath -m "$TOOLDIR")" "$(cygpath -m "$TOOLDIR")" > "$QTCONF"
         cat "$QTCONF" >>"$LOG"
         QMAKESPECARG="-qtconf $(cygpath -m "$QTCONF")"
     fi
