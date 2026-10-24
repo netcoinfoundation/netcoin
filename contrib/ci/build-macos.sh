@@ -80,20 +80,47 @@ FW="$APP/Contents/Frameworks"
 mkdir -p "$FW"
 bundle_libs
 # copy Qt and all Homebrew libraries into the bundle and point the binaries at them
-"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite || true
-# drop plugins whose Qt frameworks were not deployed (e.g. the PDF image
-# format plugin needs QtPdf); the wallet does not use them
-for p in $(find "$APP/Contents/PlugIns" -name '*.dylib'); do
-    for dep in $(otool -L "$p" | awk 'NR>1{print $1}' | grep '\.framework/' || true); do
-        fwname="$(echo "$dep" | sed -E 's#.*/([^/]+\.framework)/.*#\1#')"
-        case "$dep" in /System/*) continue ;; esac
-        if [ ! -d "$FW/$fwname" ]; then echo "removing plugin $(basename "$p") (needs $fwname)"; rm -f "$p"; break; fi
+"$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite -no-plugins || true
+# Qt plugins: only what the wallet needs (Homebrew's Qt has many more, some
+# needing frameworks such as QtPdf or QtQml that are not deployed)
+QTPLUGINS="$(find -L "$(brew --prefix qtbase)" -type d -name plugins -path '*qt*' -print -quit)"
+echo "Qt plugins from $QTPLUGINS"
+for plug in platforms/libqcocoa.dylib styles/libqmacstyle.dylib imageformats/libqgif.dylib \
+            imageformats/libqico.dylib imageformats/libqjpeg.dylib; do
+    [ -f "$QTPLUGINS/$plug" ] || { echo "plugin $plug not found"; continue; }
+    mkdir -p "$APP/Contents/PlugIns/$(dirname "$plug")"
+    cp -L "$QTPLUGINS/$plug" "$APP/Contents/PlugIns/$plug"; chmod u+w "$APP/Contents/PlugIns/$plug"
+done
+mkdir -p "$APP/Contents/Resources"
+printf '[Paths]\nPlugins = PlugIns\n' > "$APP/Contents/Resources/qt.conf"
+# Qt frameworks the plugins need but the app itself does not (e.g. QtDBus)
+for pass in 1 2 3; do
+    for f in $(find "$APP/Contents/PlugIns" -name '*.dylib') $(for fw in "$FW"/*.framework; do echo "$fw/Versions/Current/$(basename "$fw" .framework)"; done); do
+        [ -f "$f" ] || continue
+        for dep in $(otool -L "$f" | awk 'NR>1{print $1}' | grep '\.framework/' | grep -v '^/System/' || true); do
+            fwname="$(echo "$dep" | sed -E 's#.*/([^/]+\.framework)/.*#\1#')"
+            [ -d "$FW/$fwname" ] && continue
+            src="$(brew --prefix)/lib/$fwname"
+            [ -d "$src" ] || src="$(find -L "$(brew --prefix)/opt/" -maxdepth 3 -type d -name "$fwname" -print -quit)"
+            [ -n "$src" ] && [ -d "$src" ] || { echo "error: $fwname (needed by $f) not found"; false; }
+            echo "adding $fwname (needed by $(basename "$f"))"
+            cp -R -L "$src" "$FW/"; chmod -R u+w "$FW/$fwname"; rm -rf "$FW/$fwname/Headers" "$FW/$fwname/Versions/"*/Headers
+            fwbin="$FW/$fwname/Versions/Current/$(basename "$fwname" .framework)"
+            install_name_tool -id "@rpath/$fwname/Versions/A/$(basename "$fwname" .framework)" "$fwbin" 2>/dev/null
+        done
+    done
+done
+# references to Homebrew's Qt frameworks -> the bundled ones (via the app's rpath)
+for f in $(find "$APP/Contents/PlugIns" "$FW" -name '*.dylib') $(for fw in "$FW"/*.framework; do echo "$fw/Versions/Current/$(basename "$fw" .framework)"; done); do
+    [ -f "$f" ] || continue
+    for dep in $(otool -L "$f" | awk 'NR>1{print $1}' | grep -E '^/(opt/homebrew|usr/local)/.*\.framework/' || true); do
+        install_name_tool -change "$dep" "@rpath/${dep#*/lib/}" "$f" 2>/dev/null
     done
 done
 bundle_libs
 echo "== checking the bundle"
 # nothing may still refer to Homebrew
-if otool -L "$APP/Contents/MacOS/"* $(find "$FW" "$APP/Contents/PlugIns" -name '*.dylib') $FWBINS | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
+if otool -L "$APP/Contents/MacOS/"* $(find "$FW" "$APP/Contents/PlugIns" -name '*.dylib') $FWBINS | grep -E '^[[:space:]]*/(opt|usr/local)/|:$' | grep -B1 -E '^[[:space:]]*/(opt|usr/local)/'; then
     echo "error: the bundle still links to Homebrew libraries"; false
 fi
 # macdeployqt invalidates the signatures; Apple Silicon needs at least an ad-hoc one
