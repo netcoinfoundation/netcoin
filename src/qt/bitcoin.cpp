@@ -16,7 +16,9 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#if QT_VERSION < 0x050000
 #include <QTextCodec>
+#endif
 #include <QLocale>
 #include <QTimer>
 #include <QTranslator>
@@ -208,7 +210,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    QSplashScreen splash(QPixmap(":/images/splash"), 0);
+    QSplashScreen splash(QPixmap(":/images/splash"));
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min"))
 {
 

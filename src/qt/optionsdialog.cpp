@@ -26,8 +26,7 @@
 #include <QIntValidator>
 #include <QLocale>
 #include <QMessageBox>
-#include <QRegExp>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),

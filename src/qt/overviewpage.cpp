@@ -71,7 +71,7 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
-        if(qVariantCanConvert<QColor>(value))
+        if(value.canConvert<QColor>())
         {
             foreground = qvariant_cast<QColor>(value);
         }
@@ -497,10 +497,9 @@ if (!ui->diffplotframe->isHidden()){
     ui->diffplot->xAxis->setRange((double)xStart, (double)xEnd);
     ui->diffplot->yAxis->setRange(0, diffMax+(diffMax/10));
 
-    ui->diffplot->xAxis->setAutoSubTicks(false);
-    ui->diffplot->yAxis->setAutoSubTicks(false);
-    ui->diffplot->xAxis->setSubTickCount(0);
-    ui->diffplot->yAxis->setSubTickCount(0);
+    ui->diffplot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);
+    ui->diffplot->xAxis->setSubTicks(false);
+    ui->diffplot->yAxis->setSubTicks(false);
     ui->diffplot->xAxis->setLabelColor("#0381ff");
  ui->diffplot->yAxis->setLabelColor("#0381ff");
  ui->diffplot->xAxis->setTickLabelColor("#0381ff");
