@@ -52,6 +52,7 @@ for pass in 1 2 3 4 5; do
         [ -f "$fw/Versions/Current/$(basename "$fw" .framework)" ] && FWBINS="$FWBINS $fw/Versions/Current/$(basename "$fw" .framework)"
     done
     for f in "$FW"/*.dylib "$APP/Contents/MacOS/"* "$APP/Contents/PlugIns"/*/*.dylib $FWBINS; do
+        [ -f "$f" ] || continue
         for dep in $(otool -L "$f" | awk 'NR>1{print $1}' | grep -E '^(@loader_path|@rpath|/opt/homebrew|/usr/local)/' | grep -v '\.framework/' || true); do
             name="$(basename "$dep")"
             # otool -L also lists a library's own install name
@@ -80,10 +81,19 @@ mkdir -p "$FW"
 bundle_libs
 # copy Qt and all Homebrew libraries into the bundle and point the binaries at them
 "$QT/bin/macdeployqt" "$APP" -executable="$APP/Contents/MacOS/netcoind" -always-overwrite || true
+# drop plugins whose Qt frameworks were not deployed (e.g. the PDF image
+# format plugin needs QtPdf); the wallet does not use them
+for p in $(find "$APP/Contents/PlugIns" -name '*.dylib'); do
+    for dep in $(otool -L "$p" | awk 'NR>1{print $1}' | grep '\.framework/' || true); do
+        fwname="$(echo "$dep" | sed -E 's#.*/([^/]+\.framework)/.*#\1#')"
+        case "$dep" in /System/*) continue ;; esac
+        if [ ! -d "$FW/$fwname" ]; then echo "removing plugin $(basename "$p") (needs $fwname)"; rm -f "$p"; break; fi
+    done
+done
 bundle_libs
 echo "== checking the bundle"
 # nothing may still refer to Homebrew
-if otool -L "$APP/Contents/MacOS/"* "$FW/"*.dylib $FWBINS "$APP/Contents/PlugIns"/*/*.dylib | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
+if otool -L "$APP/Contents/MacOS/"* $(find "$FW" "$APP/Contents/PlugIns" -name '*.dylib') $FWBINS | grep -E '^[[:space:]]*/(opt|usr/local)/'; then
     echo "error: the bundle still links to Homebrew libraries"; false
 fi
 # macdeployqt invalidates the signatures; Apple Silicon needs at least an ad-hoc one
