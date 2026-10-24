@@ -5,6 +5,21 @@
 #include "monitoreddatamapper.h"
 #include "netbase.h"
 #include "optionsmodel.h"
+#include "conffile.h"
+#include "net.h"
+#include "torcontrol.h"
+#include "util.h"
+
+#include <QCheckBox>
+#include <QKeyEvent>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QPushButton>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #include <QDir>
 #include <QIntValidator>
@@ -20,9 +35,12 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     mapper(0),
     fRestartWarningDisplayed_Proxy(false),
     fRestartWarningDisplayed_Lang(false),
-    fProxyIpValid(true)
+    fProxyIpValid(true),
+    fNetConfChanged(false),
+    fListenOnionLoaded(true)
 {
     ui->setupUi(this);
+    setupNetConfWidgets();
 
     /* Network elements init */
 #ifndef USE_UPNP
@@ -182,6 +200,8 @@ void OptionsDialog::setSaveButtonState(bool fState)
 
 void OptionsDialog::on_okButton_clicked()
 {
+    if (!saveNetConf())
+        return;
     mapper->submit();
     accept();
 }
@@ -193,6 +213,8 @@ void OptionsDialog::on_cancelButton_clicked()
 
 void OptionsDialog::on_applyButton_clicked()
 {
+    if (!saveNetConf())
+        return;
     mapper->submit();
     disableApplyButton();
 }
@@ -245,6 +267,15 @@ void OptionsDialog::handleProxyIpValid(QValidatedLineEdit *object, bool fState)
 
 bool OptionsDialog::eventFilter(QObject *object, QEvent *event)
 {
+    if (object == addNodeEdit && event->type() == QEvent::KeyPress)
+    {
+        int nKey = static_cast<QKeyEvent*>(event)->key();
+        if (nKey == Qt::Key_Return || nKey == Qt::Key_Enter)
+        {
+            addNode();
+            return true;
+        }
+    }
     if(event->type() == QEvent::FocusOut)
     {
         if(object == ui->proxyIp)
@@ -255,4 +286,195 @@ bool OptionsDialog::eventFilter(QObject *object, QEvent *event)
         }
     }
     return QDialog::eventFilter(object, event);
+}
+
+/*
+ * Tor and addnode settings. These are core options read from netcoin.conf
+ * (shared with netcoind), so they are edited there and not in QSettings.
+ */
+void OptionsDialog::setupNetConfWidgets()
+{
+    QVBoxLayout *layout = ui->verticalLayout_Network;
+    int nPos = layout->count() - 1; // before the vertical spacer
+
+    /* Tor */
+    QGroupBox *boxTor = new QGroupBox(tr("Tor onion service"), this);
+    QVBoxLayout *layoutTor = new QVBoxLayout(boxTor);
+    listenOnion = new QCheckBox(tr("Make this node reachable through &Tor (works behind NAT and CGNAT)"), boxTor);
+    listenOnion->setToolTip(tr("Creates a .onion address for this node while Tor is running. Other NetCoin 3.1+ nodes can then connect to you even if your router does not allow incoming connections."));
+    layoutTor->addWidget(listenOnion);
+    QHBoxLayout *layoutControl = new QHBoxLayout();
+    QLabel *labelControl = new QLabel(tr("Tor &control port:"), boxTor);
+    torControl = new QLineEdit(boxTor);
+    torControl->setPlaceholderText(DEFAULT_TOR_CONTROL);
+    torControl->setMaximumWidth(160);
+    labelControl->setBuddy(torControl);
+    layoutControl->addWidget(labelControl);
+    layoutControl->addWidget(torControl);
+    layoutControl->addStretch();
+    layoutTor->addLayout(layoutControl);
+    QLabel *hintTor = new QLabel(tr("Tor Browser: 127.0.0.1:9151 (keep it open), Tor service: 127.0.0.1:9051"), boxTor);
+    hintTor->setWordWrap(true);
+    layoutTor->addWidget(hintTor);
+    onionStatus = new QLabel(boxTor);
+    onionStatus->setWordWrap(true);
+    onionStatus->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    layoutTor->addWidget(onionStatus);
+    layout->insertWidget(nPos++, boxTor);
+
+    /* addnode */
+    QGroupBox *boxNodes = new QGroupBox(tr("Always connect to these nodes"), this);
+    QVBoxLayout *layoutNodes = new QVBoxLayout(boxNodes);
+    addNodeList = new QListWidget(boxNodes);
+    addNodeList->setMaximumHeight(110);
+    addNodeList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    layoutNodes->addWidget(addNodeList);
+    QHBoxLayout *layoutAdd = new QHBoxLayout();
+    addNodeEdit = new QLineEdit(boxNodes);
+    addNodeEdit->setPlaceholderText(tr("IP address, host name or .onion, optionally with :port"));
+    addNodeButton = new QPushButton(tr("&Add"), boxNodes);
+    addNodeButton->setAutoDefault(false);
+    removeNodeButton = new QPushButton(tr("&Remove"), boxNodes);
+    removeNodeButton->setAutoDefault(false);
+    removeNodeButton->setEnabled(false);
+    layoutAdd->addWidget(addNodeEdit);
+    layoutAdd->addWidget(addNodeButton);
+    layoutAdd->addWidget(removeNodeButton);
+    layoutNodes->addLayout(layoutAdd);
+    QLabel *hintNodes = new QLabel(tr("Saved in netcoin.conf (addnode=). New nodes are connected right away; Tor settings take effect after restarting NetCoin."), boxNodes);
+    hintNodes->setWordWrap(true);
+    layoutNodes->addWidget(hintNodes);
+    layout->insertWidget(nPos++, boxNodes);
+
+    loadNetConf();
+
+    connect(listenOnion, SIGNAL(toggled(bool)), torControl, SLOT(setEnabled(bool)));
+    connect(listenOnion, SIGNAL(toggled(bool)), this, SLOT(netConfChanged()));
+    connect(torControl, SIGNAL(textEdited(QString)), this, SLOT(netConfChanged()));
+    connect(addNodeButton, SIGNAL(clicked()), this, SLOT(addNode()));
+    addNodeEdit->installEventFilter(this); // Enter adds the node instead of closing the dialog
+    connect(removeNodeButton, SIGNAL(clicked()), this, SLOT(removeNode()));
+    connect(addNodeList, SIGNAL(itemSelectionChanged()), this, SLOT(netConfChanged()));
+
+    updateOnionStatus();
+    resize(qMax(width(), 640), qMax(height(), 620));
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateOnionStatus()));
+    timer->start(2000);
+}
+
+void OptionsDialog::loadNetConf()
+{
+    std::vector<std::string> v = ConfFile::GetValues("listenonion");
+    fListenOnionLoaded = v.empty() ? DEFAULT_LISTEN_ONION : (atoi(v.back().c_str()) != 0);
+    v = ConfFile::GetValues("torcontrol");
+    strTorControlLoaded = v.empty() ? QString() : QString::fromStdString(v.back());
+    listAddNodesLoaded.clear();
+    for (const std::string& strNode : ConfFile::GetValues("addnode"))
+        listAddNodesLoaded << QString::fromStdString(strNode);
+
+    listenOnion->setChecked(fListenOnionLoaded);
+    torControl->setEnabled(fListenOnionLoaded);
+    torControl->setText(strTorControlLoaded);
+    addNodeList->clear();
+    addNodeList->addItems(listAddNodesLoaded);
+    fNetConfChanged = false;
+}
+
+void OptionsDialog::netConfChanged()
+{
+    removeNodeButton->setEnabled(!addNodeList->selectedItems().isEmpty());
+    if (sender() == addNodeList)
+        return; // only the selection changed
+    fNetConfChanged = true;
+    enableApplyButton();
+}
+
+void OptionsDialog::addNode()
+{
+    QString strNode = addNodeEdit->text().trimmed();
+    if (strNode.isEmpty())
+        return;
+    int nPort = 0;
+    std::string strHost;
+    SplitHostPort(strNode.toStdString(), nPort, strHost);
+    if (strHost.empty() || strNode.contains(' ') || strNode.contains('#') || strNode.contains('=')) {
+        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
+        ui->statusLabel->setText(tr("\"%1\" is not a valid node address.").arg(strNode));
+        return;
+    }
+    ui->statusLabel->clear();
+    if (addNodeList->findItems(strNode, Qt::MatchFixedString).isEmpty()) {
+        addNodeList->addItem(strNode);
+        netConfChanged();
+    }
+    addNodeEdit->clear();
+}
+
+void OptionsDialog::removeNode()
+{
+    foreach (QListWidgetItem *item, addNodeList->selectedItems())
+        delete item;
+    netConfChanged();
+}
+
+void OptionsDialog::updateOnionStatus()
+{
+    std::string strOnion = GetOnionServiceAddress();
+    if (!strOnion.empty())
+        onionStatus->setText(tr("This node is reachable as %1").arg(QString::fromStdString(strOnion)));
+    else if (GetBoolArg("-listenonion", DEFAULT_LISTEN_ONION) && !fNoListen)
+        onionStatus->setText(tr("No onion address yet: Tor is not running or not reachable (see debug.log)."));
+    else
+        onionStatus->setText(tr("Tor onion service is switched off."));
+}
+
+bool OptionsDialog::saveNetConf()
+{
+    if (!fNetConfChanged)
+        return true;
+
+    QStringList listNodes;
+    for (int i = 0; i < addNodeList->count(); i++)
+        listNodes << addNodeList->item(i)->text();
+    QString strControl = torControl->text().trimmed();
+
+    std::map<std::string, std::vector<std::string> > mapValues;
+    std::vector<std::string>& vNodes = mapValues["addnode"];
+    foreach (const QString& strNode, listNodes)
+        vNodes.push_back(strNode.toStdString());
+    if (listenOnion->isChecked() != fListenOnionLoaded || !ConfFile::GetValues("listenonion").empty())
+        mapValues["listenonion"].push_back(listenOnion->isChecked() ? "1" : "0");
+    if (strControl != strTorControlLoaded) {
+        mapValues["torcontrol"];
+        if (!strControl.isEmpty())
+            mapValues["torcontrol"].push_back(strControl.toStdString());
+    }
+
+    std::string strError;
+    if (!ConfFile::SetValues(mapValues, strError)) {
+        QMessageBox::critical(this, tr("Error"), tr("Cannot save the settings to netcoin.conf: %1").arg(QString::fromStdString(strError)));
+        return false;
+    }
+
+    /* addnode takes effect right away */
+    {
+        LOCK(cs_vAddedNodes);
+        foreach (const QString& strNode, listAddNodesLoaded)
+            if (!listNodes.contains(strNode)) {
+                std::vector<std::string>::iterator it = std::find(vAddedNodes.begin(), vAddedNodes.end(), strNode.toStdString());
+                if (it != vAddedNodes.end())
+                    vAddedNodes.erase(it);
+            }
+        foreach (const QString& strNode, listNodes)
+            if (std::find(vAddedNodes.begin(), vAddedNodes.end(), strNode.toStdString()) == vAddedNodes.end())
+                vAddedNodes.push_back(strNode.toStdString());
+    }
+
+    bool fTorChanged = listenOnion->isChecked() != fListenOnionLoaded || strControl != strTorControlLoaded;
+    if (fTorChanged)
+        QMessageBox::information(this, tr("Tor"), tr("The Tor settings will take effect after restarting NetCoin."), QMessageBox::Ok);
+
+    loadNetConf();
+    return true;
 }

@@ -85,6 +85,12 @@
     </qresource>
     <qresource prefix="/translations">
         <file alias="en">locale/bitcoin_en.qm</file>
+        <file alias="de">locale/bitcoin_de.qm</file>
+        <file alias="es">locale/bitcoin_es.qm</file>
+        <file alias="fr">locale/bitcoin_fr.qm</file>
+        <file alias="pl">locale/bitcoin_pl.qm</file>
+        <file alias="ru">locale/bitcoin_ru.qm</file>
+        <file alias="zh_CN">locale/bitcoin_zh_CN.qm</file>
     </qresource>
     <qresource prefix="/toolTip">
         <file>res/tooltips/aboveAllHousePlansTooltip.png</file>

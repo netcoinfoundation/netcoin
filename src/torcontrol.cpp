@@ -286,7 +286,22 @@ CService AddOnion(TorConnection& conn)
     return addr;
 }
 
+boost::mutex csOnionAddress;
+std::string strOnionAddress;
+
+void SetOnionServiceAddress(const std::string& str)
+{
+    boost::lock_guard<boost::mutex> lock(csOnionAddress);
+    strOnionAddress = str;
+}
+
 } // anon namespace
+
+std::string GetOnionServiceAddress()
+{
+    boost::lock_guard<boost::mutex> lock(csOnionAddress);
+    return strOnionAddress;
+}
 
 void ThreadTorControl()
 {
@@ -304,6 +319,7 @@ void ThreadTorControl()
             addrOnion = AddOnion(conn);
             printf("tor: this node is reachable as %s\n", addrOnion.ToString().c_str());
             AddLocal(addrOnion, LOCAL_MANUAL);
+            SetOnionServiceAddress(addrOnion.ToString());
             fLoggedFailure = false;
 
             // The onion service exists as long as this control connection
@@ -320,8 +336,10 @@ void ThreadTorControl()
                 printf("tor: cannot use the Tor control port %s: %s\n", strTarget.c_str(), e.what());
             fLoggedFailure = true; // do not fill the log while Tor is down
         }
-        if (addrOnion.IsValid())
+        if (addrOnion.IsValid()) {
             RemoveLocal(addrOnion);
+            SetOnionServiceAddress("");
+        }
         MilliSleep(60 * 1000);
     }
 }

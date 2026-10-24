@@ -17,4 +17,7 @@ static const bool DEFAULT_LISTEN_ONION = true;
  */
 void ThreadTorControl();
 
+/** The node's current .onion address (host:port), or empty if none */
+std::string GetOnionServiceAddress();
+
 #endif // NETCOIN_TORCONTROL_H

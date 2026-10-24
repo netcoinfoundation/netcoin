@@ -2,6 +2,7 @@
 #define OPTIONSDIALOG_H
 
 #include <QDialog>
+#include <QStringList>
 
 namespace Ui {
 class OptionsDialog;
@@ -9,6 +10,11 @@ class OptionsDialog;
 class OptionsModel;
 class MonitoredDataMapper;
 class QValidatedLineEdit;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QListWidget;
+class QPushButton;
 
 /** Preferences dialog. */
 class OptionsDialog : public QDialog
@@ -45,6 +51,12 @@ private slots:
     void updateDisplayUnit();
     void handleProxyIpValid(QValidatedLineEdit *object, bool fState);
 
+    /* addnode list and Tor settings (stored in netcoin.conf) */
+    void addNode();
+    void removeNode();
+    void netConfChanged();
+    void updateOnionStatus();
+
 signals:
     void proxyIpValid(QValidatedLineEdit *object, bool fValid);
 
@@ -55,6 +67,22 @@ private:
     bool fRestartWarningDisplayed_Proxy;
     bool fRestartWarningDisplayed_Lang;
     bool fProxyIpValid;
+
+    QCheckBox *listenOnion;
+    QLineEdit *torControl;
+    QLabel *onionStatus;
+    QListWidget *addNodeList;
+    QLineEdit *addNodeEdit;
+    QPushButton *addNodeButton;
+    QPushButton *removeNodeButton;
+    bool fNetConfChanged;
+    bool fListenOnionLoaded;
+    QString strTorControlLoaded;
+    QStringList listAddNodesLoaded;
+
+    void setupNetConfWidgets();
+    void loadNetConf();
+    bool saveNetConf();
 };
 
 #endif // OPTIONSDIALOG_H
